@@ -3,8 +3,6 @@ package me.jackzmc.jackzco3;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class JCommand {
     public String name;

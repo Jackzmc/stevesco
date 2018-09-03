@@ -69,7 +69,7 @@ public class jCMD implements CommandExecutor {
         } else if (args[0].equalsIgnoreCase("getphone")) {
             ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
             ItemMeta newPhoneMeta = newPhone.getItemMeta();
-            newPhoneMeta.setDisplayName("§fjPhone");
+            newPhoneMeta.setDisplayName("§3jPhone");
             newPhone.setItemMeta(newPhoneMeta);
             player.getInventory().addItem(newPhone);
         } else {

@@ -25,7 +25,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" scope="PROVIDED" name="spigot-api-1.12.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="spigot-api-1.12.2-R0.1-SNAPSHOT-shaded" level="project" />
   </component>
 </module>

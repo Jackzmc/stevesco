@@ -1,5 +1,7 @@
 package me.jackzmc.jackzco3;
 
+import com.google.common.base.Joiner;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +19,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,11 +29,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-
-
 public class Main extends JavaPlugin {
     private static Plugin plugin;
-    String latest_version = "Unknown";
+    String latest_version = "3.0.0";
     static String jackzco_prefix = "§3JackzCo§6>§r ";
 
     @Override
@@ -37,17 +39,10 @@ public class Main extends JavaPlugin {
         PluginDescriptionFile pdf = this.getDescription();
         //register commands
         this.getCommand("jackzco").setExecutor(new jCMD(this));
-        getServer().getPluginManager().registerEvents(new DoorControl(this), this);
+        this.getCommand("getid").setExecutor(new DoorControlCmd(this));
 
         //register event listeners and lots of shit yeah
-        getServer().getPluginManager().registerEvents(new JoinEvent(this), this);
-        getServer().getPluginManager().registerEvents(new MainListener(), this);
-        /*getServer().getPluginManager().registerEvents(new OnDeath(this), this);
-
-        getServer().getPluginManager().registerEvents(new CreeperExplosion(this), this);
-        getServer().getPluginManager().registerEvents(new jPhone(this), this);
-        getServer().getPluginManager().registerEvents(new MiscListener(this), this);*/
-
+        registerEvents(this, new JoinEvent(this), new JoinEvent(this), new MainListener(), new DoorControlEvent(this));
 
         final FileConfiguration config = this.getConfig();
         config.addDefault("motd", "Hello %player%, Welcome to the server!");
@@ -62,9 +57,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
 
     }
-    public static Plugin getPlugin() {
-        return plugin;
-    }
+
     public FileConfiguration getJackzCo() {
         File playerFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
         FileConfiguration jdata = YamlConfiguration.loadConfiguration(playerFile);
@@ -93,11 +86,11 @@ public class Main extends JavaPlugin {
                              String label,
                              String[] args) {
         if (command.getName().equalsIgnoreCase("j") || command.getName().equalsIgnoreCase("jump")) {
-            if(sender instanceof Player) {
+            if (sender instanceof Player) {
                 Player player = (Player) sender;
                 float pitch = player.getLocation().getPitch();
                 float yaw = player.getLocation().getYaw();
-                if(isSafeLocation(player.getTargetBlock((Set<Material>) null, 100).getLocation())) {
+                if (isSafeLocation(player.getTargetBlock((Set<Material>) null, 100).getLocation())) {
                     //true
                     Location tploc = player.getTargetBlock((Set<Material>) null, 100).getLocation();
                     tploc.setPitch(pitch);
@@ -106,15 +99,32 @@ public class Main extends JavaPlugin {
                     int z = tploc.getBlockZ();
                     tploc.setY(tploc.getWorld().getHighestBlockYAt(x, z));
                     player.teleport(tploc);
-                }else{
+                } else {
                     sender.sendMessage("§dThere is no block to jump to");
                 }
 
-            }else{
+            } else {
                 sender.sendMessage("§cYou must be in game to use this command");
             }
 
             return true;
+        }else if(command.getName().equalsIgnoreCase("setname")) {
+            if(sender instanceof Player) {
+                try {
+                    Player p = (Player) sender;
+                    String msg = Joiner.on(" ").join(args);
+                    msg = msg.replaceAll(args[0], "");
+                    msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
+
+                    ItemStack item = p.getInventory().getItemInMainHand();
+                    ItemMeta itemMeta = item.getItemMeta();
+                    itemMeta.setDisplayName(msg);
+                    item.setItemMeta(itemMeta);
+                }catch(Exception err) {
+                    sender.sendMessage("Failed: " + err.getMessage());
+                }
+            }
+
         }else if(command.getName().equalsIgnoreCase("fly")) {
             if(sender instanceof Player) {
                 Player player = (Player) sender;
@@ -253,6 +263,15 @@ public class Main extends JavaPlugin {
         }
         return true;
     }
+    public static Plugin getPlugin() {
+        return plugin;
+    }
+    public static void registerEvents(org.bukkit.plugin.Plugin plugin, Listener... listeners) {
+        for (Listener listener : listeners) {
+            Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
+        }
+    }
+
 }
 
 

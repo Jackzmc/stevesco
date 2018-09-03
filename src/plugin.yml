@@ -6,3 +6,12 @@ commands:
   jackzco:
     description: JackzCo Control JCommand
     usage: /jackzco help
+  idmanagement:
+    description: ID Card management
+    usage: /idm
+  getid:
+    description: get an id card
+    usage: /getid
+  setname:
+    description: set item of name
+    usage: /setname <name>
