@@ -1,5 +1,6 @@
 package me.jackzmc.jackzco3;
 
+import de.Herbystar.TTA.TTA_Methods;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,5 +24,8 @@ public class JoinEvent implements Listener {
         if(motd != "") {
             p.sendMessage(motd);
         }
+
+        TTA_Methods.sendTablist(p, "Jackz Craft Testing Server", "die nerd");
+        p.sendTitle("JackzCo is alive","");
     }
 }

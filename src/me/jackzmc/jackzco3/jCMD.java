@@ -24,7 +24,8 @@ public class jCMD implements CommandExecutor {
 
     public jCMD(Main plugin) {
         this.plugin = plugin; // Store the plugin in situations where you need it.
-        prefix = plugin.jackzco_prefix;
+        //prefix = plugin.jackzco_prefix;
+
     }
 
     @Override
@@ -82,6 +83,9 @@ public class jCMD implements CommandExecutor {
         /*for (String cmd : cmds) {
            sender.sendMessage("§7" + cmd);
         }*/
+    }
+    public void jRespond(Player p,String msg) {
+        p.sendMessage(prefix + msg);
     }
 }
 

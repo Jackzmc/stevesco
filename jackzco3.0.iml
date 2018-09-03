@@ -26,5 +26,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="spigot-api-1.12.2-R0.1-SNAPSHOT-shaded" level="project" />
+    <orderEntry type="library" name="TTA-4.2" level="project" />
   </component>
 </module>

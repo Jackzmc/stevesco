@@ -2,6 +2,7 @@ package me.jackzmc.jackzco3;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 
 public class JCommand {
@@ -17,4 +18,6 @@ public class JCommand {
         this.name = cmdName;
         this.description = cmdDesc;
     }
+
+
 }

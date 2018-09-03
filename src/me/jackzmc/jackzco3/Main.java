@@ -1,6 +1,7 @@
 package me.jackzmc.jackzco3;
 
 import com.google.common.base.Joiner;
+import de.Herbystar.TTA.TTA_Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,8 +32,9 @@ import java.util.Set;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
+
     String latest_version = "3.0.0";
-    static String jackzco_prefix = "§3JackzCo§6>§r ";
+    static public String jackzco_prefix = "§3JackzCo§6>§r ";
 
     @Override
     public void onEnable() {
@@ -42,7 +44,9 @@ public class Main extends JavaPlugin {
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
 
         //register event listeners and lots of shit yeah
-        registerEvents(this, new JoinEvent(this), new JoinEvent(this), new MainListener(), new DoorControlEvent(this));
+        registerEvents(this, new JoinEvent(this), new MainListener(),
+                new DoorControlEvent(this));
+        registerEvents(this,new Wand(this));
 
         final FileConfiguration config = this.getConfig();
         config.addDefault("motd", "Hello %player%, Welcome to the server!");
@@ -263,6 +267,9 @@ public class Main extends JavaPlugin {
         }
         return true;
     }
+
+
+
     public static Plugin getPlugin() {
         return plugin;
     }
