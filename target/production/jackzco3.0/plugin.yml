@@ -2,6 +2,8 @@ name: jackzco3
 version: 3.0.0
 author: Jackz
 main: me.jackzmc.jackzco3.Main
+softdepend: [WorldGuard]
+depend: [TTA]
 commands:
   jackzco:
     description: JackzCo Control JCommand

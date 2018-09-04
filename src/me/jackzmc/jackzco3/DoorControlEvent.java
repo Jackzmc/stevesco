@@ -1,10 +1,12 @@
 package me.jackzmc.jackzco3;
 
+import com.sk89q.worldguard.bukkit.RegionContainer;
+import com.sk89q.worldguard.bukkit.RegionQuery;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.Herbystar.TTA.TTA_Methods;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -20,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 
@@ -38,6 +41,21 @@ public class DoorControlEvent implements Listener {
             Block clickedBlock = e.getClickedBlock();
             Player p = e.getPlayer();
             try {
+                Boolean isJackzCoRegion = false;
+                if(plugin.getWorldGuard() != null) {
+                    RegionContainer container = plugin.getWorldGuard().getRegionContainer();
+                    RegionQuery query = container.createQuery();
+                    ApplicableRegionSet set = query.getApplicableRegions(clickedBlock.getLocation());
+                    for (ProtectedRegion region : set) {
+                        if (region.getId().contains("stevesco")) {
+                            isJackzCoRegion = true;
+                            break;
+                        }
+                    }
+                }else{
+                    isJackzCoRegion = true;
+                }
+                if(!isJackzCoRegion) return;
                 if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.IRON_DOOR_BLOCK) {
                     Boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();
@@ -46,41 +64,38 @@ public class DoorControlEvent implements Listener {
 
                             e.setCancelled(true);
                             if(item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§6ID Card")) {
+
                                 isMatch = true;
                                 BlockState blockState = clickedBlock.getState();
                                 if(((Door) blockState.getData()).isTopHalf()){
                                     blockState = clickedBlock.getRelative(BlockFace.DOWN).getState();
                                 }
 
+
                                 Openable openable = (Openable) blockState.getData();
                                 Boolean isDoorOpen = openable.isOpen();
                                 if(isDoorOpen) { //is currently opened
                                     openable.setOpen(false);
-                                    p.playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);
+                                    clickedBlock.getWorld().playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);
                                 }else{ //is currently closed
                                     openable.setOpen(true);
-                                    p.playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1, 1);
+                                    clickedBlock.getWorld().playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1, 1);
                                 }
                                 blockState.setData((MaterialData) openable);
                                 blockState.update();
-                                if(isDoorOpen) {
-                                    Bukkit.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                                final BlockState closedBS = blockState;
+                                if(!isDoorOpen) {
+                                    new java.util.Timer().schedule(new java.util.TimerTask() {
+                                        @Override
                                         public void run() {
-                                            BlockState closedBS = clickedBlock.getState();
-                                            Openable closed_openable = (Openable) closedBS.getData();
-                                            if (closed_openable.isOpen()) {
-
-                                                if (((Door) closedBS.getData()).isTopHalf()) {
-                                                    closedBS = clickedBlock.getRelative(BlockFace.DOWN).getState();
-                                                }
-                                                closed_openable.setOpen(false);
-                                                closedBS.setData((MaterialData) closed_openable);
+                                            if (openable.isOpen()) {
+                                                openable.setOpen(false);
+                                                closedBS.setData((MaterialData) openable);
                                                 closedBS.update();
-                                                p.playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);
+                                                clickedBlock.getWorld().playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);
                                             }
-
                                         }
-                                    }, 60L);
+                                    }, 3000);
                                 }
                                 break;
                             }

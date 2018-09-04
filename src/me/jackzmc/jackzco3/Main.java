@@ -1,86 +1,58 @@
 package me.jackzmc.jackzco3;
 
 import com.google.common.base.Joiner;
-import de.Herbystar.TTA.TTA_Methods;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Set;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
 
-    String latest_version = "3.0.0";
+    String latest_version = "0.0.0";
     static public String jackzco_prefix = "§3JackzCo§6>§r ";
+
+    public static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
+    public static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
 
     @Override
     public void onEnable() {
-        PluginDescriptionFile pdf = this.getDescription();
-        //register commands
+        latest_version = this.getDescription().getVersion();
         this.getCommand("jackzco").setExecutor(new jCMD(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
+        //this.getCommand("jphone").setExecutor(new jPhone(this));
 
-        //register event listeners and lots of shit yeah
-        registerEvents(this, new JoinEvent(this), new MainListener(),
-                new DoorControlEvent(this));
-        registerEvents(this,new Wand(this));
-
-        final FileConfiguration config = this.getConfig();
-        config.addDefault("motd", "Hello %player%, Welcome to the server!");
-        config.set("version", pdf.getVersion());
-        latest_version = pdf.getVersion();
-        config.options().copyDefaults(true);
-        saveConfig();
-        getJackzCo();
+        registerEvents(this,
+                new JoinEvent(this),
+                new MainListener(this),
+                new DoorControlEvent(this),
+                new Wand(this)
+        );
+        new Config().setupConfig();
         plugin = this;
     }
+
     @Override
     public void onDisable() {
 
     }
 
-    public FileConfiguration getJackzCo() {
-        File playerFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
-        FileConfiguration jdata = YamlConfiguration.loadConfiguration(playerFile);
-        return jdata;
-    }
-    public void createJackzCo() {
-        File playerFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
-        FileConfiguration jdata = YamlConfiguration.loadConfiguration(playerFile);
-        jdata.addDefault("versions.jackzco", "0.1");
-        jdata.addDefault("versions.jphone","0.1");
-        jdata.addDefault("jackzco.prefix", "§3JackzCo§6>");
-        jdata.options().copyDefaults(true);
-        try {
-            jdata.save(playerFile);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-    }
 
     /*this is a simple /jump command*/
 
@@ -160,95 +132,36 @@ public class Main extends JavaPlugin {
         return false;
     }
 
-
-
-    public final class MainListener implements Listener {
-
-
-        @EventHandler
-        public void onChange(SignChangeEvent e) {
-            //On sign creation
-            // Player p = e.getPlayer();
-            e.setLine(0,ChatColor.translateAlternateColorCodes('&', e.getLine(0)));
-            e.setLine(1,ChatColor.translateAlternateColorCodes('&', e.getLine(1)));
-            e.setLine(2,ChatColor.translateAlternateColorCodes('&', e.getLine(2)));
-            e.setLine(3,ChatColor.translateAlternateColorCodes('&', e.getLine(3)));
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null; // Maybe you want throw an exception instead
         }
 
-        @EventHandler
-        public void onInteract(PlayerInteractEvent e) {
-            Player p = e.getPlayer();
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                BlockState bs = e.getClickedBlock().getState();
-                if ((bs instanceof Sign)) {
-                    Sign sign = (Sign)bs;
-                    if (sign.getLine(0).contains("§4§lJackzCo") || sign.getLine(0).contains("§4§l§n")) {
-                        String[] options = {"Balance","Withdraw","Deposit","Test1","Test2","Test3"};
-                        System.out.println(options[0]);
-                        //String current = options[0];
-            	 /* String current = "";
-            	 int id = -1;
-               if(sign.getLine(1).contains(">")) {
-            	   current = sign.getLine(1).replace(">", "");
-            	   id = 1;
-            	   //Above is the name of the value (without > selection id)
-            	   //then
-               }else if(sign.getLine(2).contains(">")) {
-            	  current = sign.getLine(2).replace(">", "");
-            	   id = 2;
-               }else if(sign.getLine(3).contains(">")) {
-            	    current = sign.getLine(3).replace(">", "");
-            	   id = 3;
-               }else{
-            	   p.sendMessage("This sign has nothing selected and therefore invalid");
-               }
-               int index = -1;
-               for (int i=0;i<options.length;i++) {
-                   if (options[i].equals(current)) {
-                       index = i;
-                       break;
-                   }
-               }
-                //Index -> The index of the selected option in array
-               index = index + 1;
-               sign.setLine(id,options[index]);*/
-                        // sign.setLine(id-1, arg1);
-                        //ID = selected line number, current = NAME of selected item
-                        bs.update();
+        return (WorldGuardPlugin) plugin;
+    }
 
-                    }
-                }
-            }else if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
-                BlockState bs = e.getClickedBlock().getState();
-                if ((bs instanceof Sign)) {
-                    Sign sign = (Sign)bs;
-                    if (sign.getLine(0).contains("§4§lJackzCo") || sign.getLine(0).contains("§4§l§nJackzCo")) {
-                        e.setCancelled(true);
-                        if(sign.getLine(1).contains(">")) {
-                            sign.setLine(1,"Balance");
-                            sign.setLine(2, "Withdraw");
-                            sign.setLine(3, ">Deposit");
-                        }else if(sign.getLine(2).contains(">")) {
-                            sign.setLine(1,">Balance");
-                            sign.setLine(2, "Withdraw");
-                            sign.setLine(3, "Deposit");
-                        }else if(sign.getLine(3).contains(">")) {
-                            sign.setLine(1,"Balance");
-                            sign.setLine(2, ">Withdraw");
-                            sign.setLine(3, "Deposit");
-                        }else{
-                            p.sendMessage("This sign has nothing selected and therefore invalid");
-                        }
-                        bs.update();
+    public static void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
 
-                    }
-                }
-            }
-        }
-    	/*NOTE BROADCAST:
-    	 Bukkit.broadcastMessage("test");
+        name = name.replaceAll("%name%", p.getName()); //convert vars
+        name = name.replaceAll("%display name%", p.getCustomName());
+        lore = lore.replaceAll("%name%", p.getName());
+        lore = lore.replaceAll("%display name%", p.getCustomName());
 
-    	 */
+        name = ChatColor.translateAlternateColorCodes('&', name); //convert & to color code
+        lore = ChatColor.translateAlternateColorCodes('&', lore);
+        meta.setDisplayName(name);
+
+        ArrayList<String> Lore = new ArrayList<String>(Arrays.asList(lore.split("\\|")));
+
+        //Lore.add(lore);
+        meta.setLore(Lore);
+        item.setItemMeta(meta);
+
+        inv.setItem(Slot, item);
 
     }
 
@@ -273,7 +186,7 @@ public class Main extends JavaPlugin {
     public static Plugin getPlugin() {
         return plugin;
     }
-    public static void registerEvents(org.bukkit.plugin.Plugin plugin, Listener... listeners) {
+    private static void registerEvents(org.bukkit.plugin.Plugin plugin, Listener... listeners) {
         for (Listener listener : listeners) {
             Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
         }
