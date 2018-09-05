@@ -1,12 +1,9 @@
 package me.jackzmc.jackzco3;
 
-import com.sk89q.worldguard.bukkit.RegionContainer;
-import com.sk89q.worldguard.bukkit.RegionQuery;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.Herbystar.TTA.TTA_Methods;
-import org.bukkit.*;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -18,16 +15,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 
 public class DoorControlEvent implements Listener {
     private final Main plugin;
@@ -38,24 +32,11 @@ public class DoorControlEvent implements Listener {
     @EventHandler
     void DoorClick(PlayerInteractEvent e) {
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND) {
+            if(e.getClickedBlock() == null) return;
             Block clickedBlock = e.getClickedBlock();
             Player p = e.getPlayer();
             try {
-                Boolean isJackzCoRegion = false;
-                if(plugin.getWorldGuard() != null) {
-                    RegionContainer container = plugin.getWorldGuard().getRegionContainer();
-                    RegionQuery query = container.createQuery();
-                    ApplicableRegionSet set = query.getApplicableRegions(clickedBlock.getLocation());
-                    for (ProtectedRegion region : set) {
-                        if (region.getId().contains("stevesco")) {
-                            isJackzCoRegion = true;
-                            break;
-                        }
-                    }
-                }else{
-                    isJackzCoRegion = true;
-                }
-                if(!isJackzCoRegion) return;
+                if(!plugin.checkRegion(clickedBlock.getLocation(),new ArrayList<>(Arrays.asList("stevesco", "minishco")))) return;
                 if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.IRON_DOOR_BLOCK) {
                     Boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();

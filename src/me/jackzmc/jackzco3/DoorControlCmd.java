@@ -1,6 +1,7 @@
 package me.jackzmc.jackzco3;
 
 
+import me.jackzmc.jackzco3.lib.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,17 +27,27 @@ public class DoorControlCmd implements CommandExecutor {
             return true;
         }
         Player player = (Player) sender;
-
+        Number level = 1;
+        if(args.length > 0) {
+            if(Util.isInteger(args[0])) {
+                level = Integer.parseInt(args[0]);
+            }else {
+                player.sendMessage("§cInvalid Syntax. §e/getid [level]");
+            }
+        }
         ItemStack idCard = new ItemStack(Material.PAPER);
         ItemMeta idCardMeta = idCard.getItemMeta();
         idCardMeta.setDisplayName("§6ID Card");
         List<String> lore = new ArrayList<>();
         lore.add("§7UUID " + player.getUniqueId());
-        lore.add("§7Level 1");
+        lore.add("§7Level " + level.toString());
 
         idCardMeta.setLore(lore);
         idCard.setItemMeta(idCardMeta);
         player.getInventory().addItem(idCard);
+
+        List<String> validRegions = plugin.getConfig().getStringList("regions");
+        player.sendMessage("§7This §3Steves Co §7ID Card will only work for these regions: §e" + String.join(",",validRegions) );
 
         return true;
     }

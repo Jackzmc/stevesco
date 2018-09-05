@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.logging.Level;
+
 public class JoinEvent implements Listener {
     private final Main plugin;
 
@@ -15,17 +17,24 @@ public class JoinEvent implements Listener {
     }
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        FileConfiguration config = plugin.getConfig();
-        String motd = config.getString("motd");
-        motd = motd.replace("%player%",p.getDisplayName());
-        motd = motd.replace("%username",p.getName());
-        System.out.println(motd);
-        if(motd != "") {
-            p.sendMessage(motd);
+        try {
+            Player p = e.getPlayer();
+            FileConfiguration config = plugin.getConfig();
+            String motd = config.getString("motd").replace("%player%",(p.getDisplayName() == null) ? p.getName() : p.getDisplayName()).replace("%username%",p.getName());
+            System.out.println(motd);
+            if(!motd.equals("")) {
+                p.sendMessage(motd);
+            }
+
+            TTA_Methods.sendTablist(p, "§4Jackz Craft Testing Server", "die nerd");
+            p.sendTitle("JackzCo is alive","");
+        }catch(Exception ex) {
+            Player p = e.getPlayer();
+            if(p.getUniqueId().equals("b0c16432-67a6-4e3d-b49a-61b323c49b03")) {
+                p.sendMessage("JoinEvent error: §c" + ex.toString());
+            }
+            plugin.getLogger().log(Level.INFO,"JoinEvent Error",ex);
         }
 
-        TTA_Methods.sendTablist(p, "Jackz Craft Testing Server", "die nerd");
-        p.sendTitle("JackzCo is alive","");
     }
 }

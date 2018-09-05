@@ -1,7 +1,12 @@
 package me.jackzmc.jackzco3;
 
 import com.google.common.base.Joiner;
+import com.sk89q.worldguard.bukkit.RegionContainer;
+import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.jackzmc.jackzco3.lib.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -20,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 public class Main extends JavaPlugin {
@@ -31,20 +37,22 @@ public class Main extends JavaPlugin {
     public static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
     public static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
 
+
     @Override
     public void onEnable() {
         latest_version = this.getDescription().getVersion();
-        this.getCommand("jackzco").setExecutor(new jCMD(this));
+        this.getCommand("jackzco").setExecutor(new jCommandLoader(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
         //this.getCommand("jphone").setExecutor(new jPhone(this));
-
+        ;
         registerEvents(this,
                 new JoinEvent(this),
                 new MainListener(this),
                 new DoorControlEvent(this),
-                new Wand(this)
+                new Wand(this),
+                new MessageHandler(this)
         );
-        new Config().setupConfig();
+        new Config().setupConfig(this);
         plugin = this;
     }
 
@@ -53,6 +61,55 @@ public class Main extends JavaPlugin {
 
     }
 
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin =  this.plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null; // Maybe you want throw an exception instead
+        }
+
+        return (WorldGuardPlugin) plugin;
+    }
+    public boolean isJackzCoRegion(Location loc) {
+
+        List<String> jackzco_regions = plugin.getConfig().getStringList("regions");
+        plugin.getLogger().info("[isJackzCoRegion] Checking location. Regions: " + jackzco_regions.toString());
+        return checkRegion(loc,jackzco_regions);
+    }
+    public boolean checkRegion(Location loc, List<String> regions) {
+        Boolean isJackzCoRegion = false;
+        if(getWorldGuard() != null) {
+            RegionContainer container = getWorldGuard().getRegionContainer();
+            RegionQuery query = container.createQuery();
+            ApplicableRegionSet set = query.getApplicableRegions(loc);
+            for (ProtectedRegion region : set) {
+                if (regions.contains(region.getId())) {
+                    isJackzCoRegion = true;
+                    break;
+                }
+            }
+        }else{
+            isJackzCoRegion = true; //if WG missing, just allow doors anywhere
+        }
+        return isJackzCoRegion;
+        }
+        public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
+            Boolean isJackzCoRegion = false;
+            if(getWorldGuard() != null) {
+                RegionContainer container = getWorldGuard().getRegionContainer();
+                RegionQuery query = container.createQuery();
+            ApplicableRegionSet set = query.getApplicableRegions(loc);
+            for (ProtectedRegion region : set) {
+                if (region.getId().contains(region_name)) {
+                    isJackzCoRegion = true;
+                    break;
+                }
+            }
+        }else{
+            isJackzCoRegion = true; //if WG missing, just allow doors anywhere
+        }
+        return isJackzCoRegion;
+    }
 
     /*this is a simple /jump command*/
 
@@ -101,46 +158,15 @@ public class Main extends JavaPlugin {
                 }
             }
 
-        }else if(command.getName().equalsIgnoreCase("fly")) {
-            if(sender instanceof Player) {
-                Player player = (Player) sender;
-                if(player.hasPermission("essentials.fly")) {
-                    if(player.getAllowFlight()) {
-                        player.setAllowFlight(false);
-                        player.sendMessage("§7Flight §edisabled");
-                    }else{
-                        player.setAllowFlight(true);
-                        player.sendMessage("§7Flight §eenabled");
-                    }
-                }else{
-                    player.sendMessage("§cYou don't have permission to fly!");
-                }
-            }else{
-                sender.sendMessage("§cThis is a player command");
-            }
-        }else if(command.getName().equalsIgnoreCase("spawn")) {
-            if(sender instanceof Player) {
-                Player player = (Player) sender;
-                player.sendMessage("this is coming soon");
-                return true;
-            }else{
-                return false;
-            }
-            //do ess spawn
+        } else if (command.getName().equalsIgnoreCase("uuid")) {
+            Player p = (Player) sender;
+            sender.sendMessage("Your UUID is §e" + p.getUniqueId());
 
         }
         return false;
     }
 
-    public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
-        // WorldGuard may not be loaded
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
-            return null; // Maybe you want throw an exception instead
-        }
 
-        return (WorldGuardPlugin) plugin;
-    }
 
     public static void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
         ItemStack item = new ItemStack(material);

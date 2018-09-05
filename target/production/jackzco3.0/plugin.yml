@@ -6,14 +6,14 @@ softdepend: [WorldGuard]
 depend: [TTA]
 commands:
   jackzco:
-    description: JackzCo Control JCommand
+    description: The main JackzCo command
     usage: /jackzco help
   idmanagement:
     description: ID Card management
     usage: /idm
   getid:
-    description: get an id card
-    usage: /getid
+    description: gets a ID card provided by StevesCo
+    usage: /getid [level]
   setname:
     description: set item of name
     usage: /setname <name>

@@ -1,8 +1,7 @@
-package me.jackzmc.jackzco3;
+package me.jackzmc.jackzco3.lib;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 
 public class JCommand {

@@ -12,8 +12,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Set;
-
 public class Wand implements Listener {
     private final Main plugin;
 
