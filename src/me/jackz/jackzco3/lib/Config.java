@@ -1,6 +1,6 @@
-package me.jackzmc.jackzco3.lib;
+package me.jackz.jackzco3.lib;
 
-import me.jackzmc.jackzco3.Main;
+import me.jackz.jackzco3.Main;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 

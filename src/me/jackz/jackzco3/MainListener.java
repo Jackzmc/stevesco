@@ -1,4 +1,4 @@
-package me.jackzmc.jackzco3;
+package me.jackz.jackzco3;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;

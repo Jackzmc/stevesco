@@ -1,4 +1,4 @@
-package me.jackzmc.jackzco3;
+package me.jackz.jackzco3;
 
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
@@ -70,7 +70,7 @@ public class jPhone implements Listener,CommandExecutor {
 
                         //gui ? Gui.
                     }else{
-                        Integer battery = (Integer) nbti.getInteger("battery");
+                        Integer battery = nbti.getInteger("battery");
 
                         p.sendMessage(" ");
                         if(battery == -1) {
@@ -115,24 +115,21 @@ public class jPhone implements Listener,CommandExecutor {
                 entity.setStyle(Horse.Style.NONE);
                 entity.setVelocity(p.getEyeLocation().getDirection().multiply(2));
 
-                Bukkit.getScheduler().runTaskLater(plugin,  new Runnable() {
-                    @Override
-                    public void run() {
-                        entity.getWorld().createExplosion(entity.getLocation(),0);
-                        entity.remove();
-                        for(int i = 0; i< 100; i++) {
-                            FallingBlock fb = entity.getWorld().spawnFallingBlock(entity.getLocation(), Material.WOOL, (byte) random.nextInt(16));
-                            fb.setHurtEntities(false);
-                            fb.setDropItem(false);
-                            fb.setVelocity(new Vector(randomnum(), randomnum(), randomnum()).multiply(2));
-                        }
-
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    entity.getWorld().createExplosion(entity.getLocation(),0);
+                    entity.remove();
+                    for(int i = 0; i< 100; i++) {
+                        FallingBlock fb = entity.getWorld().spawnFallingBlock(entity.getLocation(), Material.WOOL, (byte) random.nextInt(16));
+                        fb.setHurtEntities(false);
+                        fb.setDropItem(false);
+                        fb.setVelocity(new Vector(randomnum(), randomnum(), randomnum()).multiply(2));
                     }
+
                 }, 20);
             }else if(p.getInventory().getItemInMainHand().getType().equals(Material.TORCH) && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("�fjLight") ) {
                 if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-                    ItemStack phone = (ItemStack) p.getInventory().getItemInMainHand();
-                    ItemMeta phoneMeta = (ItemMeta) phone.getItemMeta();
+                    ItemStack phone = p.getInventory().getItemInMainHand();
+                    ItemMeta phoneMeta = phone.getItemMeta();
                     phone.setType(Material.TRIPWIRE_HOOK);
                     phoneMeta.setDisplayName("�fjPhone");
                     phone.setItemMeta(phoneMeta);
@@ -154,19 +151,18 @@ public class jPhone implements Listener,CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            ItemStack phone = (ItemStack) p.getInventory().getItemInMainHand();
-            ItemMeta phonem = (ItemMeta) phone.getItemMeta();
+            ItemStack phone =  p.getInventory().getItemInMainHand();
             NBTItem nbti = ItemNBTAPI.getNBTItem(phone);
             if(args.length == 0) {
                 sender.sendMessage("�cPlease put an argument");
             }else{
                 if(args[0].equalsIgnoreCase("help")) {
                     //p.sendMessage("�7Please wait...");
-                    ItemStack helpbook = (ItemStack) new ItemStack(Material.WRITTEN_BOOK);
+                    ItemStack helpbook = new ItemStack(Material.WRITTEN_BOOK);
                     BookMeta helpMeta = (BookMeta) helpbook.getItemMeta();
                     helpMeta.setTitle("jPhone Terminal Help");
                     helpMeta.setAuthor("JackzCo");
-                    List<String> pages = new ArrayList<String>();
+                    List<String> pages = new ArrayList<>();
                     pages.add("well this is supposed to help you but im lazy.... oops?"); // Page 1
                     pages.add("Hope you enjoy your stay/play!");
 

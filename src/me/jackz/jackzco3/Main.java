@@ -1,12 +1,12 @@
-package me.jackzmc.jackzco3;
+package me.jackz.jackzco3;
 
-import com.google.common.base.Joiner;
 import com.sk89q.worldguard.bukkit.RegionContainer;
 import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.jackzmc.jackzco3.lib.Config;
+import me.jackz.jackzco3.lib.Config;
+import me.jackz.jackzco3.lib.LocVarLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -23,10 +23,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
@@ -52,6 +56,7 @@ public class Main extends JavaPlugin {
                 new Wand(this),
                 new MessageHandler(this)
         );
+        new LocVarLib(this);
         new Config().setupConfig(this);
         plugin = this;
     }
@@ -62,7 +67,7 @@ public class Main extends JavaPlugin {
     }
 
     public WorldGuardPlugin getWorldGuard() {
-        Plugin plugin =  this.plugin.getServer().getPluginManager().getPlugin("WorldGuard");
+        Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
         // WorldGuard may not be loaded
         if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
             return null; // Maybe you want throw an exception instead
@@ -77,92 +82,91 @@ public class Main extends JavaPlugin {
         return checkRegion(loc,jackzco_regions);
     }
     public boolean checkRegion(Location loc, List<String> regions) {
-        Boolean isJackzCoRegion = false;
         if(getWorldGuard() != null) {
             RegionContainer container = getWorldGuard().getRegionContainer();
             RegionQuery query = container.createQuery();
             ApplicableRegionSet set = query.getApplicableRegions(loc);
             for (ProtectedRegion region : set) {
-                if (regions.contains(region.getId())) {
-                    isJackzCoRegion = true;
-                    break;
+                for(String rg_name : regions) {
+                    if (region.getId().contains(rg_name)) {
+                        return true;
+                    }
                 }
             }
         }else{
-            isJackzCoRegion = true; //if WG missing, just allow doors anywhere
+            return true;//if WG missing, just allow doors anywhere
         }
-        return isJackzCoRegion;
+        return false;
         }
         public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
-            Boolean isJackzCoRegion = false;
             if(getWorldGuard() != null) {
                 RegionContainer container = getWorldGuard().getRegionContainer();
                 RegionQuery query = container.createQuery();
-            ApplicableRegionSet set = query.getApplicableRegions(loc);
-            for (ProtectedRegion region : set) {
-                if (region.getId().contains(region_name)) {
-                    isJackzCoRegion = true;
-                    break;
+                ApplicableRegionSet set = query.getApplicableRegions(loc);
+                for (ProtectedRegion region : set) {
+                    if (region.getId().contains(region_name)) {
+                        return true;
+                    }
                 }
-            }
         }else{
-            isJackzCoRegion = true; //if WG missing, just allow doors anywhere
+            return true; //if WG missing, just allow doors anywhere
         }
-        return isJackzCoRegion;
+        return false;
     }
-
-    /*this is a simple /jump command*/
-
     @Override
-    public boolean onCommand(CommandSender sender,
-                             Command command,
-                             String label,
-                             String[] args) {
-        if (command.getName().equalsIgnoreCase("j") || command.getName().equalsIgnoreCase("jump")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                float pitch = player.getLocation().getPitch();
-                float yaw = player.getLocation().getYaw();
-                if (isSafeLocation(player.getTargetBlock((Set<Material>) null, 100).getLocation())) {
-                    //true
-                    Location tploc = player.getTargetBlock((Set<Material>) null, 100).getLocation();
-                    tploc.setPitch(pitch);
-                    tploc.setYaw(yaw);
-                    int x = tploc.getBlockX();
-                    int z = tploc.getBlockZ();
-                    tploc.setY(tploc.getWorld().getHighestBlockYAt(x, z));
-                    player.teleport(tploc);
-                } else {
-                    sender.sendMessage("§dThere is no block to jump to");
-                }
-
-            } else {
-                sender.sendMessage("§cYou must be in game to use this command");
-            }
-
-            return true;
-        }else if(command.getName().equalsIgnoreCase("setname")) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+       if(command.getName().equalsIgnoreCase("setname")) {
             if(sender instanceof Player) {
                 try {
                     Player p = (Player) sender;
-                    String msg = Joiner.on(" ").join(args);
-                    msg = msg.replaceAll(args[0], "");
-                    msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
-
                     ItemStack item = p.getInventory().getItemInMainHand();
-                    ItemMeta itemMeta = item.getItemMeta();
-                    itemMeta.setDisplayName(msg);
-                    item.setItemMeta(itemMeta);
-                }catch(Exception err) {
-                    sender.sendMessage("Failed: " + err.getMessage());
-                }
-            }
+                    if(item == null) {
+                        p.sendMessage("§cYou must have an item in your primary hand!");
+                        return true;
+                    }else{
 
-        } else if (command.getName().equalsIgnoreCase("uuid")) {
+                        String msg = args[0].replace("_"," ");
+                        msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
+
+                        ItemMeta itemMeta = item.getItemMeta();
+                        itemMeta.setDisplayName(msg);
+                        item.setItemMeta(itemMeta);
+
+                    }
+                }catch(Exception err) {
+                    sender.sendMessage("Failed: §c" + err.toString());
+                    getLogger().log(Level.INFO,"setname!",err);
+                }
+            }else{
+                sender.sendMessage("You must be a player");
+            }
+            return true;
+       } else if (command.getName().equalsIgnoreCase("uuid")) {
             Player p = (Player) sender;
             sender.sendMessage("Your UUID is §e" + p.getUniqueId());
+            return true;
+       }else if(command.getName().equalsIgnoreCase("getlogs")) {
+           try {
 
-        }
+               String log = getDataFolder().toPath() + "/../../logs/latest.log";
+               FileInputStream in = new FileInputStream(log);
+               BufferedReader br = new BufferedReader(new InputStreamReader(in));
+
+               List<String> lines = new LinkedList<>();
+               for(String tmp; (tmp = br.readLine()) != null;)
+                   if (lines.add(tmp) && lines.size() > 5)
+                       lines.remove(0);
+
+               for(String line : lines) {
+                   sender.sendMessage(line);
+               }
+           }catch(Exception ex) {
+               sender.sendMessage("Failed to get file: " + ex.toString());
+               getLogger().log(Level.INFO,"getlogs!",ex);
+           }
+
+           return true;
+       }
         return false;
     }
 
@@ -181,7 +185,7 @@ public class Main extends JavaPlugin {
         lore = ChatColor.translateAlternateColorCodes('&', lore);
         meta.setDisplayName(name);
 
-        ArrayList<String> Lore = new ArrayList<String>(Arrays.asList(lore.split("\\|")));
+        ArrayList<String> Lore = new ArrayList<>(Arrays.asList(lore.split("\\|")));
 
         //Lore.add(lore);
         meta.setLore(Lore);

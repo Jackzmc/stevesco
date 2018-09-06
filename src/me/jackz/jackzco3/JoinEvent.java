@@ -1,4 +1,4 @@
-package me.jackzmc.jackzco3;
+package me.jackz.jackzco3;
 
 import de.Herbystar.TTA.TTA_Methods;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,6 +20,7 @@ public class JoinEvent implements Listener {
         try {
             Player p = e.getPlayer();
             FileConfiguration config = plugin.getConfig();
+            plugin.getLogger().info(p.getDisplayName() + ":" + p.getName() + ":" + p.getCustomName());
             String motd = config.getString("motd").replace("%player%",(p.getDisplayName() == null) ? p.getName() : p.getDisplayName()).replace("%username%",p.getName());
             System.out.println(motd);
             if(!motd.equals("")) {
@@ -30,7 +31,7 @@ public class JoinEvent implements Listener {
             p.sendTitle("JackzCo is alive","");
         }catch(Exception ex) {
             Player p = e.getPlayer();
-            if(p.getUniqueId().equals("b0c16432-67a6-4e3d-b49a-61b323c49b03")) {
+            if(p.getUniqueId().toString().equals("b0c16432-67a6-4e3d-b49a-61b323c49b03")) {
                 p.sendMessage("JoinEvent error: §c" + ex.toString());
             }
             plugin.getLogger().log(Level.INFO,"JoinEvent Error",ex);

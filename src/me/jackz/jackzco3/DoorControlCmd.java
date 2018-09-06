@@ -1,7 +1,7 @@
-package me.jackzmc.jackzco3;
+package me.jackz.jackzco3;
 
 
-import me.jackzmc.jackzco3.lib.Util;
+import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

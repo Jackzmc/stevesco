@@ -1,4 +1,4 @@
-package me.jackzmc.jackzco3.lib;
+package me.jackz.jackzco3.lib;
 
 public class Util {
     public static boolean isInteger(String s) {
