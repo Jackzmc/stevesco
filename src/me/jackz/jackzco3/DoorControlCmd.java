@@ -46,7 +46,7 @@ public class DoorControlCmd implements CommandExecutor {
         idCard.setItemMeta(idCardMeta);
         player.getInventory().addItem(idCard);
 
-        List<String> validRegions = plugin.getConfig().getStringList("regions");
+        List<String> validRegions = plugin.getJackzCo().getStringList("regions");
         player.sendMessage("§7This §3Steves Co §7ID Card will only work for these regions: §e" + String.join(",",validRegions) );
 
         return true;
