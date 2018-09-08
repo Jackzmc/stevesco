@@ -1,27 +1,43 @@
 package me.jackz.jackzco3.lib;
 
-import com.sk89q.worldguard.util.jsonsimple.JSONArray;
-import com.sk89q.worldguard.util.jsonsimple.JSONObject;
-import jdk.nashorn.internal.parser.JSONParser;
-import me.jackz.jackzco3.Main;
 import org.bukkit.Location;
-import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class LocVarLib {
-    private final Main plugin;
-    public LocVarLib(Main plugin) {
+    //private final Main plugin;
+    private Properties properties = new Properties();
+    private Map<String,Location> db = new HashMap<>();
+
+    /*public LocVarLib(Main plugin) {
         this.plugin = plugin;
+        //load db from file & initalize var
+
+        File dbfile = new File(plugin.getDataFolder().toPath() + "/locvar.db");
+        properties.load(new FileInputStream(dbfile));
+
+        for (String key : properties.stringPropertyNames()) {
+            db.put(key, properties.getProperty(key.toString()));
+        }
     }
-    public JSONObject getSettings(Location loc) throws ParseException, FileNotFoundException, IOException {
+    public JSONObject getJSONSettings(Location loc) throws ParseException, FileNotFoundException, IOException {
          JSONParser parser = new JSONParser();
-        return parser.parse(new FileReader("employees.json"));
+         return parser.parse(new FileReader("employees.json"));
     }
-    public void setSettings(Location loc,JSONObject obj) {
+    public void setJSONSettings(Location loc,JSONObject obj) {
 
     }
+
+    public void saveSettings() {
+        for (Map.Entry<String,Location> entry : db.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+
+        properties.store(new FileOutputStream("data.properties"), null);
+    }
+    public Map getSettings() {
+        return db;
+    }*/
 }

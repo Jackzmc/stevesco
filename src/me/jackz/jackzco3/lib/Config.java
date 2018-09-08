@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Config {
     private Main plugin;
-    public void setupConfig(Main plugin) {
+    public void setupConfig(Main plugin) { //set the config in memory, and set defaults
         this.plugin = plugin;
         File configFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
@@ -29,7 +29,7 @@ public class Config {
             e1.printStackTrace();
         }
     }
-    public FileConfiguration getJackzCo() {
+    public FileConfiguration getJackzCo() { //returns the FileConfiguration of config(.yml)
         File playerFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
         return YamlConfiguration.loadConfiguration(playerFile);
     }

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2018 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3;
 
 import com.sk89q.worldguard.bukkit.RegionContainer;
@@ -6,7 +23,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.jackz.jackzco3.lib.Config;
-import me.jackz.jackzco3.lib.LocVarLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -54,9 +70,11 @@ public class Main extends JavaPlugin {
                 new MainListener(this),
                 new DoorControlEvent(this),
                 new Wand(this),
-                new MessageHandler(this)
+                new MessageHandler(this),
+		        new MoveHandler(this),
+                new SignHandler(this)
         );
-        new LocVarLib(this);
+        //new LocVarLib(this);
         new Config().setupConfig(this);
         plugin = this;
     }
