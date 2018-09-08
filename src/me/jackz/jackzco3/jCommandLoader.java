@@ -41,6 +41,9 @@ public class jCommandLoader implements CommandExecutor {
             case "reload":
                 Bukkit.dispatchCommand(sender, "plugman reload JackzCo3");
                 break;
+            case "config":
+                plugin.reloadConfig();
+                break;
             case "version":
                 sender.sendMessage(prefix + "Currently running on version §e" + plugin.latest_version + "!");
                 break;

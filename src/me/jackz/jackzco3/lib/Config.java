@@ -9,14 +9,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Config {
-    private Main plugin;
-    public void setupConfig(Main plugin) { //set the config in memory, and set defaults
-        this.plugin = plugin;
-        File configFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
+    public FileConfiguration setupConfig(Main plugin) { //set the config in memory, and set defaults
+        File configFile = new File (plugin.getDataFolder(), "jackzco.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
         config.addDefault("motd", "Hello %player%, Welcome to the server!");
         config.addDefault("jackzco.prefix", "§3JackzCo§6>");
         config.addDefault("regions",new ArrayList<String>());
+        config.addDefault("scanner.disallowed",new ArrayList<String>());
 
         config.set("version",plugin.getDescription().getVersion());
         config.addDefault("versions.jackzco", "0.1");
@@ -28,9 +27,6 @@ public class Config {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-    }
-    public FileConfiguration getJackzCo() { //returns the FileConfiguration of config(.yml)
-        File playerFile = new File (plugin.getDataFolder(), "jackzco" + ".yml");
-        return YamlConfiguration.loadConfiguration(playerFile);
+        return config;
     }
 }

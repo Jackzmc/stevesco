@@ -31,6 +31,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
@@ -57,7 +58,7 @@ public class Main extends JavaPlugin {
     public static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
     public static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
 
-
+    public FileConfiguration config;
     @Override
     public void onEnable() {
         latest_version = this.getDescription().getVersion();
@@ -75,7 +76,7 @@ public class Main extends JavaPlugin {
                 new SignHandler(this)
         );
         //new LocVarLib(this);
-        new Config().setupConfig(this);
+        config = new Config().setupConfig(this);
         plugin = this;
     }
 
@@ -87,7 +88,7 @@ public class Main extends JavaPlugin {
     public WorldGuardPlugin getWorldGuard() {
         Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
         // WorldGuard may not be loaded
-        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+        if (!(plugin instanceof WorldGuardPlugin)) {
             return null; // Maybe you want throw an exception instead
         }
 
@@ -95,7 +96,7 @@ public class Main extends JavaPlugin {
     }
     public boolean isJackzCoRegion(Location loc) {
 
-        List<String> jackzco_regions = plugin.getConfig().getStringList("regions");
+        List<String> jackzco_regions = getJackzCo().getStringList("regions");
         plugin.getLogger().info("[isJackzCoRegion] Checking location. Regions: " + jackzco_regions.toString());
         return checkRegion(loc,jackzco_regions);
     }
@@ -131,6 +132,9 @@ public class Main extends JavaPlugin {
         }
         return false;
     }
+    public FileConfiguration getJackzCo() {
+        return config;
+    }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
        if(command.getName().equalsIgnoreCase("setname")) {
@@ -160,6 +164,10 @@ public class Main extends JavaPlugin {
             }
             return true;
        } else if (command.getName().equalsIgnoreCase("uuid")) {
+           if(!(sender instanceof Player)) {
+               sender.sendMessage("§7Must be a player");
+               return true;
+           }
             Player p = (Player) sender;
             sender.sendMessage("Your UUID is §e" + p.getUniqueId());
             return true;
@@ -171,19 +179,38 @@ public class Main extends JavaPlugin {
                BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
                List<String> lines = new LinkedList<>();
-               for(String tmp; (tmp = br.readLine()) != null;)
+               for (String tmp; (tmp = br.readLine()) != null; )
                    if (lines.add(tmp) && lines.size() > 5)
                        lines.remove(0);
 
-               for(String line : lines) {
+               for (String line : lines) {
                    sender.sendMessage(line);
                }
-           }catch(Exception ex) {
+           } catch (Exception ex) {
                sender.sendMessage("Failed to get file: " + ex.toString());
-               getLogger().log(Level.INFO,"getlogs!",ex);
+               getLogger().log(Level.INFO, "getlogs!", ex);
            }
 
            return true;
+       }else if(command.getName().equalsIgnoreCase("getname")) {
+           if(sender instanceof Player) {
+               Player p = (Player) sender;
+               ItemStack itm = p.getInventory().getItemInMainHand();
+               if(itm == null) {
+                   p.sendMessage("§cYou must have an item in your hand!");
+               }else{
+                   p.sendMessage("Item is: §e" + itm.getType().toString());
+               }
+           }
+           return true;
+       }else if(command.getName().equalsIgnoreCase("test")) {
+            sender.sendMessage(getJackzCo().getString("motd"));
+            if(sender instanceof Player) {
+                Player p = (Player) sender;
+                sender.sendMessage("In JackzCo Region: " + isJackzCoRegion(p.getLocation()));
+            }
+
+            return true;
        }
         return false;
     }

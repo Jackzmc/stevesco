@@ -23,3 +23,9 @@ commands:
   getlogs:
     description: gets the latest server logs
     usage: /getlogs [# of last lines]
+  test:
+    description: TEST TEST? TEST TEST! TEST TEST TEST. TEST TEST
+    usage: TEST TEST TEST TEST TEST TEST
+  getname:
+      description: gets the name of the item
+      usage: /getitem
