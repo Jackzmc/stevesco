@@ -12,7 +12,7 @@ import java.util.logging.Level;
 public class JoinEvent implements Listener {
     private final Main plugin;
 
-    public JoinEvent(Main plugin) {
+    JoinEvent(Main plugin) {
         this.plugin = plugin; // Store the plugin in situations where you need it.
     }
     @EventHandler

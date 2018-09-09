@@ -23,12 +23,11 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.jackz.jackzco3.lib.Config;
+import me.jackz.jackzco3.lib.jTower;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -39,33 +38,35 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
 
     String latest_version = "0.0.0";
-    static public String jackzco_prefix = "§3JackzCo§6>§r ";
+    static String jackzco_prefix = "§3JackzCo§6>§r ";
 
-    public static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
-    public static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
+     static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
+     static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
 
-    public FileConfiguration config;
+    FileConfiguration config;
+
     @Override
     public void onEnable() {
+        plugin = this;
         latest_version = this.getDescription().getVersion();
         this.getCommand("jackzco").setExecutor(new jCommandLoader(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
+        this.getCommand("jphone").setExecutor(new jPhone(this));
+
         //this.getCommand("jphone").setExecutor(new jPhone(this));
-        ;
         registerEvents(this,
                 new JoinEvent(this),
                 new MainListener(this),
@@ -73,11 +74,12 @@ public class Main extends JavaPlugin {
                 new Wand(this),
                 new MessageHandler(this),
 		        new MoveHandler(this),
-                new SignHandler(this)
+                new SignHandler(this),
+                new PlayerInteractHandler(this)
         );
         //new LocVarLib(this);
         config = new Config().setupConfig(this);
-        plugin = this;
+        loadTowers();
     }
 
     @Override
@@ -85,7 +87,12 @@ public class Main extends JavaPlugin {
 
     }
 
-    public WorldGuardPlugin getWorldGuard() {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return new MiscCommands().onCommand(this,sender,command,label,args);
+    }
+
+    WorldGuardPlugin getWorldGuard() {
         Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
         // WorldGuard may not be loaded
         if (!(plugin instanceof WorldGuardPlugin)) {
@@ -94,13 +101,13 @@ public class Main extends JavaPlugin {
 
         return (WorldGuardPlugin) plugin;
     }
-    public boolean isJackzCoRegion(Location loc) {
+    boolean isJackzCoRegion(Location loc) {
 
         List<String> jackzco_regions = getJackzCo().getStringList("regions");
         plugin.getLogger().info("[isJackzCoRegion] Checking location. Regions: " + jackzco_regions.toString());
         return checkRegion(loc,jackzco_regions);
     }
-    public boolean checkRegion(Location loc, List<String> regions) {
+    boolean checkRegion(Location loc, List<String> regions) {
         if(getWorldGuard() != null) {
             RegionContainer container = getWorldGuard().getRegionContainer();
             RegionQuery query = container.createQuery();
@@ -116,108 +123,48 @@ public class Main extends JavaPlugin {
             return true;//if WG missing, just allow doors anywhere
         }
         return false;
-        }
-        public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
-            if(getWorldGuard() != null) {
-                RegionContainer container = getWorldGuard().getRegionContainer();
-                RegionQuery query = container.createQuery();
-                ApplicableRegionSet set = query.getApplicableRegions(loc);
-                for (ProtectedRegion region : set) {
-                    if (region.getId().contains(region_name)) {
-                        return true;
-                    }
+    }
+
+    boolean checkRegion(Location loc, String region_name) { //should simplify but eh
+        if(getWorldGuard() != null) {
+            RegionContainer container = getWorldGuard().getRegionContainer();
+            RegionQuery query = container.createQuery();
+            ApplicableRegionSet set = query.getApplicableRegions(loc);
+            for (ProtectedRegion region : set) {
+                if (region.getId().contains(region_name)) {
+                    return true;
                 }
+            }
         }else{
             return true; //if WG missing, just allow doors anywhere
         }
         return false;
     }
-    public FileConfiguration getJackzCo() {
+
+    FileConfiguration getJackzCo() {
         return config;
     }
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-       if(command.getName().equalsIgnoreCase("setname")) {
-            if(sender instanceof Player) {
+    private void loadTowers() {
+        File[] towers = new File(getDataFolder() + "/towers").listFiles();
+        if(towers != null) {
+            for (File tower : towers) {
                 try {
-                    Player p = (Player) sender;
-                    ItemStack item = p.getInventory().getItemInMainHand();
-                    if(item == null) {
-                        p.sendMessage("§cYou must have an item in your primary hand!");
-                        return true;
-                    }else{
-
-                        String msg = args[0].replace("_"," ");
-                        msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
-
-                        ItemMeta itemMeta = item.getItemMeta();
-                        itemMeta.setDisplayName(msg);
-                        item.setItemMeta(itemMeta);
-
+                    if (tower.isFile()) {
+                        if (!tower.getName().endsWith(".tower")) continue;
+                        JSONParser parser = new JSONParser();
+                        JSONObject obj = (JSONObject) parser.parse(new FileReader(tower));
+                        new jTower(obj, getServer().getWorld("world"));
                     }
-                }catch(Exception err) {
-                    sender.sendMessage("Failed: §c" + err.toString());
-                    getLogger().log(Level.INFO,"setname!",err);
+                } catch (Exception e) {
+
                 }
-            }else{
-                sender.sendMessage("You must be a player");
             }
-            return true;
-       } else if (command.getName().equalsIgnoreCase("uuid")) {
-           if(!(sender instanceof Player)) {
-               sender.sendMessage("§7Must be a player");
-               return true;
-           }
-            Player p = (Player) sender;
-            sender.sendMessage("Your UUID is §e" + p.getUniqueId());
-            return true;
-       }else if(command.getName().equalsIgnoreCase("getlogs")) {
-           try {
-
-               String log = getDataFolder().toPath() + "/../../logs/latest.log";
-               FileInputStream in = new FileInputStream(log);
-               BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-               List<String> lines = new LinkedList<>();
-               for (String tmp; (tmp = br.readLine()) != null; )
-                   if (lines.add(tmp) && lines.size() > 5)
-                       lines.remove(0);
-
-               for (String line : lines) {
-                   sender.sendMessage(line);
-               }
-           } catch (Exception ex) {
-               sender.sendMessage("Failed to get file: " + ex.toString());
-               getLogger().log(Level.INFO, "getlogs!", ex);
-           }
-
-           return true;
-       }else if(command.getName().equalsIgnoreCase("getname")) {
-           if(sender instanceof Player) {
-               Player p = (Player) sender;
-               ItemStack itm = p.getInventory().getItemInMainHand();
-               if(itm == null) {
-                   p.sendMessage("§cYou must have an item in your hand!");
-               }else{
-                   p.sendMessage("Item is: §e" + itm.getType().toString());
-               }
-           }
-           return true;
-       }else if(command.getName().equalsIgnoreCase("test")) {
-            sender.sendMessage(getJackzCo().getString("motd"));
-            if(sender instanceof Player) {
-                Player p = (Player) sender;
-                sender.sendMessage("In JackzCo Region: " + isJackzCoRegion(p.getLocation()));
-            }
-
-            return true;
-       }
-        return false;
+            return;
+        }
+        getServer().getLogger().warning("No /towers folder found");
     }
 
-
-
-    public static void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
+    static void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -239,24 +186,6 @@ public class Main extends JavaPlugin {
         inv.setItem(Slot, item);
 
     }
-
-    public static boolean isSafeLocation(Location location) {
-        Block feet = location.getBlock();
-        if (!feet.getType().isTransparent() && !feet.getLocation().add(0, 1, 0).getBlock().getType().isTransparent()) {
-            return false; // not transparent (will suffocate)
-        }
-        Block head = feet.getRelative(BlockFace.UP);
-        if (!head.getType().isTransparent()) {
-            return false; // not transparent (will suffocate)
-        }
-        Block ground = feet.getRelative(BlockFace.DOWN);
-        if (!ground.getType().isSolid()) {
-            return false; // not solid
-        }
-        return true;
-    }
-
-
 
     public static Plugin getPlugin() {
         return plugin;

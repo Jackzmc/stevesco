@@ -29,3 +29,6 @@ commands:
   getname:
       description: gets the name of the item
       usage: /getitem
+  jphone:
+      description: the jphone cmd line thingy yeah ha
+      usage: /jphone help

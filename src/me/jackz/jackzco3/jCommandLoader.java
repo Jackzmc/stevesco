@@ -16,7 +16,7 @@ import java.util.Calendar;
 public class jCommandLoader implements CommandExecutor {
     private final Main plugin;
     private String prefix;
-    public jCommandLoader(Main plugin) {
+    jCommandLoader(Main plugin) {
         prefix = plugin.jackzco_prefix;
         this.plugin = plugin;
     }
@@ -67,6 +67,9 @@ public class jCommandLoader implements CommandExecutor {
                    sender.sendMessage(ChatColor.RED + "jCloud Commands: [help] [url] [info]");
                 }
                 break;
+            case "admin":
+                new jCommandAdmin(plugin,sender,cmd,commandLabel,args);
+                return true;
             case "getphone":
                 if(!(sender instanceof Player)) {
                     sender.sendMessage("[JackzCo] You must be a player to use this");

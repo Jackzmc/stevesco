@@ -9,12 +9,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 public class MessageHandler implements Listener {
     private Main plugin;
 
-    public MessageHandler(Main plugin) {
+    MessageHandler(Main plugin) {
         this.plugin = plugin;
     }
     @EventHandler
     public void chatEvent(AsyncPlayerChatEvent e) {
-        e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
+        e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage().replace(":tm:","™").replace(".\\","/")));
         Player p = e.getPlayer();
         String msg = e.getMessage();
         if(msg.startsWith("jackzco")) {

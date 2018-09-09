@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-public class DoorControlEvent implements Listener {
+class DoorControlEvent implements Listener {
     private final Main plugin;
-    public DoorControlEvent(Main plugin) {
+    DoorControlEvent(Main plugin) {
         this.plugin = plugin;
     }
 
@@ -39,7 +39,7 @@ public class DoorControlEvent implements Listener {
 
                 if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.IRON_DOOR_BLOCK) {
                     if(!plugin.checkRegion(clickedBlock.getLocation(),new ArrayList<>(Arrays.asList("stevesco", "minishco")))) return;
-                    Boolean isMatch = false;
+                    boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();
                     for(ItemStack item : inv.getContents()) {
                         if(item != null && item.getType().equals(Material.PAPER)) {
@@ -55,7 +55,7 @@ public class DoorControlEvent implements Listener {
 
 
                                 Openable openable = (Openable) blockState.getData();
-                                Boolean isDoorOpen = openable.isOpen();
+                                boolean isDoorOpen = openable.isOpen();
                                 if(isDoorOpen) { //is currently opened
                                     openable.setOpen(false);
                                     clickedBlock.getWorld().playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);

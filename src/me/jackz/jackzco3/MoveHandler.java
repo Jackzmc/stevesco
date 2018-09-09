@@ -19,9 +19,10 @@ public class MoveHandler implements Listener {
 	private Map<String,Boolean> scanImmune = new HashMap<>();
 	private Map<String,Boolean> scanTimeImmune = new HashMap<>();
 
-	public MoveHandler(Main plugin) {
+	MoveHandler(Main plugin) {
 		this.plugin = plugin;
 	}
+
 	@EventHandler
 	public void PlayerMoveEvent(PlayerMoveEvent e) {
 
@@ -42,20 +43,16 @@ public class MoveHandler implements Listener {
 		}
 		switch(underneathPlayer.getType()) {
 			case STONE:
-				if(!isImmune && !isTimeImmune && underneathPlayer.getData() == (byte) 6) {
+				if(!isImmune && !isTimeImmune && underneathPlayer.getData() == (byte) 2) {
 					scanImmune.put(p.getUniqueId().toString(),true);
-					plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-						@Override
-						public void run() {
-							scanTimeImmune.put(p.getUniqueId().toString(), false);
-							//isTimeImmune = false;
-						}
+					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+						scanTimeImmune.put(p.getUniqueId().toString(), false);
+						//isTimeImmune = false;
 					},600L);
 					scanTimeImmune.put(p.getUniqueId().toString(),true);
 					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™");
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();
-					String illegalItemString;
 					for(ItemStack item  : p.getInventory()) {
 						if(item == null) continue;
 						for(String blacklisted : items) {
@@ -64,11 +61,10 @@ public class MoveHandler implements Listener {
 							}
 						}
 					}
-
-					p.sendMessage(plugin.jackzco_prefix + " §7Detected illegal items: §e" + illegalItems.stream().map(itm -> {
-						return itm.getType().toString();
-					}).collect(Collectors.joining(", ")));
-
+					if(illegalItems.size() > 0) {
+						p.sendMessage(plugin.jackzco_prefix + " §7Detected illegal items: §e" + illegalItems.stream().map(itm -> itm.getType().toString()).collect(Collectors.joining(", ")));
+						//todo: lockdown
+					}
 				}
 				break;
 			default:

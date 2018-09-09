@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DoorControlCmd implements CommandExecutor {
     private final Main plugin;
-    public DoorControlCmd(Main plugin) {
+    DoorControlCmd(Main plugin) {
         this.plugin = plugin;
     }
 
@@ -34,6 +34,7 @@ public class DoorControlCmd implements CommandExecutor {
             }else {
                 player.sendMessage("§cInvalid Syntax. §e/getid [level]");
             }
+            return true;
         }
         ItemStack idCard = new ItemStack(Material.PAPER);
         ItemMeta idCardMeta = idCard.getItemMeta();
