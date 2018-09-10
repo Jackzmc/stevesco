@@ -47,7 +47,7 @@ public class jCommandLoader implements CommandExecutor {
             case "version":
                 sender.sendMessage(prefix + "Currently running on version §e" + plugin.latest_version + "!");
                 break;
-            case "jCloud":
+            case "jcloud":
                 if (args.length >= 2) {
                     if (args[1].equalsIgnoreCase("help")) {
                         sender.sendMessage("§aWhat is jCloud? §7I don't know, what is it?");

@@ -33,16 +33,16 @@ import java.util.logging.Level;
 class MiscCommands {
 	boolean onCommand(Main plugin,CommandSender sender, Command command, String label, String[] args) {
 		if(command.getName().equalsIgnoreCase("setname")) {
-			if(sender instanceof Player) {
+			if (sender instanceof Player) {
 				try {
 					Player p = (Player) sender;
 					ItemStack item = p.getInventory().getItemInMainHand();
-					if(item == null) {
+					if (item == null) {
 						p.sendMessage("§cYou must have an item in your primary hand!");
 						return true;
-					}else{
+					} else {
 
-						String msg = args[0].replace("_"," ");
+						String msg = args[0].replace("_", " ");
 						msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
 
 						ItemMeta itemMeta = item.getItemMeta();
@@ -50,13 +50,21 @@ class MiscCommands {
 						item.setItemMeta(itemMeta);
 
 					}
-				}catch(Exception err) {
+				} catch (Exception err) {
 					sender.sendMessage("Failed: §c" + err.toString());
-					plugin.getLogger().log(Level.INFO,"setname!",err);
+					plugin.getLogger().log(Level.INFO, "setname!", err);
 				}
-			}else{
+			} else {
 				sender.sendMessage("You must be a player");
 			}
+			return true;
+		}else if(command.getName().equalsIgnoreCase("jstore")) {
+			if(!(sender instanceof Player)) {
+				sender.sendMessage("§7Must be a player");
+				return true;
+			}
+			Player p = (Player) sender;
+			new SignHandler(plugin).getStore(p);
 			return true;
 		} else if (command.getName().equalsIgnoreCase("uuid")) {
 			if(!(sender instanceof Player)) {

@@ -24,10 +24,7 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.jackz.jackzco3.lib.Config;
 import me.jackz.jackzco3.lib.jTower;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -46,6 +43,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
@@ -53,10 +51,7 @@ public class Main extends JavaPlugin {
     String latest_version = "0.0.0";
     static String jackzco_prefix = "§3JackzCo§6>§r ";
 
-     static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
-     static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
-
-    FileConfiguration config;
+    private FileConfiguration config;
 
     @Override
     public void onEnable() {
@@ -75,16 +70,43 @@ public class Main extends JavaPlugin {
                 new MessageHandler(this),
 		        new MoveHandler(this),
                 new SignHandler(this),
-                new PlayerInteractHandler(this)
+                new PlayerInteractHandler(this),
+		        new jPhone(this)
         );
         //new LocVarLib(this);
         config = new Config().setupConfig(this);
         loadTowers();
+        if(config.getBoolean("updatecheck.enabled")) {
+	        getServer().getScheduler().runTaskTimer(this, this::checkForUpdates,0L,config.getInt("updatecheck.interval")*20L);
+        }
     }
 
     @Override
     public void onDisable() {
+		//getServer().getScheduler().cancelAllTasks();
+    }
 
+    private void checkForUpdates() {
+    	try {
+		    File newJar = new File(getDataFolder() + "/jackzco.jar");
+		    if(newJar.exists()) {
+		    	File dest = new File(plugin.getDataFolder() + "../jackzco.jar");
+		    	if(dest.exists()) {
+		    		dest.delete();
+			    }
+			    newJar.renameTo(new File(plugin.getDataFolder() + "/../jackzco.jar"));
+			    Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plugman reload JackzCo3"), 5 * 20L);
+			    getLogger().info("[UpdateChecker] Updated & Reloaded JackzCo");
+			    Player jackz = getServer().getPlayer(UUID.fromString("b0c16432-67a6-4e3d-b49a-61b323c49b03"));
+			    if(jackz != null) {
+			    	jackz.sendMessage(jackzco_prefix + "§7Auto updated & reloaded jackzco");
+			    	jackz.playSound(jackz.getLocation(), Sound.BLOCK_NOTE_PLING,1,1);
+			    }
+		    }
+	    }catch(Exception ex) {
+    	    getLogger().warning("[UpdateChecker] Error while update checking: " + ex.toString());
+	    }
+    	//periodically check for an update
     }
 
     @Override

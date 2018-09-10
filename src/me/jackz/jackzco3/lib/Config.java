@@ -16,10 +16,12 @@ public class Config {
         config.addDefault("jackzco.prefix", "§3JackzCo§6>");
         config.addDefault("regions",new ArrayList<String>());
         config.addDefault("scanner.disallowed",new ArrayList<String>());
+        config.addDefault("updatecheck.enabled",true);
+        config.addDefault("updatecheck.interval",30);
 
-        config.set("version",plugin.getDescription().getVersion());
         config.addDefault("versions.jackzco", "0.1");
         config.addDefault("versions.jphone","0.1");
+        config.set("versions.main",plugin.getDescription().getVersion());
 
         config.options().copyDefaults(true);
         try {

@@ -2,7 +2,7 @@ name: jackzco3
 version: 3.0.0
 author: Jackz
 main: me.jackz.jackzco3.Main
-softdepend: [WorldGuard]
+softdepend: [WorldGuard,GlowAPI]
 depend: [TTA]
 commands:
   jackzco:
@@ -27,8 +27,11 @@ commands:
     description: TEST TEST? TEST TEST! TEST TEST TEST. TEST TEST
     usage: TEST TEST TEST TEST TEST TEST
   getname:
-      description: gets the name of the item
-      usage: /getitem
+    description: gets the name of the item
+    usage: /getitem
   jphone:
-      description: the jphone cmd line thingy yeah ha
-      usage: /jphone help
+    description: the jphone cmd line thingy yeah ha
+    usage: /jphone help
+  jstore:
+    description: open the jstore
+    usage: /jstore
