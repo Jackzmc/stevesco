@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class SignHandler implements Listener {
 	private final Main plugin;
@@ -42,9 +43,23 @@ public class SignHandler implements Listener {
 	public void onInvClick(InventoryClickEvent e) {
 		Player p = (Player) e.getWhoClicked();
 		if(e.getClickedInventory().getName().equals(jstore.getName())) {
+			ItemStack item = e.getCurrentItem();
 			e.setCancelled(true);
-			p.sendMessage("§cSorry, jStore is not setup yet.");
+			if(item == null) {
+				//do nothing?
+				return;
+			}
 			switch(e.getCurrentItem().getType()) {
+				case TRIPWIRE_HOOK:
+					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
+						case "§6jPhone X":
+							break;
+						case "§6jPhone XL":
+							break;
+						default:
+							p.sendMessage("§cInvalid phone");
+					}
+					break;
 				default:
 					p.sendMessage("§cSorry, that item is not setup");
 					p.closeInventory();
