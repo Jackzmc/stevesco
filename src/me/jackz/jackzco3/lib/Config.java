@@ -19,8 +19,9 @@ public class Config {
         config.addDefault("updatecheck.enabled",true);
         config.addDefault("updatecheck.interval",30);
 
-        config.addDefault("versions.jackzco", "0.1");
-        config.addDefault("versions.jphone","0.1");
+        config.set("versions.jackzco", "0.1");
+        config.set("versions.jphone","0.1");
+        config.set("versions.terminal","1.0.0-alpha");
         config.set("versions.main",plugin.getDescription().getVersion());
 
         config.options().copyDefaults(true);

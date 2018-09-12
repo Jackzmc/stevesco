@@ -6,10 +6,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -112,32 +111,106 @@ public class jPhone implements Listener,CommandExecutor {
                     }
                 }
             }else if(p.getInventory().getItemInMainHand().getType() == Material.NETHER_STAR) {
-                final Horse entity = (Horse) p.getWorld().spawnEntity(p.getEyeLocation(),EntityType.HORSE);
-                entity.setStyle(Horse.Style.NONE);
-                entity.setVelocity(p.getEyeLocation().getDirection().multiply(3));
+	            if (p.isSneaking()) {
+		            if(!plugin.checkRegion(p.getLocation(),"horsechaos")) {
+		            	p.sendMessage("§cYou must be in the horsechaos region");
+		            	return;
+		            }
+	            	if(e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR) {
+			            for (int i = 0; i < 50; i++) {
+				            double rnd = Math.random();
+				            Material mt;
+				            if (rnd < .25) {
+					            mt = Material.WOOL;
+				            } else if (rnd >= .25 && rnd < .5) {
+					            mt = Material.STAINED_CLAY;
+				            } else if (rnd >= .5 && rnd < .75) {
+					            mt = Material.CONCRETE;
+				            } else {
+					            mt = Material.CONCRETE_POWDER;
+				            }
+				            @SuppressWarnings("deprecation")
+				            FallingBlock fb = p.getWorld().spawnFallingBlock(p.getEyeLocation(), mt, (byte) random.nextInt(16));
+				            fb.setHurtEntities(false);
+				            fb.setDropItem(false);
+				            GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
+				            Vector v = p.getEyeLocation().getDirection();
+				            v = v.add(new Vector(random.nextInt((1 - -1) + 1) + -1,0,random.nextInt((1 - -1) + 1) + -1));
+				            fb.setVelocity(v.multiply(2));
 
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    entity.getWorld().createExplosion(entity.getLocation(),0);
-                    entity.remove();
-                    for(int i = 0; i< 100; i++) {
-                    	double rnd = Math.random();
-                    	Material mt;
-	                    if(rnd < .3) {
-		                    mt = Material.WOOL;
-	                    }else if(rnd >= .3 && rnd < .6) {
-	                    	mt = Material.CONCRETE;
-	                    }else{
-	                    	mt = Material.CONCRETE_POWDER;
-	                    }
-	                    @SuppressWarnings("deprecation")
-	                    FallingBlock fb = entity.getWorld().spawnFallingBlock(entity.getLocation(), mt, (byte) random.nextInt(16));
-                        fb.setHurtEntities(false);
-                        fb.setDropItem(false);
-                        GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE,p);
-                        Vector v =  new Vector(randomnum(), randomnum(), randomnum());
-                        fb.setVelocity(v.multiply(2));
-                    }
-                }, 15);
+			            }
+	            		return;
+		            }
+		            Block targetbk = p.getTargetBlock(null, 100);
+		            Location targetloc;
+		            if (targetbk == null) {
+			            p.sendMessage("§cCan't find block, must be within 100 blocks");
+			            return;
+		            }else if(targetbk.getType().equals(Material.GLASS)) {
+		            	p.sendMessage("§cGlass is blacklisted, try some other block.");
+		            	return;
+		            }
+		            targetloc = targetbk.getLocation();
+		            if(!plugin.checkRegion(targetloc,"horsechaos")) {
+			            p.sendMessage("§cYou must be in the horsechaos region");
+			            return;
+		            }
+		            p.getWorld().createExplosion(targetloc, 0);
+
+		            for (int i = 0; i < 50; i++) {
+			            double rnd = Math.random();
+			            Material mt;
+			            if (rnd < .25) {
+				            mt = Material.WOOL;
+			            } else if (rnd >= .25 && rnd < .5) {
+				            mt = Material.STAINED_CLAY;
+			            } else if (rnd >= .5 && rnd < .75) {
+				            mt = Material.CONCRETE;
+			            } else {
+				            mt = Material.CONCRETE_POWDER;
+			            }
+			            @SuppressWarnings("deprecation")
+			            FallingBlock fb = p.getWorld().spawnFallingBlock(targetloc, mt, (byte) random.nextInt(16));
+			            fb.setHurtEntities(false);
+			            fb.setDropItem(false);
+			            GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
+			            Vector v = new Vector(randomnum(), randomnum(), randomnum());
+			            fb.setVelocity(v.multiply(2));
+		            }
+	            } else {
+		            if(!plugin.checkRegion(p.getLocation(),"horsechaos")) {
+			            p.sendMessage("§cYou must be in the horsechaos region");
+			            return;
+		            }
+		            final Horse entity = (Horse) p.getWorld().spawnEntity(p.getEyeLocation(),EntityType.HORSE);
+		            entity.setStyle(Horse.Style.NONE);
+		            e.setCancelled(true);
+		            entity.setVelocity(p.getEyeLocation().getDirection().multiply((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) ? 5 : 2));
+		            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+			            entity.getWorld().createExplosion(entity.getLocation(), 0);
+			            entity.remove();
+			            for (int i = 0; i < 100; i++) {
+				            double rnd = Math.random();
+				            Material mt;
+				            if (rnd < .25) {
+					            mt = Material.WOOL;
+				            } else if (rnd >= .25 && rnd < .5) {
+					            mt = Material.STAINED_CLAY;
+				            } else if (rnd >= .5 && rnd < .75) {
+					            mt = Material.CONCRETE;
+				            } else {
+					            mt = Material.CONCRETE_POWDER;
+				            }
+				            @SuppressWarnings("deprecation")
+				            FallingBlock fb = entity.getWorld().spawnFallingBlock(entity.getLocation(), mt, (byte) random.nextInt(16));
+				            fb.setHurtEntities(false);
+				            fb.setDropItem(false);
+				            GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
+				            Vector v = new Vector(randomnum(), randomnum(), randomnum());
+				            fb.setVelocity(v.multiply(2));
+			            }
+		            }, 15);
+	            }
             }else if(p.getInventory().getItemInMainHand().getType().equals(Material.TORCH) && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§fjLight") ) {
             	e.setCancelled(true);
                 if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
@@ -400,5 +473,51 @@ public class jPhone implements Listener,CommandExecutor {
 			}
 			p.closeInventory(); //close it
 		}
+	}
+
+	@EventHandler
+	public void jPhoneChat(AsyncPlayerChatEvent e) {
+    	Player p = e.getPlayer();
+    	ItemStack itm = p.getInventory().getItemInMainHand();
+    	if(itm != null) {
+    		NBTItem nbt = ItemNBTAPI.getNBTItem(itm);
+    		if(nbt.getBoolean("terminal")) {
+    			e.setCancelled(true);
+			    p.sendMessage(" ");
+    			p.sendMessage("§a>" + e.getMessage());
+    			String[] args = e.getMessage().split(" ");
+    			switch(args[0].toLowerCase()) {
+				    case "version":
+				    	p.sendMessage("§7The current version of terminal is §e" + plugin.getJackzCo().getString("versions.terminal"));
+				    	break;
+				    case "light":
+				    case "jlight":
+					    ItemStack CurrentPhone = nbt.getItem();
+					    ItemMeta PhoneMeta = CurrentPhone.getItemMeta();
+					    PhoneMeta.setDisplayName("§fjLight");
+					    CurrentPhone.setItemMeta(PhoneMeta);
+					    CurrentPhone.setType(Material.TORCH);
+					    p.getInventory().setItemInMainHand(CurrentPhone);
+				    	break;
+				    case "commands":
+				    	p.sendMessage("§3Current Commands:\n§ehelp §7general help\n§eversion §7check the version of terminal\n§elight §7turn on your flashlight\n§eexit §7exits terminal");
+				    	break;
+				    case "help":
+				    	p.sendMessage("§7Hi, terminal is currently in alpha and missing features.");
+				    	p.sendMessage("§7Current Version is: §e" + plugin.getJackzCo().getString("versions.terminal"));
+				    	p.sendMessage("§7Type §ecommands §7to view commands");
+				    	break;
+				    case "exit":
+				    	nbt.setBoolean("terminal",false);
+					    p.sendMessage("§7Exited §eterminal mode");
+					    p.getInventory().setItemInMainHand(nbt.getItem());
+					    break;
+				    default:
+				    	p.sendMessage("§cUnknown command was specified. §7Type §ehelp for help");
+
+			    }
+
+		    }
+	    }
 	}
 }
