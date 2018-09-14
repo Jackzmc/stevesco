@@ -1,5 +1,6 @@
 package me.jackz.jackzco3;
 
+import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -67,9 +68,10 @@ public class SignHandler implements Listener {
 		}
 	}
 	Inventory getStore(Player p) {
-		Main.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,1,"§fjPhone 2","§a$Unknown");
-		Main.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,3,"§fjPhone 2X:","§a$Unknown+$100");
-		Main.createDisplay(p,Material.PISTON_BASE,jstore,5,"§fjCharger","§7Ultra fast charger");
+		Util util = new Util();
+		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,1,"§fjPhone 2","§a$Unknown");
+		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,3,"§fjPhone 2X:","§a$Unknown+$100");
+		util.createDisplay(p,Material.PISTON_BASE,jstore,5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
 		return jstore;
 	}
