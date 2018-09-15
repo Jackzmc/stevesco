@@ -63,13 +63,14 @@ public class InteractEvent implements Listener {
 		Player p = e.getPlayer();
 		//below is the stupid way to stop double activation
 		if(e.getAction() == Action.PHYSICAL) return;
+		ItemStack item = p.getInventory().getItemInMainHand();
+		ItemMeta meta = item.getItemMeta();
 		if(e.getHand().equals(EquipmentSlot.HAND)) {
 			//spacing so i dont get confused. rightclick
-			if(p.getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK) && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(jphone.phoneName)) {
+			if(item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
 				e.setCancelled(true);
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
-				ItemStack item =  p.getInventory().getItemInMainHand();
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
 				if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if(p.isSneaking()) {
@@ -110,7 +111,7 @@ public class InteractEvent implements Listener {
 							//Key "owner" not set
 						}else{
 							//is claimed
-							TextComponent msg = new TextComponent("§9Notice §7This device is claimed. Hover for details");
+							TextComponent msg = new TextComponent("§9This device is claimed. §7Hover for details");
 							msg.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create() ) );
 
 							p.spigot().sendMessage(msg);
@@ -228,13 +229,13 @@ public class InteractEvent implements Listener {
 						}
 					}, 15);
 				}
-			}else if(p.getInventory().getItemInMainHand().getType().equals(Material.TORCH) && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("§fjLight") ) {
+			}else if(item.getType().equals(Material.TORCH) && meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjLight") ) {
 				e.setCancelled(true);
 				if(e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 					ItemStack phone = p.getInventory().getItemInMainHand();
 					ItemMeta phoneMeta = phone.getItemMeta();
 					phone.setType(Material.TRIPWIRE_HOOK);
-					phoneMeta.setDisplayName(jphone.phoneName);
+					phoneMeta.setDisplayName(jphone.phoneName); //check if 2X
 					phone.setItemMeta(phoneMeta);
 					p.getInventory().setItemInMainHand(phone);
 				}
@@ -242,7 +243,7 @@ public class InteractEvent implements Listener {
 			}
 			//below is the stupid way to stop offhand placement. I don't know if two setcancels will fuck it up but i hope not
 		}else if(e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-			if(p.getInventory().getItemInMainHand().getType() == Material.TRIPWIRE_HOOK && p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(jphone.phoneName)) {
+			if(item.getType() == Material.TRIPWIRE_HOOK && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
 				e.setCancelled(true);
 			}
 		}
@@ -250,7 +251,7 @@ public class InteractEvent implements Listener {
 	}
 
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) {
+	public void onInventoryClick(InventoryClickEvent event) { //move to own class?
 		Player p = (Player) event.getWhoClicked(); // The player that clicked the item
 		ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 		Inventory inventory = event.getInventory(); // The inventory that was clicked in
@@ -280,12 +281,14 @@ public class InteractEvent implements Listener {
 						//ON to OFF
 						nbti.setBoolean("terminal", false);
 						p.sendMessage("§7Exited §eterminal mode");
-					}else if(!(nbti.getBoolean("terminal"))) {
+						p.getInventory().setItemInMainHand(nbti.getItem());
+					}else if(!nbti.getBoolean("terminal")) {
 						//OFF to ON
 						nbti.setBoolean("terminal", true);
 						p.sendMessage("§7Entered §eterminal mode. §7Type §e'help'§7 for help");
+						p.getInventory().setItemInMainHand(nbti.getItem());
 					}
-					p.getInventory().setItemInMainHand(nbti.getItem());
+
 					break;
 				default:
 					p.sendMessage("That item is not configured correctly.");

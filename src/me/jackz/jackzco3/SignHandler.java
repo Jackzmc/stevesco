@@ -1,5 +1,6 @@
 package me.jackz.jackzco3;
 
+import me.jackz.jackzco3.jPhone.jPhoneMain;
 import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -42,24 +43,34 @@ public class SignHandler implements Listener {
 	}
 	@EventHandler
 	public void onInvClick(InventoryClickEvent e) {
-		Player p = (Player) e.getWhoClicked();
-		if(e.getClickedInventory().getName().equals(jstore.getName())) {
+		if(e.getClickedInventory() != null && e.getClickedInventory().getName().equals(jstore.getName())) {
+			Player p = (Player) e.getWhoClicked();
 			ItemStack item = e.getCurrentItem();
 			e.setCancelled(true);
 			if(item == null) {
 				//do nothing?
 				return;
 			}
+			jPhoneMain jphone = new jPhoneMain(plugin);
 			switch(e.getCurrentItem().getType()) {
 				case TRIPWIRE_HOOK:
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
-						case "§6jPhone X":
+						case "§fjPhone 2": {
+							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2",false));
 							break;
-						case "§6jPhone XL":
+						} case "§fjPhone 2X": {
+							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2X",false));
 							break;
-						default:
+						} default:
+							p.sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());
 							p.sendMessage("§cInvalid phone");
 					}
+					break;
+				case PISTON_BASE:
+					p.sendMessage("§7The §3jCharger is currently not for sale at this time.");
+					break;
+				case AIR:
+					//dont do anything
 					break;
 				default:
 					p.sendMessage("§cSorry, that item is not setup");
@@ -70,7 +81,7 @@ public class SignHandler implements Listener {
 	Inventory getStore(Player p) {
 		Util util = new Util();
 		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,1,"§fjPhone 2","§a$Unknown");
-		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,3,"§fjPhone 2X:","§a$Unknown+$100");
+		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,3,"§fjPhone 2X","§a$Unknown+$100");
 		util.createDisplay(p,Material.PISTON_BASE,jstore,5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
 		return jstore;

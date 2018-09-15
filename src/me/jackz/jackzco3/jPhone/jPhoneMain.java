@@ -17,18 +17,16 @@
 
 package me.jackz.jackzco3.jPhone;
 
+import de.tr7zw.itemnbtapi.ItemNBTAPI;
+import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class jPhoneMain implements Listener {
 	final Main plugin;
@@ -45,5 +43,19 @@ public class jPhoneMain implements Listener {
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
 	}
 
+	public ItemStack givePhone(Player p,String phoneName, boolean locked) {
+
+		NBTItem nbt = ItemNBTAPI.getNBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
+		nbt.setInteger("battery",100);
+		if(!locked) nbt.setString("owner",p.getUniqueId().toString());
+		nbt.setBoolean("terminal",false);
+		nbt.setBoolean("firstuse",true);
+		nbt.setBoolean("locked",locked);
+		ItemStack item = nbt.getItem();
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(phoneName);
+		item.setItemMeta(meta);
+		return item;
+	}
 
 }

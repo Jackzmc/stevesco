@@ -94,10 +94,10 @@ public class Main extends JavaPlugin {
 			    }
 			    newJar.renameTo(new File(plugin.getDataFolder() + "/../jackzco.jar"));
 			    Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plugman reload JackzCo3"), 5 * 20L);
-			    getLogger().info("[UpdateChecker] Updated & Reloaded JackzCo");
+			    getLogger().info("[UpdateChecker] Updating & reloading JackzCo");
 			    Player jackz = getServer().getPlayer(UUID.fromString("b0c16432-67a6-4e3d-b49a-61b323c49b03"));
 			    if(jackz != null) {
-			    	jackz.sendMessage(jackzco_prefix + "§7Auto updated & reloaded jackzco");
+			    	jackz.sendMessage(jackzco_prefix + "§7Auto updating & reloading jackzco");
 			    	jackz.playSound(jackz.getLocation(), Sound.BLOCK_NOTE_PLING,1,1);
 			    }
 		    }

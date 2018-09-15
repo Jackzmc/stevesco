@@ -41,6 +41,9 @@ public class ChatListener implements Listener {
 		ItemStack itm = p.getInventory().getItemInMainHand();
 		if(itm != null) {
 			NBTItem nbt = ItemNBTAPI.getNBTItem(itm);
+			if(!nbt.hasNBTData()) {
+				return;
+			}
 			if(nbt.getBoolean("terminal")) {
 				e.setCancelled(true);
 				p.sendMessage(" ");

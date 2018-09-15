@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 
 public class jCommandLoader implements CommandExecutor {
@@ -76,9 +77,14 @@ public class jCommandLoader implements CommandExecutor {
                     return true;
                 }
                 Player p = (Player) sender;
+                if(!p.isOp()) {
+                    p.sendMessage("§cYou must be an OP to get the jPhone Test Phone.");
+                    return true;
+                }
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();
-                newPhoneMeta.setDisplayName("§3jPhone");
+                newPhoneMeta.setDisplayName("§3jPhone Development Phone");
+                newPhoneMeta.setLore(Arrays.asList("§cNOT §7to be shared with the public","§4IF CAUGHT SHARING PHONE, ","§4YOU WILL BE SUED & TERMINATED"));
                 newPhone.setItemMeta(newPhoneMeta);
                 p.getInventory().addItem(newPhone);
                 break;
