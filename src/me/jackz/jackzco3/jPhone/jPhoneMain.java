@@ -43,7 +43,7 @@ public class jPhoneMain implements Listener {
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
 	}
 
-	public ItemStack givePhone(Player p,String phoneName, boolean locked) {
+	public ItemStack givePhone(Player p, String name, boolean locked) {
 
 		NBTItem nbt = ItemNBTAPI.getNBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
 		nbt.setInteger("battery",100);
@@ -51,9 +51,10 @@ public class jPhoneMain implements Listener {
 		nbt.setBoolean("terminal",false);
 		nbt.setBoolean("firstuse",true);
 		nbt.setBoolean("locked",locked);
+		nbt.setBoolean("state",true);
 		ItemStack item = nbt.getItem();
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(phoneName);
+		meta.setDisplayName(name);
 		item.setItemMeta(meta);
 		return item;
 	}
