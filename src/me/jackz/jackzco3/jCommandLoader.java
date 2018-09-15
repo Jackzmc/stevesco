@@ -18,7 +18,7 @@ public class jCommandLoader implements CommandExecutor {
     private final Main plugin;
     private String prefix;
     jCommandLoader(Main plugin) {
-        prefix = plugin.jackzco_prefix;
+        prefix = Main.jackzco_prefix;
         this.plugin = plugin;
     }
     @Override

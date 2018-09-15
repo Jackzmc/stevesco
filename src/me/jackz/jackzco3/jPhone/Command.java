@@ -30,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class Command  implements CommandExecutor {
+public class Command implements CommandExecutor {
 	private Main plugin;
 	private jPhoneMain jphone;
 	Command(Main plugin,jPhoneMain jphone) {

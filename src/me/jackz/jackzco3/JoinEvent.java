@@ -20,6 +20,7 @@ public class JoinEvent implements Listener {
             if(plugin.getJackzCo().getString("motd") == null) return;
             Player p = e.getPlayer();
             TTA_Methods.sendTablist(p, "§4Jackz Craft Testing Server", "die nerd");
+            //noinspection deprecation
             p.sendTitle("JackzCo is alive","");
             String motd = plugin.getJackzCo().getString("motd").replace("%player%",(p.getDisplayName() == null) ? p.getName() : p.getDisplayName()).replace("%username%",p.getName());
             System.out.println(motd);

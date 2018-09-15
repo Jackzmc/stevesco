@@ -80,9 +80,9 @@ public class SignHandler implements Listener {
 	}
 	Inventory getStore(Player p) {
 		Util util = new Util();
-		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,1,"§fjPhone 2","§a$Unknown");
-		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,3,"§fjPhone 2X","§a$Unknown+$100");
-		util.createDisplay(p,Material.PISTON_BASE,jstore,5,"§fjCharger","§7Ultra fast charger");
+		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$Unknown");
+		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$Unknown+$100");
+		util.createDisplay(p,Material.PISTON_BASE,jstore,9+5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
 		return jstore;
 	}

@@ -61,7 +61,6 @@ public class Util {
         //Lore.add(lore);
         meta.setLore(Lore);
         item.setItemMeta(meta);
-
         inv.setItem(Slot, item);
     }
 }

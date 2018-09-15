@@ -79,10 +79,10 @@ public class InteractEvent implements Listener {
 						//plugin.appswitcher.setItem(1,  new ItemStack(Material.BOOK_AND_QUILL,1));
 						//plugin.appswitcher.setItem(3,  new ItemStack(Material.TORCH,1));
 
-						util.createDisplay(p,Material.BOOK_AND_QUILL,jphone.appswitcher,10,"&9Settings","&7Configure your phone");
-						util.createDisplay(p,Material.SIGN,jphone.appswitcher,12,"&9Terminal","&7Open the console/terminal");
-						util.createDisplay(p,Material.TORCH,jphone.appswitcher,14,"&9Flashlight","&7Illuminate the world!|&7(Left click to turn off)");
-						p.openInventory(jphone.appswitcher);
+						util.createDisplay(p,Material.BOOK_AND_QUILL, jPhoneMain.appswitcher,10,"&9Settings","&7Configure your phone");
+						util.createDisplay(p,Material.SIGN, jPhoneMain.appswitcher,12,"&9Terminal","&7Open the console/terminal");
+						util.createDisplay(p,Material.TORCH, jPhoneMain.appswitcher,14,"&9Flashlight","&7Illuminate the world!|&7(Left click to turn off)");
+						p.openInventory(jPhoneMain.appswitcher);
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
 
 						//gui ? Gui.
@@ -122,7 +122,7 @@ public class InteractEvent implements Listener {
 					if(p.isSneaking()) {
 						p.sendMessage("§cjPhone KeyChain is not ready yet");
 
-						p.openInventory(jphone.keychain);
+						p.openInventory(jPhoneMain.keychain);
 					}else{
 
 						p.sendMessage("§cCould not locate any nearby towers");
@@ -255,7 +255,7 @@ public class InteractEvent implements Listener {
 		Player p = (Player) event.getWhoClicked(); // The player that clicked the item
 		ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 		Inventory inventory = event.getInventory(); // The inventory that was clicked in
-		if(inventory.getName().equals(jphone.appswitcher.getName())) {
+		if(inventory.getName().equals(jPhoneMain.appswitcher.getName())) {
 			//If name of inventory is same as app switcher
 			event.setCancelled(true);
 			if(!(p.getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK))) {

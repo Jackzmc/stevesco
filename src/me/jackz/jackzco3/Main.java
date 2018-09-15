@@ -175,7 +175,7 @@ public class Main extends JavaPlugin {
                         JSONObject obj = (JSONObject) parser.parse(new FileReader(tower));
                         new jTower(obj, getServer().getWorld("world"));
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 }
             }

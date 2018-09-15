@@ -43,6 +43,7 @@ public class MoveHandler implements Listener {
 		}
 		switch(underneathPlayer.getType()) {
 			case STONE:
+				//noinspection deprecation
 				if(!isImmune && !isTimeImmune && underneathPlayer.getData() == (byte) 2) {
 					scanImmune.put(p.getUniqueId().toString(),true);
 					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
@@ -50,6 +51,7 @@ public class MoveHandler implements Listener {
 						//isTimeImmune = false;
 					},600L);
 					scanTimeImmune.put(p.getUniqueId().toString(),true);
+					//noinspection deprecation
 					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™");
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();
@@ -62,7 +64,9 @@ public class MoveHandler implements Listener {
 						}
 					}
 					if(illegalItems.size() > 0) {
-						p.sendMessage(plugin.jackzco_prefix + " §7Detected illegal items: §e" + illegalItems.stream().map(itm -> itm.getType().toString()).collect(Collectors.joining(", ")));
+						String itemList = illegalItems.stream().map(itm -> itm.getType().toString()).collect(Collectors.joining(", "));
+						p.sendMessage(Main.jackzco_prefix + "§7Detected illegal items: §e" + itemList);
+						plugin.getServer().broadcastMessage("§3JackzCo Security §7Player §e" + p.getName() + " §7has illegal items: §e" + itemList);
 						//todo: lockdown
 					}
 				}
