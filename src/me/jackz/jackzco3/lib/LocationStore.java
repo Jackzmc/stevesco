@@ -27,6 +27,7 @@ public class LocationStore {
     public LocationStore(Main plugin) {
         this.plugin = plugin;
     }
+
     public boolean getBoolean(Location loc) {
         try(FileReader file = new FileReader(plugin.getDataFolder().toString() + "/location.store")){
             JSONParser parser = new JSONParser();
@@ -55,7 +56,26 @@ public class LocationStore {
             return null;
         }
     }
-
+    public void deleteValue(Location loc) {
+        try{
+            File file = new File(plugin.getDataFolder().toString() + "/location.store");
+            JSONObject obj;
+            if(!file.exists()) {
+                //throw new FileNotFoundException();
+                obj = new JSONObject();
+            }else{
+                JSONParser parser = new JSONParser();
+                obj = (JSONObject) parser.parse(new FileReader(file));
+            }
+            obj.remove(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
+            FileWriter writer = new FileWriter(file);
+            writer.write(obj.toJSONString());
+            writer.flush();
+            writer.close();
+        }catch(Exception e) {
+            plugin.getLogger().warning(e.toString());
+        }
+    }
     @SuppressWarnings("unchecked")
     public void setString(Location loc,String value) {
         try{

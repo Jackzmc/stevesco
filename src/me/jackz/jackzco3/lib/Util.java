@@ -63,4 +63,14 @@ public class Util {
         item.setItemMeta(meta);
         inv.setItem(Slot, item);
     }
+    public ItemStack getNamedItem(Material mt, String name) {
+        ItemStack item = new ItemStack(mt);
+        ItemMeta meta = item.getItemMeta();
+        meta.setDisplayName(name);
+        item.setItemMeta(meta);
+        return item;
+    }
+    public Location getCenterLocation(Location loc) {
+        return loc.add((loc.getX() > 0 ? 0.5 : -0.5), 0.0, (loc.getZ() > 0 ? 0.5 : -0.5));
+    }
 }

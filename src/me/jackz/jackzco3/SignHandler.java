@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class SignHandler implements Listener {
 	private final Main plugin;
@@ -67,7 +68,14 @@ public class SignHandler implements Listener {
 					}
 					break;
 				case PISTON_BASE:
-					p.sendMessage("§7The §3jCharger is currently not for sale at this time.");
+					ItemStack jcharger = new ItemStack(Material.PISTON_BASE);
+					ItemMeta meta = jcharger.getItemMeta();
+					meta.setDisplayName("§fjCharger");
+					jcharger.setItemMeta(meta);
+
+					p.getInventory().addItem(jcharger);
+					p.sendMessage("§aThank you for buying the jCharger!");
+					p.sendMessage("§7Place the piston on a gold block to set it up.");
 					break;
 				case AIR:
 					//dont do anything

@@ -47,6 +47,7 @@ class PlayerInteractHandler implements Listener {
 				if(p.isSneaking()) {
 					Location loc = e.getClickedBlock().getLocation();
 					if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+
 						new LocationStore(plugin).setBoolean(e.getClickedBlock().getLocation(),true);
 						p.sendMessage("§7Attempted to store §etrue §7for " + String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
 					}else if(e.getAction() == Action.LEFT_CLICK_BLOCK) {

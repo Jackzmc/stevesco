@@ -57,7 +57,7 @@ public class ChatListener implements Listener {
 			if(!nbt.hasNBTData()) {
 				return;
 			}
-			if(!nbt.getBoolean("state")) {
+			if(nbt.getBoolean("terminal") && !nbt.getBoolean("state")) { //check if terminal mode on, and its off
 				p.sendMessage("§7Cannot connect to phone: §cPhone is offline");
 				return;
 			}
@@ -214,8 +214,8 @@ public class ChatListener implements Listener {
 							TextComponent msg = new TextComponent("§cPlease choose an option: §e");
 							TextComponent msg_2 = new TextComponent("[Players]");
 							TextComponent msg_3 = new TextComponent(" [Entities]");
-							TextComponent msg_4 = new TextComponent(" [All]");
-							msg_2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,"glow players"));
+							TextComponent msg_4 = new TextComponent(" [All]"); //i hope i can simplify all of this
+							msg_2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"glow players"));
 							msg_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "glow entities"));
 							msg_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "glow all"));
 

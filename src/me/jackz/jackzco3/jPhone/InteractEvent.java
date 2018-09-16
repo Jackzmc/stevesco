@@ -34,10 +34,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -73,43 +71,43 @@ public class InteractEvent implements Listener {
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
-				if(e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_BASE) {
-					if(new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
-						if(nbti.getInteger("battery") == 100) {
+				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_BASE) {
+					if (new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
+						if (nbti.getInteger("battery") == 100) {
 							p.sendMessage("§7Your phone is already at §e100%");
 							return;
 						}
 						//charge phone
-						p.getWorld().spawnParticle(Particle.SPELL_INSTANT,getCenterLocation(e.getClickedBlock().getLocation()).add(0,3,0),40,0.5,3,0.5);
+						p.getWorld().spawnParticle(Particle.SPELL_INSTANT, util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
 						p.sendMessage("§7Charging...");
-						for(int i=0;i<59;i++) {
+						for (int i = 0; i < 59; i++) {
 							plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
-									getCenterLocation(e.getClickedBlock().getLocation()).add(0,3,0),
-									10, 0.5,3,0.5),
+									util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
+									10, 0.5, 3, 0.5),
 									i
 							);
 						}
 						plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-							if(p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
+							if (p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
 								p.sendMessage("§7Charging aborted - you must hold your phone.");
 								return;
 							}
-							p.playSound(e.getClickedBlock().getLocation(),Sound.BLOCK_NOTE_CHIME,1,1);
-							nbti.setInteger("battery",100);
+							p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_CHIME, 1, 1);
+							nbti.setInteger("battery", 100);
 							p.sendMessage("§aYour phone has been charged!");
 							p.getInventory().setItemInMainHand(nbti.getItem());
-						},60L);
+						}, 60L);
 						return;
 					}
 
 				}
 
-				if(!nbti.getBoolean("state")) {
-					if(p.isSneaking()) {
-						if(nbti.getInteger("battery") < 5) {
+				if (!nbti.getBoolean("state")) {
+					if (p.isSneaking()) {
+						if (nbti.getInteger("battery") < 5) {
 							p.sendMessage("§7Battery is too low to start");
-						}else{
-							nbti.setBoolean("state",true);
+						} else {
+							nbti.setBoolean("state", true);
 							p.sendMessage("§7Turned on phone");
 						}
 						p.getInventory().setItemInMainHand(nbti.getItem());
@@ -118,49 +116,55 @@ public class InteractEvent implements Listener {
 					p.sendMessage("§cPhone is turned off, shift+rightclick to turn it on");
 					return;
 				}
-				if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-					if(p.isSneaking()) {
-						util.createDisplay(p,Material.BOOK_AND_QUILL, jPhoneMain.appswitcher,10,"&9Settings","&7Configure your phone");
-						util.createDisplay(p,Material.SIGN, jPhoneMain.appswitcher,12,"&9Terminal","&7Open the console/terminal");
-						util.createDisplay(p,Material.TORCH, jPhoneMain.appswitcher,14,"&9Flashlight","&7Illuminate the world!|&7(Left click to turn off)");
-						util.createDisplay(p,Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher,16,"§9Power off","§7Turn the phone off");
-						util.createDisplay(p,Material.NOTE_BLOCK,jPhoneMain.appswitcher,28,"§9Steves Tunes","§7Your music, the way you want");
+				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					if (p.isSneaking()) {
+						util.createDisplay(p, Material.BOOK_AND_QUILL, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
+						util.createDisplay(p, Material.SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
+						util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
+						util.createDisplay(p, Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
+						util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
 						p.openInventory(jPhoneMain.appswitcher);
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
-					}else{
+					} else {
 						Integer battery = nbti.getInteger("battery");
 						p.sendMessage(" ");
-						if(battery == -1) {
+						if (battery == -1) {
 							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §aBattery §cDead");
-						}else{
-							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §a Battery §e"  + battery + "%");
+						} else {
+							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §a Battery §e" + battery + "%");
 						}
 						p.sendMessage("§7Check your data by /jackzco jcloud info");
-						if(!(nbti.hasKey("owner"))) {
+						if (!(nbti.hasKey("owner"))) {
 							//hover: "Go to App Switcher->Settings->Owner to claim"
 							TextComponent msg = new TextComponent("§cThis device is not claimed. ");
 							TextComponent msg_hover = new TextComponent("§c[Hover to learn how to]");
 							//message.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "http://spigotmc.org" ) );
-							msg_hover.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("To claim this device go to \n§eapp switcher §rthen §esettings §rthen\n§eowner§r to claim.").create() ) );
+							msg_hover.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("To claim this device go to \n§eapp switcher §rthen §esettings §rthen\n§eowner§r to claim.").create()));
 							msg.addExtra(msg_hover);
 							p.spigot().sendMessage(msg);
 							//Key "owner" not set
-						}else{
+						} else {
 							//is claimed
 							TextComponent msg = new TextComponent("§9This device is claimed. §7Hover for details");
-							msg.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create() ) );
+							msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create()));
 
 							p.spigot().sendMessage(msg);
 						}
 						p.sendMessage(" ");
 					}
-				}else if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					if(p.isSneaking()) {
+				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+					if (p.isSneaking()) {
 						p.sendMessage("§cjPhone KeyChain is not ready yet");
 						p.openInventory(jPhoneMain.keychain);
-					}else if(e.getAction() == Action.LEFT_CLICK_AIR){
+					} else if (e.getAction() == Action.LEFT_CLICK_AIR) {
 						p.sendMessage("§cCould not locate any nearby towers");
 					}
+				}
+			}else if(p.getInventory().getItemInMainHand().getType() == Material.PISTON_BASE && e.getAction() == Action.RIGHT_CLICK_AIR) {
+				if(meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
+					e.setCancelled(true);
+					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
+					return;
 				}
 			}else if(p.getInventory().getItemInMainHand().getType() == Material.NETHER_STAR) {
 				if (p.isSneaking()) {
@@ -285,75 +289,4 @@ public class InteractEvent implements Listener {
 
 	}
 
-	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) { //move to own class?
-		Player p = (Player) event.getWhoClicked(); // The player that clicked the item
-		ItemStack clicked = event.getCurrentItem(); // The item that was clicked
-		Inventory inventory = event.getInventory(); // The inventory that was clicked in
-		if(inventory.getName().equals(jPhoneMain.appswitcher.getName())) {
-			//If name of inventory is same as app switcher
-			event.setCancelled(true);
-			if(!(p.getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK))) {
-				p.sendMessage("§You must have your phone being held");
-				return;
-			}
-			if(clicked == null) return;
-			ItemStack item =  p.getInventory().getItemInMainHand();
-			NBTItem nbti = ItemNBTAPI.getNBTItem(item);
-			switch(clicked.getType()) {
-				case AIR:
-					break;
-				case TORCH:
-					ItemStack CurrentPhone = nbti.getItem();
-					ItemMeta PhoneMeta = CurrentPhone.getItemMeta();
-					PhoneMeta.setDisplayName("§fjLight");
-					CurrentPhone.setItemMeta(PhoneMeta);
-					CurrentPhone.setType(Material.TORCH);
-					p.getInventory().setItemInMainHand(CurrentPhone);
-					break;
-				case BOOK_AND_QUILL:
-					p.sendMessage("§7Type /jphone claim to claim");
-					break;
-				case SIGN:
-					if(nbti.getBoolean("terminal")) {
-						//ON to OFF
-						nbti.setBoolean("terminal", false);
-						p.sendMessage("§7Exited §eterminal mode");
-						p.getInventory().setItemInMainHand(nbti.getItem());
-					}else if(!nbti.getBoolean("terminal")) {
-						//OFF to ON
-						nbti.setBoolean("terminal", true);
-						p.sendMessage("§7Entered §eterminal mode. §7Type §e'help'§7 for help");
-						p.getInventory().setItemInMainHand(nbti.getItem());
-					}
-
-					break;
-				case REDSTONE_LAMP_OFF:
-					nbti.setBoolean("state",false);
-					p.getInventory().setItemInMainHand(nbti.getItem());
-					p.sendMessage("§7Phone has been switched off.");
-					break;
-				case NOTE_BLOCK:
-					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
-					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-						p.openInventory(jPhoneMain.stunes);
-					},1L);
-					//play a tune
-					break;
-				default:
-					p.sendMessage("That item is not configured correctly.");
-			}
-			p.closeInventory(); //close it
-		}else if(inventory.getName().equals(jPhoneMain.stunes.getName())) {
-			event.setCancelled(true);
-			switch(clicked.getType()) {
-				default:
-					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
-			}
-		}
-	}
-
-	private Location getCenterLocation(Location loc) {
-		return loc.add((loc.getX() > 0 ? 0.5 : -0.5), 0.0, (loc.getZ() > 0 ? 0.5 : -0.5));
-	}
 }
