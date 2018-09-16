@@ -17,10 +17,13 @@
 
 package me.jackz.jackzco3;
 
+import me.jackz.jackzco3.lib.LocationStore;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -40,7 +43,24 @@ class PlayerInteractHandler implements Listener {
 			ItemStack hand = p.getInventory().getItemInMainHand();
 			if(hand != null && hand.getType() == Material.STICK) {
 				ItemMeta meta = hand.getItemMeta();
+				e.setCancelled(true);
+				if(p.isSneaking()) {
+					Location loc = e.getClickedBlock().getLocation();
+					if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+						new LocationStore(plugin).setBoolean(e.getClickedBlock().getLocation(),true);
+						p.sendMessage("§7Attempted to store §etrue §7for " + String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
+					}else if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
+						new LocationStore(plugin).setString(e.getClickedBlock().getLocation(),"yeet");
+						p.sendMessage("§7Attempted to store §eyeet §7for " + String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
+					}
+				}else {
+					if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+						p.sendMessage("§7Value of bool: §e" + new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation()));
+					}else if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
+						p.sendMessage("§7Value of string: §e" + new LocationStore(plugin).getString(e.getClickedBlock().getLocation()));
 
+					}
+				}
 			}
 		}
 	}

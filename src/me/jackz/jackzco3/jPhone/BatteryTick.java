@@ -25,10 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Random;
-
 public class BatteryTick implements Runnable {
-	private Random random = new Random();
 	public void run() {
 		for(Player p : Bukkit.getOnlinePlayers()){
 

@@ -84,6 +84,7 @@ public class Main extends JavaPlugin {
 		//getServer().getScheduler().cancelAllTasks();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void checkForUpdates() {
     	try {
 		    File newJar = new File(getDataFolder() + "/jackzco.jar");
