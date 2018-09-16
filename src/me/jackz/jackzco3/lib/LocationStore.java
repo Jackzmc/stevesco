@@ -23,10 +23,7 @@ public class LocationStore {
         .getBoolean(Location)
         .setBoolean(Location,boolean)
         .setString(Location,String)
-
-
      */
-
     public LocationStore(Main plugin) {
         this.plugin = plugin;
     }

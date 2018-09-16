@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.LocationStore;
 import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -72,6 +73,37 @@ public class InteractEvent implements Listener {
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
+				if(e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_BASE) {
+					if(new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
+						if(nbti.getInteger("battery") == 100) {
+							p.sendMessage("§7Your phone is already at §e100%");
+							return;
+						}
+						//charge phone
+						p.getWorld().spawnParticle(Particle.SPELL_INSTANT,getCenterLocation(e.getClickedBlock().getLocation()).add(0,3,0),40,0.5,3,0.5);
+						p.sendMessage("§7Charging...");
+						for(int i=0;i<59;i++) {
+							plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
+									getCenterLocation(e.getClickedBlock().getLocation()).add(0,3,0),
+									10, 0.5,3,0.5),
+									i
+							);
+						}
+						plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+							if(p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) {
+								p.sendMessage("§7Charging aborted - you must hold your phone.");
+								return;
+							}
+							p.playSound(e.getClickedBlock().getLocation(),Sound.BLOCK_NOTE_CHIME,1,1);
+							nbti.setInteger("battery",100);
+							p.sendMessage("§aYour phone has been charged!");
+							p.getInventory().setItemInMainHand(nbti.getItem());
+						},60L);
+						return;
+					}
+
+				}
+
 				if(!nbti.getBoolean("state")) {
 					if(p.isSneaking()) {
 						if(nbti.getInteger("battery") < 5) {
@@ -124,7 +156,7 @@ public class InteractEvent implements Listener {
 					if(p.isSneaking()) {
 						p.sendMessage("§cjPhone KeyChain is not ready yet");
 						p.openInventory(jPhoneMain.keychain);
-					}else{
+					}else if(e.getAction() == Action.LEFT_CLICK_AIR){
 						p.sendMessage("§cCould not locate any nearby towers");
 					}
 				}
@@ -296,5 +328,9 @@ public class InteractEvent implements Listener {
 			}
 			p.closeInventory(); //close it
 		}
+	}
+
+	private Location getCenterLocation(Location loc) {
+		return loc.add((loc.getX() > 0 ? 0.5 : -0.5), 0.0, (loc.getZ() > 0 ? 0.5 : -0.5));
 	}
 }
