@@ -54,7 +54,7 @@ public class InteractEvent implements Listener {
 		this.util = new Util();
 	}
 
-	Random random = new Random();
+	private Random random = new Random();
 	private double randomnum() {
 		return random.nextBoolean() ? random.nextDouble() : -random.nextDouble();
 	}
@@ -72,40 +72,42 @@ public class InteractEvent implements Listener {
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
+				if(!nbti.getBoolean("state")) {
+					if(p.isSneaking()) {
+						if(nbti.getInteger("battery") < 5) {
+							p.sendMessage("§7Battery is too low to start");
+						}else{
+							nbti.setBoolean("state",true);
+							p.sendMessage("§7Turned on phone");
+						}
+						p.getInventory().setItemInMainHand(nbti.getItem());
+						return;
+					}
+					p.sendMessage("§cPhone is turned off, shift+rightclick to turn it on");
+					return;
+				}
 				if(e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if(p.isSneaking()) {
-						//p.sendMessage("§cjPhone App Switcher not ready yet");
-
-						//plugin.appswitcher.setItem(1,  new ItemStack(Material.BOOK_AND_QUILL,1));
-						//plugin.appswitcher.setItem(3,  new ItemStack(Material.TORCH,1));
-
 						util.createDisplay(p,Material.BOOK_AND_QUILL, jPhoneMain.appswitcher,10,"&9Settings","&7Configure your phone");
 						util.createDisplay(p,Material.SIGN, jPhoneMain.appswitcher,12,"&9Terminal","&7Open the console/terminal");
 						util.createDisplay(p,Material.TORCH, jPhoneMain.appswitcher,14,"&9Flashlight","&7Illuminate the world!|&7(Left click to turn off)");
 						p.openInventory(jPhoneMain.appswitcher);
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
-
-						//gui ? Gui.
 					}else{
 						Integer battery = nbti.getInteger("battery");
-
 						p.sendMessage(" ");
 						if(battery == -1) {
-							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + ChatColor.GOLD + " | " + ChatColor.GREEN + "Battery " + ChatColor.RED + "Dead");
+							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §aBattery §cDead");
 						}else{
-							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + ChatColor.GOLD + " | " + ChatColor.GREEN + "Battery " + ChatColor.YELLOW + battery + "%");
+							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §a Battery §e"  + battery + "%");
 						}
 						p.sendMessage("§7Check your data by /jackzco jcloud info");
-
-
 						if(!(nbti.hasKey("owner"))) {
-
 							//hover: "Go to App Switcher->Settings->Owner to claim"
 							TextComponent msg = new TextComponent("§cThis device is not claimed. ");
 							TextComponent msg_hover = new TextComponent("§c[Hover to learn how to]");
 							//message.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "http://spigotmc.org" ) );
 							msg_hover.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("To claim this device go to \n§eapp switcher §rthen §esettings §rthen\n§eowner§r to claim.").create() ) );
-
 							msg.addExtra(msg_hover);
 							p.spigot().sendMessage(msg);
 							//Key "owner" not set
@@ -121,10 +123,8 @@ public class InteractEvent implements Listener {
 				}else if(e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					if(p.isSneaking()) {
 						p.sendMessage("§cjPhone KeyChain is not ready yet");
-
 						p.openInventory(jPhoneMain.keychain);
 					}else{
-
 						p.sendMessage("§cCould not locate any nearby towers");
 					}
 				}
@@ -242,8 +242,9 @@ public class InteractEvent implements Listener {
 
 			}
 			//below is the stupid way to stop offhand placement. I don't know if two setcancels will fuck it up but i hope not
-		}else if(e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-			if(item.getType() == Material.TRIPWIRE_HOOK && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
+		}
+		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) {
+			if(item.getType() == Material.TRIPWIRE_HOOK && meta != null && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
 				e.setCancelled(true);
 			}
 		}

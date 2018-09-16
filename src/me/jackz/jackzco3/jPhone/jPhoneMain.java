@@ -29,22 +29,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class jPhoneMain implements Listener {
-	final Main plugin;
+	private final Main plugin;
 	static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
 	static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
 
 	String phoneName = "§3jPhone";
 
 	public jPhoneMain(Main plugin) {
-
 		this.plugin = plugin; // Store the plugin in situations where you need it.
 		plugin.getServer().getPluginManager().registerEvents(new ChatListener(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InteractEvent(plugin,this),plugin);
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
+		//plugin.getServer().getScheduler().runTaskTimer(plugin, new BatteryTick(), 0L,200L);
 	}
 
 	public ItemStack givePhone(Player p, String name, boolean locked) {
-
 		NBTItem nbt = ItemNBTAPI.getNBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
 		nbt.setInteger("battery",100);
 		if(!locked) nbt.setString("owner",p.getUniqueId().toString());
@@ -58,5 +58,4 @@ public class jPhoneMain implements Listener {
 		item.setItemMeta(meta);
 		return item;
 	}
-
 }

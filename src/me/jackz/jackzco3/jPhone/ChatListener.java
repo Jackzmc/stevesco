@@ -24,6 +24,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -38,6 +39,7 @@ import org.inventivetalent.glow.GlowAPI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class ChatListener implements Listener {
 	private Main plugin;
@@ -102,8 +104,14 @@ public class ChatListener implements Listener {
 							p.getInventory().setItemInMainHand(nbt.getItem());
 						}
 						break;
+					case "charge":
+						nbt.setInteger("battery", 100);
+						p.getInventory().setItemInMainHand(nbt.getItem());
+						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING,1,1);
+						p.sendMessage("§aYour phone has been charged using the power of BlockChain(TM)");
+						break;
 					case "trash":
-						Inventory trash = Bukkit.createInventory(null, 9 * 3, "jPhoneMain Portable Trash");
+						Inventory trash = Bukkit.createInventory(null, 9 * 3, "jPhone Portable Trash");
 						p.openInventory(trash);
 						break;
 					case "dangers": {
@@ -224,7 +232,13 @@ public class ChatListener implements Listener {
 						p.getInventory().setItemInMainHand(nbt.getItem());
 						break;
 					case "lookup":
-						p.performCommand("/jphone lookup " + args[1]);
+						p.sendMessage("§7Looking up player from UUID...");
+						try {
+							UUID uuid = UUID.fromString(args[1]);
+							p.sendMessage("§7Player: §e" + Bukkit.getOfflinePlayer(uuid).getName());
+						}catch(IllegalArgumentException ex) {
+							p.sendMessage("§cPlayer was not found, or invalid UUID");
+						}
 						break;
 					case "exit":
 						nbt.setBoolean("terminal",false);
