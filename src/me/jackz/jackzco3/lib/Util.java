@@ -41,7 +41,7 @@ public class Util {
         return ground.getType().isSolid();
     }
     public void createDisplay(Player p, Material material, Inventory inv, int slot, String name) {
-        createDisplay(p,material,inv,slot,name);
+        createDisplay(p,material,inv,slot,name,"");
     }
     public void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
         ItemStack item = new ItemStack(material);

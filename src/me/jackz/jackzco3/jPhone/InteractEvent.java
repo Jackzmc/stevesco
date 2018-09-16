@@ -90,7 +90,7 @@ public class InteractEvent implements Listener {
 							);
 						}
 						plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-							if(p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) {
+							if(p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
 								p.sendMessage("§7Charging aborted - you must hold your phone.");
 								return;
 							}
@@ -123,6 +123,8 @@ public class InteractEvent implements Listener {
 						util.createDisplay(p,Material.BOOK_AND_QUILL, jPhoneMain.appswitcher,10,"&9Settings","&7Configure your phone");
 						util.createDisplay(p,Material.SIGN, jPhoneMain.appswitcher,12,"&9Terminal","&7Open the console/terminal");
 						util.createDisplay(p,Material.TORCH, jPhoneMain.appswitcher,14,"&9Flashlight","&7Illuminate the world!|&7(Left click to turn off)");
+						util.createDisplay(p,Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher,16,"§9Power off","§7Turn the phone off");
+						util.createDisplay(p,Material.NOTE_BLOCK,jPhoneMain.appswitcher,28,"§9Steves Tunes","§7Your music, the way you want");
 						p.openInventory(jPhoneMain.appswitcher);
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
 					}else{
@@ -295,9 +297,12 @@ public class InteractEvent implements Listener {
 				p.sendMessage("§You must have your phone being held");
 				return;
 			}
+			if(clicked == null) return;
 			ItemStack item =  p.getInventory().getItemInMainHand();
 			NBTItem nbti = ItemNBTAPI.getNBTItem(item);
 			switch(clicked.getType()) {
+				case AIR:
+					break;
 				case TORCH:
 					ItemStack CurrentPhone = nbti.getItem();
 					ItemMeta PhoneMeta = CurrentPhone.getItemMeta();
@@ -323,10 +328,28 @@ public class InteractEvent implements Listener {
 					}
 
 					break;
+				case REDSTONE_LAMP_OFF:
+					nbti.setBoolean("state",false);
+					p.getInventory().setItemInMainHand(nbti.getItem());
+					p.sendMessage("§7Phone has been switched off.");
+					break;
+				case NOTE_BLOCK:
+					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
+					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+						p.openInventory(jPhoneMain.stunes);
+					},1L);
+					//play a tune
+					break;
 				default:
 					p.sendMessage("That item is not configured correctly.");
 			}
 			p.closeInventory(); //close it
+		}else if(inventory.getName().equals(jPhoneMain.stunes.getName())) {
+			event.setCancelled(true);
+			switch(clicked.getType()) {
+				default:
+					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
+			}
 		}
 	}
 

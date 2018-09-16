@@ -57,6 +57,10 @@ public class ChatListener implements Listener {
 			if(!nbt.hasNBTData()) {
 				return;
 			}
+			if(!nbt.getBoolean("state")) {
+				p.sendMessage("§7Cannot connect to phone: §cPhone is offline");
+				return;
+			}
 			if(nbt.getBoolean("terminal")) {
 				e.setCancelled(true);
 				p.sendMessage(" ");
@@ -85,7 +89,8 @@ public class ChatListener implements Listener {
 								"§edangers §7highlights dangers (legacy",
 								"§estate §7turn on/off phone",
 								"§elookup §7lookup a player by UUID",
-								"§eexit §7exit terminal mode"
+								"§eexit §7exit terminal mode",
+								"§ejcloud §7manage your jCloud account"
 						));
 						p.sendMessage("§3Current Commands:\n" + String.join("\n",cmds));
 						break;
@@ -210,9 +215,9 @@ public class ChatListener implements Listener {
 							TextComponent msg_2 = new TextComponent("[Players]");
 							TextComponent msg_3 = new TextComponent(" [Entities]");
 							TextComponent msg_4 = new TextComponent(" [All]");
-							msg_2.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/jphone _terminal players"));
-							msg_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/jphone _terminal entities"));
-							msg_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/jphone _terminal all"));
+							msg_2.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,"glow players"));
+							msg_3.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "glow entities"));
+							msg_4.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "glow all"));
 
 							msg.addExtra(msg_2);
 							msg.addExtra(msg_3);
@@ -238,6 +243,13 @@ public class ChatListener implements Listener {
 							p.sendMessage("§7Player: §e" + Bukkit.getOfflinePlayer(uuid).getName());
 						}catch(IllegalArgumentException ex) {
 							p.sendMessage("§cPlayer was not found, or invalid UUID");
+						}
+						break;
+					case "jcloud":
+						switch(args[1].toLowerCase()) {
+							default:
+								p.sendMessage("§7Failed to fetch data from jCloud API: §c501 Not Implemented");
+								break;
 						}
 						break;
 					case "exit":

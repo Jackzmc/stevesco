@@ -30,8 +30,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class jPhoneMain implements Listener {
 	private final Main plugin;
-	static Inventory keychain = Bukkit.createInventory(null, 9, "Inventory");
-	static Inventory appswitcher = Bukkit.createInventory(null, 36, "§4jPhone App Switcher");
+	static Inventory keychain = Bukkit.createInventory(null, 9, "jPhone Keychain");
+	static Inventory appswitcher = Bukkit.createInventory(null, 45, "§9jPhone App Switcher");
+	static Inventory stunes = Bukkit.createInventory(null,54,"§9Steves Tunes Player");
 
 	String phoneName = "§3jPhone";
 
