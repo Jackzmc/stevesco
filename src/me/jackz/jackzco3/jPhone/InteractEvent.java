@@ -27,6 +27,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Horse;
@@ -154,8 +155,18 @@ public class InteractEvent implements Listener {
 					}
 				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					if (p.isSneaking()) {
-						p.sendMessage("§cjPhone KeyChain is not ready yet");
-						p.openInventory(jPhoneMain.keychain);
+						if(new KeychainStorage(plugin,p).getStorage().size() == 0) {
+							p.sendMessage("§cSorry, there is no free jKeychains at the moment.");
+							return;
+						}
+						Location keyLoc = new KeychainStorage(plugin,p).getKeychain(p);
+						if(keyLoc == null) {
+							p.sendMessage("§cSorry, cannot create a jKeychain at this time.");
+							return;
+						}
+						Block block = p.getWorld().getBlockAt(keyLoc);
+						ShulkerBox keystore = (ShulkerBox) block.getState();
+						p.openInventory(keystore.getInventory());
 					} else if (e.getAction() == Action.LEFT_CLICK_AIR) {
 						p.sendMessage("§cCould not locate any nearby towers");
 					}

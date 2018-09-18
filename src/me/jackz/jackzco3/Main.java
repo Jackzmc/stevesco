@@ -40,7 +40,9 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
@@ -48,7 +50,7 @@ public class Main extends JavaPlugin {
 
     String latest_version = "0.0.0";
     static String jackzco_prefix = "§3JackzCo§6>§r ";
-
+    public Map<String,Location> keychainMap = new HashMap<>();
     private FileConfiguration config;
 
     @Override

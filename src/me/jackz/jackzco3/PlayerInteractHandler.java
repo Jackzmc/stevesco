@@ -42,6 +42,10 @@ class PlayerInteractHandler implements Listener {
 		if(e.getHand() == EquipmentSlot.HAND) {
 			ItemStack hand = p.getInventory().getItemInMainHand();
 			if(hand != null && hand.getType() == Material.STICK) {
+				/*
+					name = §9Debugger
+					lore[0] = <filename here>
+				 */
 				ItemMeta meta = hand.getItemMeta();
 				e.setCancelled(true);
 				if(p.isSneaking()) {

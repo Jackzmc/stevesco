@@ -19,6 +19,7 @@ package me.jackz.jackzco3;
 
 import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,20 +31,31 @@ class jCommandAdmin {
 			return;
 		}
 		Player p = (Player) sender;
-		if(args[1].equalsIgnoreCase("tower")) {
-			if(args.length < 3) {
-				p.sendMessage("§7Please enter an ID for the tower");
-				return;
-			}
-			//args[0], args[1], args[2]
-			if(Util.isInteger(args[2])) {
-				String id = String.format("%03d", Integer.parseInt(args[2]));
-				jTower twr = new jTower(id,p.getLocation());
-				twr.toJSON(plugin);
-				p.sendMessage("§ajTower #" + id + " created");
-			}else{
-				p.sendMessage("§cNot a valid ID");
-			}
+		if(!p.getUniqueId().toString().equals("b0c16432-67a6-4e3d-b49a-61b323c49b03")) {
+			p.sendMessage("§cYou are not a jackz, u fuk off m8");
+			return;
+		}
+		switch(args[1].toLowerCase()) {
+			case "tower":
+				if(args.length < 3) {
+					p.sendMessage("§7Please enter an ID for the tower");
+					return;
+				}
+				//args[0], args[1], args[2]
+				if(Util.isInteger(args[2])) {
+					String id = String.format("%03d", Integer.parseInt(args[2]));
+					jTower twr = new jTower(id,p.getLocation());
+					twr.toJSON(plugin);
+					p.sendMessage("§ajTower #" + id + " created");
+				}else{
+					p.sendMessage("§cNot a valid ID");
+				}
+				break;
+			case "keychain":
+				p.getInventory().addItem(new Util().getCustomItem(Material.BLAZE_ROD,"§6jKeychain Creator"));
+				break;
+			default:
+				p.sendMessage("§cUnknown admin option, you fuck");
 		}
 	}
 }

@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Util {
     public static boolean isInteger(String s) {
@@ -63,14 +64,30 @@ public class Util {
         item.setItemMeta(meta);
         inv.setItem(Slot, item);
     }
-    public ItemStack getNamedItem(Material mt, String name) {
+    public ItemStack getCustomItem(Material mt, String name) {
+        return getCustomItem(mt,name,new ArrayList<>());
+    }
+    public ItemStack getCustomItem(Material mt, String name, List<String> lore) {
         ItemStack item = new ItemStack(mt);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
+        meta.setLore(lore);
         item.setItemMeta(meta);
         return item;
     }
     public Location getCenterLocation(Location loc) {
         return loc.add((loc.getX() > 0 ? 0.5 : -0.5), 0.0, (loc.getZ() > 0 ? 0.5 : -0.5));
+    }
+    public boolean checkItem(ItemStack input, String name) {
+        ItemMeta meta = input.getItemMeta();
+        if(meta == null || meta.getDisplayName() == null) {
+            return false;
+        }else{
+            return meta.getDisplayName().equals(name);
+        }
+    }
+    public boolean checkItem(ItemStack input, Material mt, String name) {
+        if(input == null || input.getType() != mt) return false;
+        return checkItem(input,name);
     }
 }

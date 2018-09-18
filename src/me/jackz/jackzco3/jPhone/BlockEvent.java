@@ -69,7 +69,7 @@ public class BlockEvent implements Listener {
 			if(isCharger) {
 				if(p.isSneaking()) {
 					new LocationStore(plugin).deleteValue(e.getBlock().getLocation()); //todo: make .deleteValue()
-					p.getInventory().addItem(util.getNamedItem(Material.PISTON_BASE,"§fjCharger"));
+					p.getInventory().addItem(util.getCustomItem(Material.PISTON_BASE,"§fjCharger"));
 					p.sendMessage("§cSuccessfully removed jCharger");
 				}else{
 					e.setCancelled(true);
