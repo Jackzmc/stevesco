@@ -31,9 +31,9 @@ public class LocationStore {
     }
 
     public boolean getBoolean(Location loc) {
-        try(FileReader file = new FileReader(plugin.getDataFolder().toString() + "/location.store")){
+        try(FileReader fr = new FileReader(file)){
             JSONParser parser = new JSONParser();
-            JSONObject obj = (JSONObject) parser.parse(file);
+            JSONObject obj = (JSONObject) parser.parse(fr);
             Object output = obj.get(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
             if(output == null) {
                 return false;
@@ -46,8 +46,8 @@ public class LocationStore {
     }
     public String getString(Location loc) {
         JSONParser parser = new JSONParser();
-        try(FileReader file = new FileReader(plugin.getDataFolder().toString() + "/location.store")){
-            JSONObject obj = (JSONObject) parser.parse(file);
+        try(FileReader fr = new FileReader(file)){
+            JSONObject obj = (JSONObject) parser.parse(fr);
             Object output = obj.get(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
             if(output == null) {
                 return null;
@@ -62,7 +62,6 @@ public class LocationStore {
     @SuppressWarnings("unchecked")
     public void setString(Location loc,String value) {
         try{
-            File file = new File(plugin.getDataFolder().toString() + "/location.store");
             JSONObject obj;
             if(!file.exists()) {
                 //throw new FileNotFoundException();
@@ -83,7 +82,7 @@ public class LocationStore {
     @SuppressWarnings("unchecked")
     public void setBoolean(Location loc,boolean value) {
         try{
-            File file = new File(plugin.getDataFolder().toString() + "/location.store");
+
             JSONObject obj;
             if(!file.exists()) {
                 //throw new FileNotFoundException();
@@ -104,7 +103,6 @@ public class LocationStore {
 
 	public void deleteValue(Location loc) {
 		try{
-			File file = new File(plugin.getDataFolder().toString() + "/location.store");
 			JSONObject obj;
 			if(!file.exists()) {
 				//throw new FileNotFoundException();
@@ -122,4 +120,8 @@ public class LocationStore {
 			plugin.getLogger().warning(e.toString());
 		}
 	}
+	/*
+	getReader
+	saveWrite
+	 */
 }
