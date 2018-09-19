@@ -22,6 +22,7 @@ import com.sk89q.worldguard.bukkit.RegionQuery;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import me.jackz.jackzco3.jPhone.KeyChainStorage;
 import me.jackz.jackzco3.jPhone.jPhoneMain;
 import me.jackz.jackzco3.lib.Config;
 import me.jackz.jackzco3.lib.jTower;
@@ -83,6 +84,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        new KeyChainStorage(this).saveMap(keychainMap); //hopefully saves map
 		//getServer().getScheduler().cancelAllTasks();
     }
 

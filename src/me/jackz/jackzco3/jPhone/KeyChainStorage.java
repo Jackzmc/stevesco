@@ -18,16 +18,10 @@
 package me.jackz.jackzco3.jPhone;
 
 import me.jackz.jackzco3.Main;
-import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.File;
@@ -35,38 +29,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
-class KeychainEvents implements Listener {
-	private final Main plugin;
-	KeychainEvents(Main plugin) {
-		this.plugin = plugin;
-	}
-
-	@EventHandler
-	public void onClick(PlayerInteractEvent e) {
-		Player p = e.getPlayer();
-		if(e.getHand() == EquipmentSlot.HAND) {
-			if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if(new Util().checkItem(e.getItem(), Material.BLAZE_ROD,"§6jKeychain Creator")) {
-					//todo: check if inventory
-					//todo: convert name
-					e.setCancelled(true);
-					boolean status = new KeychainStorage(plugin,p).addKeyChain(e.getClickedBlock().getLocation());
-					if(status) {
-						p.sendMessage("§aSuccessfully added to storage");
-					}else{
-						p.sendMessage("§cFailed to add storage.");
-					}
-				}
-			}
-		}
-	}
-}
-
-class KeychainStorage {
+public class KeyChainStorage {
 	private final Main plugin;
 	private final File file;
+	private final File jsonMap;
 	//private Map<String,Location> keychainMap = new HashMap<>(); //store in file instead of hashmap? | or in main.java
 	/*
 	each player gets registered a new storage
@@ -87,8 +56,9 @@ class KeychainStorage {
 		"playerUUID":"location (x,y,z only)"
 	}
 	 */
-	KeychainStorage(Main plugin, Player p) {
+	public KeyChainStorage(Main plugin) {
 		file = new File(plugin.getDataFolder() + "/data/keychains.list");
+		jsonMap = new File(plugin.getDataFolder() + "/data/keychain.map");
 		this.plugin = plugin;
 	}
 	public Location getKeychain(Player p) {
@@ -103,6 +73,7 @@ class KeychainStorage {
 				keychains.remove(0);
 				saveArray(keychains);
 				plugin.keychainMap.put(p.getUniqueId().toString(),loc);
+				//saveMap(); //stored on onDisable now
 				return loc;
 			}else{
 				return null;
@@ -116,11 +87,70 @@ class KeychainStorage {
 		//check ID based off player (store map?)
 		//then get location from ID (map)
 	}
-	private Map<String,Location> getMap() {
-		return null;
+	/*
+	map:
+	{
+		"uuid":"string loc"
 	}
-	private void storeMap() {
+	 */
+	/*private JSONObject getMap2(Player p) {
+		if(!file.exists())  {
+			saveObject(new JSONObject());
+			return null;
+		}else{
+			try{
+				JSONParser parser = new JSONParser();
+				FileReader freader = new FileReader(file);
+				JSONObject obj = (JSONObject) parser.parse(freader);
+				return obj;
+			}catch (Exception e) {
+				plugin.getLogger().warning("KeyChain#getMap failed: " + e.toString());
+				return null;
+			}
+		}
+	}*/
+	private Map<String,Location> getMap(Player p) {
+		if(!file.exists())  {
+			Map<String,Location> map = new HashMap<>();
+			saveMap(map);
+			return map;
+		}else{
+			try{
+				JSONParser parser = new JSONParser();
+				FileReader freader = new FileReader(file);
+				JSONObject obj = (JSONObject) parser.parse(freader);
+				Map<String,Location> map = new HashMap<>();
 
+				for (Object o : obj.keySet()) {
+					String key = (String) o;
+					String value = obj.get(key).toString();
+					double[] ldoubles = Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
+					Location loc = new Location(p.getWorld(), ldoubles[0], ldoubles[1], ldoubles[2]);
+					map.put(key, loc);
+				}
+				return map;
+				//should be printed below?
+			}catch (Exception e) {
+				plugin.getLogger().warning("KeyChain#getMap failed: " + e.toString());
+				return null;
+			}
+		}
+	}
+	public void saveMap(Map<String,Location> map) {
+		try {
+			FileWriter fw = new FileWriter(jsonMap);
+			JSONArray array = new JSONArray();
+			for(Object o : map.keySet()) {
+				String player = (String) o; //UUID
+				Location loc = map.get(player);
+				array.add(String.format("%f,%f,%f",loc.getX(),loc.getY(),loc.getZ()));
+			}
+			fw.write(array.toJSONString());
+			fw.flush();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -151,24 +181,19 @@ class KeychainStorage {
 	}
 
 	public JSONArray getStorage() {
-		JSONArray keychainstore;
 		if(!file.exists())  {
-			createDefaultObject();
-			keychainstore = new JSONArray();
+			saveArray(new JSONArray());
+			return new JSONArray();
 		}else{
 			try{
 				JSONParser parser = new JSONParser();
 				FileReader freader = new FileReader(file);
-				keychainstore = (JSONArray) parser.parse(freader);
+				return (JSONArray) parser.parse(freader);
 				//should be printed below?
 			}catch (Exception e) {
 				plugin.getLogger().warning("KeyChain#getStorage failed: " + e.toString());
 				return null;
 			}
 		}
-		return keychainstore;
-	}
-	private void createDefaultObject() {
-		saveArray(new JSONArray());
 	}
 }

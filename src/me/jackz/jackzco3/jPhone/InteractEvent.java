@@ -155,11 +155,11 @@ public class InteractEvent implements Listener {
 					}
 				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					if (p.isSneaking()) {
-						if(new KeychainStorage(plugin,p).getStorage().size() == 0) {
+						if(new KeyChainStorage(plugin).getStorage().size() == 0) {
 							p.sendMessage("§cSorry, there is no free jKeychains at the moment.");
 							return;
 						}
-						Location keyLoc = new KeychainStorage(plugin,p).getKeychain(p);
+						Location keyLoc = new KeyChainStorage(plugin).getKeychain(p);
 						if(keyLoc == null) {
 							p.sendMessage("§cSorry, cannot create a jKeychain at this time.");
 							return;
