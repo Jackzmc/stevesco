@@ -56,6 +56,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        keychainMap = new KeyChainStorage(this).loadMap(Bukkit.getWorld("overworld"));
         plugin = this;
         new jPhoneMain(this);
         latest_version = this.getDescription().getVersion();

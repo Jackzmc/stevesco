@@ -19,6 +19,7 @@ package me.jackz.jackzco3.jPhone;
 
 import me.jackz.jackzco3.Main;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class KeyChainStorage {
 	private final Main plugin;
@@ -109,29 +111,31 @@ public class KeyChainStorage {
 			}
 		}
 	}*/
-	private Map<String,Location> getMap(Player p) {
-		if(!file.exists())  {
+	public Map<String,Location> loadMap(World world) {
+		if(!jsonMap.exists())  {
+			plugin.getLogger().warning("jsonmap doesnt exist, creating blank");
 			Map<String,Location> map = new HashMap<>();
 			saveMap(map);
 			return map;
 		}else{
 			try{
 				JSONParser parser = new JSONParser();
-				FileReader freader = new FileReader(file);
+				FileReader freader = new FileReader(jsonMap);
 				JSONObject obj = (JSONObject) parser.parse(freader);
 				Map<String,Location> map = new HashMap<>();
-
-				for (Object o : obj.keySet()) {
-					String key = (String) o;
-					String value = obj.get(key).toString();
-					double[] ldoubles = Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
-					Location loc = new Location(p.getWorld(), ldoubles[0], ldoubles[1], ldoubles[2]);
-					map.put(key, loc);
+				if(obj.size() > 0) {
+					for (Object o : obj.keySet()) {
+						String key = (String) o;
+						String value = obj.get(key).toString();
+						double[] ldoubles = Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
+						Location loc = new Location(world, ldoubles[0], ldoubles[1], ldoubles[2]);
+						map.put(key, loc);
+					}
 				}
 				return map;
 				//should be printed below?
 			}catch (Exception e) {
-				plugin.getLogger().warning("KeyChain#getMap failed: " + e.toString());
+				plugin.getLogger().warning("KeyChain#loadMap failed: " + e.toString());
 				return null;
 			}
 		}
@@ -139,17 +143,20 @@ public class KeyChainStorage {
 	public void saveMap(Map<String,Location> map) {
 		try {
 			FileWriter fw = new FileWriter(jsonMap);
-			JSONArray array = new JSONArray();
-			for(Object o : map.keySet()) {
-				String player = (String) o; //UUID
-				Location loc = map.get(player);
-				array.add(String.format("%f,%f,%f",loc.getX(),loc.getY(),loc.getZ()));
+			JSONObject root = new JSONObject();
+			if(map.size() > 0) {
+				for (Object o : map.keySet()) {
+					String playerID = (String) o; //UUID
+					Location loc = map.get(playerID);
+					root.put(playerID, String.format("%f,%f,%f", loc.getX(), loc.getY(), loc.getZ()));
+				}
 			}
-			fw.write(array.toJSONString());
+			fw.write(root.toJSONString());
 			fw.flush();
 			fw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+			plugin.getLogger().log(Level.WARNING,"KeyChain#saveMap",e);
 		}
 	}
 
