@@ -109,6 +109,32 @@ public class ChatListener implements Listener {
 							p.getInventory().setItemInMainHand(nbt.getItem());
 						}
 						break;
+					case "text":
+						//text 'player' 'message' [3 args]
+						if(args.length < 3) {
+							p.sendMessage("§cSyntax for texting: §etext <player> <message>");
+							return;
+						}
+						Player rec = Bukkit.getPlayer(args[1]);
+						if(rec == null) {
+							p.sendMessage("§cPlayer §e" + args[1] + " §cwas not found online");
+							return;
+						}else if(rec == p) {
+						p.sendMessage("§cYou can't text yourself!");
+							return;
+						}
+						//loop rec's inventory to check for phone:
+						for (int i = 0; i < p.getInventory().getSize(); i++) {
+							ItemStack item = p.getInventory().getItem(i);
+							if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
+							ItemMeta meta = item.getItemMeta();
+							if (meta.getDisplayName() == null) continue;
+							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
+								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
+								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
+							}
+						}
+						break;
 					case "charge":
 						nbt.setInteger("battery", 100);
 						p.getInventory().setItemInMainHand(nbt.getItem());

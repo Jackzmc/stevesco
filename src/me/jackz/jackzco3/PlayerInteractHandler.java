@@ -27,7 +27,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 class PlayerInteractHandler implements Listener {
 	private final Main plugin;
@@ -41,12 +40,11 @@ class PlayerInteractHandler implements Listener {
 		Player p = e.getPlayer();
 		if(e.getHand() == EquipmentSlot.HAND) {
 			ItemStack hand = p.getInventory().getItemInMainHand();
-			if(hand != null && hand.getType() == Material.STICK) {
+			if(new me.jackz.jackzco3.lib.Util().checkItem(hand,Material.STICK,"§6LocationStore Checker")) {
 				/*
 					name = §9Debugger
 					lore[0] = <filename here>
 				 */
-				ItemMeta meta = hand.getItemMeta();
 				e.setCancelled(true);
 				if(p.isSneaking()) {
 					Location loc = e.getClickedBlock().getLocation();

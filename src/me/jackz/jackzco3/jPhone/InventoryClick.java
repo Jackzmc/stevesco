@@ -21,6 +21,9 @@ import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.Util;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,7 +70,16 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(CurrentPhone);
 					break;
 				case BOOK_AND_QUILL:
-					p.sendMessage("§7Type /jphone claim to claim");
+					BaseComponent message = new TextComponent("§3jPhoneOS Settings\n");
+					if(!nbti.hasKey("owner")) {
+						BaseComponent ownermsg = new TextComponent("§cThis phone is not claimed, click to claim.\n");
+						ownermsg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"claim"));
+						message.addExtra(ownermsg);
+						message.addExtra("\n");
+					}
+					message.addExtra("§7No other settings found.\n");
+					p.spigot().sendMessage(message);
+					//p.sendMessage("§7Type /jphone claim to claim");
 					break;
 				case SIGN:
 					if(nbti.getBoolean("terminal")) {
@@ -90,6 +102,7 @@ public class InventoryClick implements Listener {
 					break;
 				case NOTE_BLOCK:
 					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
+					util.createDisplay(p,Material.RECORD_3,jPhoneMain.stunes,2,"§9Legacy Player");
 					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 						p.openInventory(jPhoneMain.stunes);
 					},1L);
@@ -102,6 +115,9 @@ public class InventoryClick implements Listener {
 		}else if(inventory.getName().equals(jPhoneMain.stunes.getName())) {
 			event.setCancelled(true);
 			switch(clicked.getType()) {
+				case RECORD_3:
+					p.performCommand("music");
+					break;
 				default:
 					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
 			}
