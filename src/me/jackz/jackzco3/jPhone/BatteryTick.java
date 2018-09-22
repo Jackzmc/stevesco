@@ -27,15 +27,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class BatteryTick implements Runnable {
 	public void run() {
-		for(Player p : Bukkit.getOnlinePlayers()){
-
-			//Inventory inv = p.getInventory();
-			for(int i = 0; i < p.getInventory().getSize(); i++) {
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			//check player's inventory
+			for (int i = 0; i < p.getInventory().getSize(); i++) {
 				ItemStack item = p.getInventory().getItem(i);
-				if(item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
+				if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
 				ItemMeta meta = item.getItemMeta();
-				if(meta.getDisplayName() == null) continue;
-				if(meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) { //check if tripwire hook is jPhone || jLight
+				if (meta.getDisplayName() == null) continue;
+				if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) { //check if tripwire hook is jPhone || jLight
 
 					NBTItem nbt = ItemNBTAPI.getNBTItem(item);
 					if (nbt.getBoolean("state")) { //If phone on
@@ -56,6 +55,9 @@ public class BatteryTick implements Runnable {
 					}
 				}
 			}
+
+			//check for nearby blocks
+
 		}
 	}
 }

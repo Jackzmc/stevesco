@@ -18,34 +18,34 @@
 package me.jackz.jackzco3.jPhone;
 
 import me.jackz.jackzco3.Main;
-import me.jackz.jackzco3.lib.Util;
+import me.jackz.jackzco3.lib.LocationStore;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 
-class KeyChainEvents implements Listener {
+public class BatteryEffect implements Runnable {
 	private final Main plugin;
-	KeyChainEvents(Main plugin) {
+	BatteryEffect(Main plugin) {
 		this.plugin = plugin;
 	}
-	@EventHandler
-	void onClick(PlayerInteractEvent e) {
-		Player p = e.getPlayer();
-		if(e.getHand() == EquipmentSlot.HAND) {
-			if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if(new Util().checkItem(e.getItem(), Material.BLAZE_ROD,"§6jKeychain Creator")) {
-					//todo: check if inventory
-					//todo: convert name
-					e.setCancelled(true);
-					boolean status = new KeyChainStorage(plugin).addKeyChain(e.getClickedBlock().getLocation());
-					if(status) {
-						p.sendMessage("§aSuccessfully added to storage");
-					}else{
-						p.sendMessage("§cFailed to add storage.");
+
+	@Override
+	public void run() {
+		int radius = 5;
+		for(Player p : Bukkit.getOnlinePlayers()) {
+			for (int x = radius; x >= -radius; x--) {
+				for (int y = radius; y >= -radius; y--) {
+					for (int z = radius; z >= -radius; z--) {
+						Block bk = p.getLocation().getBlock().getRelative(x, y, z);
+						if (bk.getType().equals(Material.PISTON_BASE)) {
+							if (new LocationStore(plugin).getBoolean(bk.getLocation())) {
+								Location loc = new me.jackz.jackzco3.lib.Util().getCenterLocation(bk.getLocation());
+								p.spawnParticle(Particle.ENCHANTMENT_TABLE, loc.add(0, 3, 0), 10, 0.5, 5, 0.5);
+							}
+						}
 					}
 				}
 			}
