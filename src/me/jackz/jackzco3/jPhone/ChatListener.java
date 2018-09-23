@@ -104,17 +104,25 @@ public class ChatListener implements Listener {
 								"§etext §7text any player that has a jPhone",
 								"§ejcloud §7manage your jCloud account"
 						));
+						final int pageResults = 10;
 						List<List<String>> commands = new ArrayList<>();
-						for(int i=0;i<cmds.size();i++)
-                            if (i % 15 == 0) {
-                                List<String> list = new ArrayList<>(cmds.subList(0, 14));
-                                commands.add(list);
-                            }
+						if(cmds.size() >= pageResults) {
+							for (int i = 0; i < cmds.size(); i++)
+								if (i % pageResults == 0) {
+									//index of:
+									int starting = (((i+10) / pageResults) - 1) * pageResults;
+									//todo: check
+									int endsize = (starting+(pageResults - 1)) > cmds.size() ? cmds.size() : starting+(pageResults - 1);
+									List<String> list = new ArrayList<>(cmds.subList(i, endsize));
+									commands.add(list);
+								}
+						}else{
+							commands.add(cmds);
+						}
                         if(pageno > commands.size()) {
                             pageno = commands.size();
                         }
-                        pageno = pageno--; //convert to array #
-						p.sendMessage("§3Current Commands: §7(Page §e1/" + commands.size() + "§7)\n" + String.join("\n",cmds.get(pageno)));
+						p.sendMessage("§3Current Commands: §7(Page §e" + (pageno) + "/" + commands.size() + "§7)\n" + String.join("\n",commands.get(pageno-1)));
 						break;
 					case "help":
 						p.sendMessage("§7Hi, terminal is currently in alpha and missing features.");
