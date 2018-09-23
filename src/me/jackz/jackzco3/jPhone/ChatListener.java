@@ -132,8 +132,10 @@ public class ChatListener implements Listener {
 							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
 								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
 								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
+								return;
 							}
 						}
+						p.sendMessage("§cPlayer does not have a jPhone. Cannot receive texts");
 						break;
 					case "charge":
 						nbt.setInteger("battery", 100);
