@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -80,6 +81,16 @@ public class ChatListener implements Listener {
 						p.getInventory().setItemInMainHand(CurrentPhone);
 						break;
 					case "commands":
+					    int pageno = 1;
+					    if(args.length >= 2) {
+					        if(new Util().isInteger(args[1])) {
+					            pageno = Integer.parseInt(args[1]);
+					            if(pageno <= 0) {
+					                pageno = 1;
+                                }
+                            }
+                        }
+					    //TODO: pagination (split by 10 or 15s)
 						List<String> cmds = new ArrayList<>(Arrays.asList( //make clickable names
 								"§ehelp §7get jphone help",
 								"§eversion §7check the version of terminal",
@@ -90,9 +101,20 @@ public class ChatListener implements Listener {
 								"§estate §7turn on/off phone",
 								"§elookup §7lookup a player by UUID",
 								"§eexit §7exit terminal mode",
+								"§etext §7text any player that has a jPhone",
 								"§ejcloud §7manage your jCloud account"
 						));
-						p.sendMessage("§3Current Commands:\n" + String.join("\n",cmds));
+						List<List<String>> commands = new ArrayList<>();
+						for(int i=0;i<cmds.size();i++)
+                            if (i % 15 == 0) {
+                                List<String> list = new ArrayList<>(cmds.subList(0, 14));
+                                commands.add(list);
+                            }
+                        if(pageno > commands.size()) {
+                            pageno = commands.size();
+                        }
+                        pageno = pageno--; //convert to array #
+						p.sendMessage("§3Current Commands: §7(Page §e1/" + commands.size() + "§7)\n" + String.join("\n",cmds.get(pageno)));
 						break;
 					case "help":
 						p.sendMessage("§7Hi, terminal is currently in alpha and missing features.");
