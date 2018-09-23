@@ -110,9 +110,7 @@ public class ChatListener implements Listener {
 							for (int i = 0; i < cmds.size(); i++)
 								if (i % pageResults == 0) {
 									//index of:
-									int starting = (((i+10) / pageResults) - 1) * pageResults;
-									//todo: check
-									int endsize = (starting+(pageResults - 1)) > cmds.size() ? cmds.size() : starting+(pageResults - 1);
+									int endsize = (i+(pageResults - 1)) > cmds.size() ? cmds.size() : i+(pageResults - 1);
 									List<String> list = new ArrayList<>(cmds.subList(i, endsize));
 									commands.add(list);
 								}

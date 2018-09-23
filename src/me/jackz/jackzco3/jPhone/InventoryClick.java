@@ -61,15 +61,14 @@ public class InventoryClick implements Listener {
 			switch(clicked.getType()) {
 				case AIR:
 					break;
-				case TORCH:
-					ItemStack CurrentPhone = nbti.getItem();
-					ItemMeta PhoneMeta = CurrentPhone.getItemMeta();
-					PhoneMeta.setDisplayName("§fjLight");
-					CurrentPhone.setItemMeta(PhoneMeta);
-					CurrentPhone.setType(Material.TORCH);
-					p.getInventory().setItemInMainHand(CurrentPhone);
+				case TORCH: {
+					ItemMeta meta = item.getItemMeta();
+					meta.setDisplayName("§fjLight");
+					item.setItemMeta(meta);
+					item.setType(Material.TORCH);
+					p.getInventory().setItemInMainHand(item);
 					break;
-				case BOOK_AND_QUILL:
+				} case BOOK_AND_QUILL:
 					BaseComponent message = new TextComponent("§3jPhoneOS Settings\n");
 					if(!nbti.hasKey("owner")) {
 						BaseComponent ownermsg = new TextComponent("§cThis phone is not claimed, click to claim.\n");
@@ -95,7 +94,14 @@ public class InventoryClick implements Listener {
 					}
 
 					break;
-				case REDSTONE_LAMP_OFF:
+				case BONE: {
+					ItemMeta meta = item.getItemMeta();
+					meta.setDisplayName("§3jWrench");
+					item.setItemMeta(meta);
+					item.setType(Material.BONE);
+					p.getInventory().setItemInMainHand(item);
+					break;
+				} case REDSTONE_LAMP_OFF:
 					nbti.setBoolean("state",false);
 					p.getInventory().setItemInMainHand(nbti.getItem());
 					p.sendMessage("§7Phone has been switched off.");

@@ -42,6 +42,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class InteractEvent implements Listener {
@@ -124,6 +127,7 @@ public class InteractEvent implements Listener {
 						util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
 						util.createDisplay(p, Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
 						util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
+						util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
 						p.openInventory(jPhoneMain.appswitcher);
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
 					} else {
@@ -172,10 +176,63 @@ public class InteractEvent implements Listener {
 					}
 				}
 			}else if(p.getInventory().getItemInMainHand().getType() == Material.PISTON_BASE && e.getAction() == Action.RIGHT_CLICK_AIR) {
-				if(meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
+				if (meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
 					e.setCancelled(true);
 					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
 					return;
+				}
+			}else if(util.checkItem(item,Material.BONE,"§3jWrench")) {
+				e.setCancelled(true);
+				if(p.isSneaking()) {
+					ItemMeta phoneMeta = item.getItemMeta();
+					item.setType(Material.TRIPWIRE_HOOK);
+					phoneMeta.setDisplayName(jphone.phoneName); //check if 2X
+					item.setItemMeta(phoneMeta);
+					p.getInventory().setItemInMainHand(item);
+					return;
+				}
+				List<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
+						Material.PISTON_BASE,
+						Material.PISTON_STICKY_BASE,
+						Material.IRON_DOOR,
+						Material.DISPENSER,
+						Material.CHEST,
+						Material.WOOD_DOOR,
+						Material.DROPPER
+				));
+				if(e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+					Block b = e.getClickedBlock();
+					if(!allowedBlocks.contains(b.getType())) {
+						p.sendMessage("§cInvalid block");
+						//p.sendMessage("§cValid blocks: §e" + String.join(",",allowedBlocks::toString));
+						return;
+					}
+					try {
+						/*BlockFace[] directions = {BlockFace.NORTH,BlockFace.EAST,BlockFace.SOUTH,BlockFace.WEST,BlockFace.UP,BlockFace.DOWN};
+						Directional dir = (Directional) b;
+						BlockFace direction = dir.getFacing();
+						dir.setFacingDirection(BlockFace.EAST_NORTH_EAST);*/
+						if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+							/*int index = java.util.Arrays.binarySearch(directions,direction);
+							if(index+1 == directions.length) {
+								dir.setFacingDirection(directions[0]);
+							}else{
+								dir.setFacingDirection(directions[++index]);
+							}*/
+							int data = b.getData();
+							b.setData((byte) ((data == 5) ? 0 : ++data));
+						}else if(e.getAction() == Action.LEFT_CLICK_BLOCK) {
+							int data = b.getData();
+							b.setData((byte) ((data == 0) ? 5 : --data));
+						}
+
+					}catch(IllegalArgumentException ex) {
+						plugin.getLogger().warning("Wrench failure: " + ex.toString());
+						p.sendMessage("§7Uh oh! Something went wrong. §c" + ex.toString());
+					}
+
+				}else{
+					p.sendMessage("§cPlease left/right click a block");
 				}
 			}else if(p.getInventory().getItemInMainHand().getType() == Material.NETHER_STAR) {
 				if (p.isSneaking()) {
