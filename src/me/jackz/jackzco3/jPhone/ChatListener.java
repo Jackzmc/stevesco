@@ -38,11 +38,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ChatListener implements Listener {
 	private Main plugin;
@@ -102,10 +101,11 @@ public class ChatListener implements Listener {
 								"§edangers §7highlights dangers (legacy",
 								"§estate §7turn on/off phone",
 								"§elookup §7lookup a player by UUID",
-								"§eexit §7exit terminal mode",
 								"§etext §7text any player that has a jPhone",
 								"§ekeychain §7View your used/free space on your keychain",
-								"§ejcloud §7manage your jCloud account"
+								"§ejcloud §7manage your jCloud account",
+								"§edate/time §7view the current time or date",
+								"§eexit §7exit terminal mode"
 						));
 						final int pageResults = 10;
 						List<List<String>> commands = new ArrayList<>();
@@ -136,7 +136,15 @@ public class ChatListener implements Listener {
 						p.sendMessage("§7Current Version is: §e" + plugin.getJackzCo().getString("versions.terminal"));
 						p.sendMessage("§7Type §ecommands §7to view commands");
 						break;
-					case "claim":
+					case "time": {
+						DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+						p.sendMessage("§7The time is §e" + dateFormat.format(new Date()));
+						break;
+					} case "date": {
+						DateFormat dateFormat = new SimpleDateFormat("EEEE, MMMMMM d yyyy ");
+						p.sendMessage("§7Today is §e" + dateFormat.format(new Date()));
+						break;
+					} case "claim":
 					case "own":
 						if (nbt.hasKey("owner")) {
 							p.sendMessage("§cThis device is claimed by: §e" + nbt.getString("owner")  + (nbt.getString("owner").equals(p.getUniqueId().toString()) ? " §7(You)":""));
