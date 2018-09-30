@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 public class InventoryStore {
 	private Main plugin;
@@ -37,6 +38,16 @@ public class InventoryStore {
 		this.plugin = plugin;
 	}
 
+	public int getFillSize(Inventory inv) {
+		return inv.getSize();
+	}
+	public int getFillSize() {
+		File invFile = new File (plugin.getDataFolder(), "inventories/" + name + ".yml");
+		FileConfiguration config = YamlConfiguration.loadConfiguration(invFile);
+		Set<String> keys = config.getKeys(false);
+		return keys.size();
+
+	}
 	public Inventory loadInv() {
 		Inventory inv = Bukkit.createInventory(null,slots,name);
 		inv.clear();

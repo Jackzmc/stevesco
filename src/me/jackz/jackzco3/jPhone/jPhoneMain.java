@@ -34,7 +34,7 @@ public class jPhoneMain implements Listener {
 	static Inventory appswitcher = Bukkit.createInventory(null, 45, "§9jPhone App Switcher");
 	static Inventory stunes = Bukkit.createInventory(null,54,"§9Steves Tunes Player");
 
-	String phoneName = "§3jPhone";
+	static String phoneName = "§3jPhone";
 
 	public jPhoneMain(Main plugin) {
 		this.plugin = plugin; // Store the plugin in situations where you need it.

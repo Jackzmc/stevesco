@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -37,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,6 +104,7 @@ public class ChatListener implements Listener {
 								"§elookup §7lookup a player by UUID",
 								"§eexit §7exit terminal mode",
 								"§etext §7text any player that has a jPhone",
+								"§ekeychain §7View your used/free space on your keychain",
 								"§ejcloud §7manage your jCloud account"
 						));
 						final int pageResults = 10;
@@ -121,6 +124,12 @@ public class ChatListener implements Listener {
                             pageno = commands.size();
                         }
 						p.sendMessage("§3Current Commands: §7(Page §e" + (pageno) + "/" + commands.size() + "§7)\n" + String.join("\n",commands.get(pageno-1)));
+						break;
+					case "keychain":
+						int max_size = 9*3;
+						float size = new InventoryStore(plugin,"keychain_" + p.getName(),max_size).getFillSize();
+						double percent = (size/(float)max_size) * 100;
+						p.sendMessage(MessageFormat.format("§7Your keychain is §e{0}% §7full. (§e{1}/{2}§7)",percent,size,max_size));
 						break;
 					case "help":
 						p.sendMessage("§7Hi, terminal is currently in alpha and missing features.");

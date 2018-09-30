@@ -131,6 +131,10 @@ public class InventoryClick implements Listener {
 				default:
 					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
 			}
+		}else if(inventory.getName().startsWith("keychain")) {
+			if(new Util().checkItem(clicked,Material.TRIPWIRE_HOOK,jPhoneMain.phoneName)) { //TODO: check for other devices
+				event.setCancelled(true);
+			}
 		}
 	}
 	@EventHandler
