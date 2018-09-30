@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.LocationStore;
 import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -27,7 +28,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Horse;
@@ -37,6 +37,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -158,8 +159,9 @@ public class InteractEvent implements Listener {
 						p.sendMessage(" ");
 					}
 				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+					InventoryStore store = new InventoryStore(plugin,"keychain_" + p.getName(),9*3);
 					if (p.isSneaking()) {
-						if(new KeyChainStorage(plugin).getStorage().size() == 0) {
+						/*if(new KeyChainStorage(plugin).getStorage().size() == 0) {
 							p.sendMessage("§cSorry, there is no free jKeychains at the moment.");
 							return;
 						}
@@ -170,7 +172,9 @@ public class InteractEvent implements Listener {
 						}
 						Block block = p.getWorld().getBlockAt(keyLoc);
 						ShulkerBox keystore = (ShulkerBox) block.getState();
-						p.openInventory(keystore.getInventory());
+						p.openInventory(keystore.getInventory());*/
+						Inventory inv = store.loadInv();
+						p.openInventory(inv);
 					} else if (e.getAction() == Action.LEFT_CLICK_AIR) {
 						p.sendMessage("§cCould not locate any nearby towers");
 					}

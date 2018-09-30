@@ -20,8 +20,8 @@ public class Config {
         config.addDefault("updatecheck.interval",30);
 
         config.set("versions.jackzco", "DEVELOPMENT BUILD");
-        config.set("versions.jphone","2.1.0-beta");
-        config.set("versions.terminal","1.4.0-beta");
+        config.set("versions.jphone","2.2.0-beta");
+        config.set("versions.terminal","1.5.0-beta");
         config.set("versions.main",plugin.getDescription().getVersion());
 
         config.options().copyDefaults(true);

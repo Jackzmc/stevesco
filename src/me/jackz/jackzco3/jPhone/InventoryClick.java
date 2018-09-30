@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -29,9 +30,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.io.IOException;
 
 public class InventoryClick implements Listener {
 	private final Main plugin;
@@ -126,6 +130,17 @@ public class InventoryClick implements Listener {
 					break;
 				default:
 					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
+			}
+		}
+	}
+	@EventHandler
+	public void onInvClose(InventoryCloseEvent e) {
+		Inventory inv = e.getInventory();
+		if(inv.getName().startsWith("keychain")) {
+			try {
+				new InventoryStore(plugin,inv.getName(),9*3).saveInv(inv);
+			} catch (IOException e1) {
+				e.getPlayer().sendMessage("§7Failed to save your KeyChain: §e" + e1.toString());
 			}
 		}
 	}
