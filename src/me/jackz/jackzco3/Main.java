@@ -73,7 +73,8 @@ public class Main extends JavaPlugin {
                 new MessageHandler(this),
 		        new MoveHandler(this),
                 new SignHandler(this),
-                new PlayerInteractHandler(this)
+                new PlayerInteractHandler(this),
+                new Bow(this)
         );
         //new LocVarLib(this);
         config = new Config().setupConfig(this);

@@ -22,6 +22,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -105,6 +106,7 @@ public class ChatListener implements Listener {
 								"§ekeychain §7View your used/free space on your keychain",
 								"§ejcloud §7manage your jCloud account",
 								"§edate/time §7view the current time or date",
+								"§esettings §7view/Set your phone's settings",
 								"§eexit §7exit terminal mode"
 						));
 						final int pageResults = 10;
@@ -165,7 +167,7 @@ public class ChatListener implements Listener {
 							p.sendMessage("§cPlayer §e" + args[1] + " §cwas not found online");
 							return;
 						}else if(rec == p) {
-						p.sendMessage("§cYou can't text yourself!");
+							p.sendMessage("§cYou can't text yourself!");
 							return;
 						}
 						//loop rec's inventory to check for phone:
@@ -177,6 +179,7 @@ public class ChatListener implements Listener {
 							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
 								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
 								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
+								p.playSound(p.getLocation(),Sound.BLOCK_NOTE_FLUTE,1,1);
 								return;
 							}
 						}
@@ -309,6 +312,16 @@ public class ChatListener implements Listener {
 						}
 						p.getInventory().setItemInMainHand(nbt.getItem());
 						break;
+					case "settings":
+						BaseComponent message = new TextComponent("§3jPhoneOS Settings\n");
+						if(!nbt.hasKey("owner")) {
+							BaseComponent ownermsg = new TextComponent("§cThis phone is not claimed, click to claim.\n");
+							ownermsg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"claim"));
+							message.addExtra(ownermsg);
+							message.addExtra("\n");
+						}
+						message.addExtra("§7No other settings found.\n");
+						p.spigot().sendMessage(message);
 					case "lookup":
 						p.sendMessage("§7Looking up player from UUID...");
 						try {

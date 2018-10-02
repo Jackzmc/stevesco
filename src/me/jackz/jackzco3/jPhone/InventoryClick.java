@@ -22,9 +22,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,15 +71,7 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(item);
 					break;
 				} case BOOK_AND_QUILL:
-					BaseComponent message = new TextComponent("§3jPhoneOS Settings\n");
-					if(!nbti.hasKey("owner")) {
-						BaseComponent ownermsg = new TextComponent("§cThis phone is not claimed, click to claim.\n");
-						ownermsg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"claim"));
-						message.addExtra(ownermsg);
-						message.addExtra("\n");
-					}
-					message.addExtra("§7No other settings found.\n");
-					p.spigot().sendMessage(message);
+					p.performCommand("settings");
 					//p.sendMessage("§7Type /jphone claim to claim");
 					break;
 				case SIGN:
@@ -110,6 +100,12 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(nbti.getItem());
 					p.sendMessage("§7Phone has been switched off.");
 					break;
+				case GOLD_NUGGET:
+					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+						Inventory inv = new InventoryStore(plugin,"keychain_" + p.getName(),9*3).loadInv();
+						p.openInventory(inv);
+					},1L);
+					break;
 				case NOTE_BLOCK:
 					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
 					util.createDisplay(p,Material.RECORD_3,jPhoneMain.stunes,2,"§9Legacy Player");
@@ -132,8 +128,21 @@ public class InventoryClick implements Listener {
 					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
 			}
 		}else if(inventory.getName().startsWith("keychain")) {
-			if(new Util().checkItem(clicked,Material.TRIPWIRE_HOOK,jPhoneMain.phoneName)) { //TODO: check for other devices
-				event.setCancelled(true);
+			String[] phonenames = {
+					"§3jPhone",
+					jPhoneMain.phoneName,
+					"§fjLight",
+					"§3jPhone Development Phone",
+					"§3jPhone XL"
+			};
+			ItemMeta meta = clicked.getItemMeta();
+			if(meta.getDisplayName() != null) {
+				for (String phonename : phonenames) {
+					if(meta.getDisplayName().startsWith(phonename)) {
+						event.setCancelled(true);
+					}
+				}
+
 			}
 		}
 	}

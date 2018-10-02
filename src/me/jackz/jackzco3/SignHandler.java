@@ -58,9 +58,11 @@ public class SignHandler implements Listener {
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
 						case "§fjPhone 2": {
 							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2",false));
+							p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
 							break;
 						} case "§fjPhone 2X": {
 							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2X",false));
+							p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
 							break;
 						} default:
 							p.sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());

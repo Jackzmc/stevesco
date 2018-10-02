@@ -71,24 +71,40 @@ public class jCommandLoader implements CommandExecutor {
             case "admin":
                 new jCommandAdmin(plugin,sender,cmd,commandLabel,args);
                 return true;
-            case "getphone":
-                if(!(sender instanceof Player)) {
+            case "beta": {
+                if (!(sender instanceof Player)) {
                     sender.sendMessage("[JackzCo] You must be a player to use this");
                     return true;
                 }
                 Player p = (Player) sender;
-                if(!p.isOp()) {
+                ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
+                ItemMeta newPhoneMeta = newPhone.getItemMeta();
+                newPhoneMeta.setDisplayName("§3jPhone Beta Phone");
+                newPhoneMeta.setLore(Arrays.asList("§cBeta Test #001", "§eBugs May Occur"));
+                newPhone.setItemMeta(newPhoneMeta);
+                p.getInventory().addItem(newPhone);
+                p.sendMessage("§7Thank you for being apart of the §3jPhone Beta Program");
+                p.sendMessage("§7We have provided you a documentation book to get started with the phone. Thank you for choosing JackzCo!");
+                p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
+                break;
+            } case "dev": {
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage("[JackzCo] You must be a player to use this");
+                    return true;
+                }
+                Player p = (Player) sender;
+                if (!p.isOp()) {
                     p.sendMessage("§cYou must be an OP to get the jPhone Test Phone.");
                     return true;
                 }
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();
                 newPhoneMeta.setDisplayName("§3jPhone Development Phone");
-                newPhoneMeta.setLore(Arrays.asList("§cNOT §7to be shared with the public","§4IF CAUGHT SHARING PHONE, ","§4YOU WILL BE SUED & TERMINATED"));
+                newPhoneMeta.setLore(Arrays.asList("§cNOT §7to be shared with the public", "§4IF CAUGHT SHARING PHONE, ", "§4YOU WILL BE SUED & TERMINATED"));
                 newPhone.setItemMeta(newPhoneMeta);
                 p.getInventory().addItem(newPhone);
                 break;
-            default:
+            } default:
                 sender.sendMessage("§aJackzCo §eV" + plugin.latest_version + " §e" + "?" + " commands");
                 break;
         }

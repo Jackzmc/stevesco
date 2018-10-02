@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Random;
 
 public class InteractEvent implements Listener {
+
+
 	private final Main plugin;
 	private final Util util;
 	private jPhoneMain jphone;
@@ -123,13 +125,7 @@ public class InteractEvent implements Listener {
 				}
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if (p.isSneaking()) {
-						util.createDisplay(p, Material.BOOK_AND_QUILL, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
-						util.createDisplay(p, Material.SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
-						util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
-						util.createDisplay(p, Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
-						util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
-						util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
-						p.openInventory(jPhoneMain.appswitcher);
+						p.openInventory(jphone.getAppSwitcher(p));
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
 					} else {
 						Integer battery = nbti.getInteger("battery");

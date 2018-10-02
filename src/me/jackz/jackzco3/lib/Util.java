@@ -8,6 +8,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -15,6 +16,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
+    public Util() {
+
+    }
+
     public static boolean isInteger(String s) {
         return isInteger(s,10);
     }
@@ -89,5 +94,18 @@ public class Util {
     public boolean checkItem(ItemStack input, Material mt, String name) {
         if(input == null || input.getType() != mt) return false;
         return checkItem(input,name);
+    }
+    public ItemStack getIntroBook() {
+        String[] pages = {
+                "Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
+                "You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
+        };
+        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+        BookMeta meta = (BookMeta) book.getItemMeta();
+        meta.setAuthor("JackzCo");
+        meta.setTitle("jPhone Docs");
+        meta.addPage(pages);
+        book.setItemMeta(meta);
+        return book;
     }
 }

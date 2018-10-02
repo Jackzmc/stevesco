@@ -24,12 +24,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 
 public class BatteryEffect implements Runnable {
 	private final Main plugin;
+	private me.jackz.jackzco3.lib.Util util;
 	BatteryEffect(Main plugin) {
 		this.plugin = plugin;
+		this.util = new me.jackz.jackzco3.lib.Util();
 	}
 
 	@Override
@@ -42,9 +45,15 @@ public class BatteryEffect implements Runnable {
 						Block bk = p.getLocation().getBlock().getRelative(x, y, z);
 						if (bk.getType().equals(Material.PISTON_BASE)) {
 							if (new LocationStore(plugin).getBoolean(bk.getLocation())) {
-								Location loc = new me.jackz.jackzco3.lib.Util().getCenterLocation(bk.getLocation());
+								Location loc = util.getCenterLocation(bk.getLocation());
 								p.spawnParticle(Particle.ENCHANTMENT_TABLE, loc.add(0, 3, 0), 10, 0.5, 5, 0.5);
 							}
+						}else if(bk.getType().equals(Material.EMERALD_BLOCK)) {
+							Location loc = bk.getLocation().add(new Location(p.getWorld(),0,30,0));
+							if(!loc.getBlock().getType().equals(Material.AIR)) return;
+							FallingBlock b = p.getWorld().spawnFallingBlock(util.getCenterLocation(loc), Material.EMERALD_ORE,(byte) 0);
+							b.setDropItem(false);
+							b.setHurtEntities(true);
 						}
 					}
 				}

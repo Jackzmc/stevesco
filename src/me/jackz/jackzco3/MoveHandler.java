@@ -29,6 +29,8 @@ public class MoveHandler implements Listener {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
+
+
 		if(!plugin.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
 		if(underneathPlayer == null) return;
