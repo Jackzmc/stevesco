@@ -24,6 +24,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 class jCommandAdmin {
 	jCommandAdmin(Main plugin, CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if(!(sender instanceof Player)) {
@@ -41,19 +43,21 @@ class jCommandAdmin {
 		}
 		switch(args[1].toLowerCase()) {
 			case "tower":
+				String id;
 				if(args.length < 3) {
-					p.sendMessage("§7Please enter an ID for the tower");
+					id = UUID.randomUUID().toString();
+					p.sendMessage("§7Using §e" + id + "§7as ID of tower.");
 					return;
 				}
 				//args[0], args[1], args[2]
 				if(Util.isInteger(args[2])) {
-					String id = String.format("%03d", Integer.parseInt(args[2]));
-					jTower twr = new jTower(id,p.getLocation());
-					twr.toJSON(plugin);
-					p.sendMessage("§ajTower #" + id + " created");
+					id = String.format("%03d", Integer.parseInt(args[2]));
 				}else{
-					p.sendMessage("§cNot a valid ID");
+					id = args[2].toLowerCase();
 				}
+				jTower twr = new jTower(id,p.getLocation());
+				twr.toJSON(plugin);
+				p.sendMessage("§ajTower §e" + id + " §acreated");
 				break;
 			case "keychain":
 				p.getInventory().addItem(new Util().getCustomItem(Material.BLAZE_ROD,"§6jKeychain Creator"));
