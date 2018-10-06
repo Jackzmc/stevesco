@@ -46,7 +46,7 @@ public class Bow implements Listener {
 				p.launchProjectile(Arrow.class,finalV);
 			}*/
 
-			if(random.nextInt() < .2) {
+			if(random.nextFloat() < .1f) {
 				TTA_Methods.sendActionBar(p,"Hey, why are you shooting?");
 				e.setCancelled(true);
 			}

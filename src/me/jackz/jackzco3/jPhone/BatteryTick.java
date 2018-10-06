@@ -42,7 +42,7 @@ public class BatteryTick implements Runnable {
 							nbt.setInteger("battery", 100);
 						}
 						if (nbt.getInteger("battery") == 3) {
-							p.sendMessage("§cShutting down phone in slot §e" + (i + 1) + "§7 due to low battery");
+							p.sendMessage("§cShutting down phone in slot §e" + (i + 1) + "§c due to low battery");
 							nbt.setBoolean("state", false);
 						} else if (nbt.getInteger("battery") == 0) {
 							nbt.setInteger("battery", -1);

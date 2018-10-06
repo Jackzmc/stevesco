@@ -162,16 +162,22 @@ public class InteractEvent implements Listener {
 						p.openInventory(inv);
 					} else {
 						//https://gist.github.com/Caeden117/92223ecd39b61bd3310aee64e0dfd0d0
-						HashMap<String,Double> towers = jphone.getTowers(p.getLocation());
+						HashMap<String,Double> towers = jphone.getSortedTowers(p.getLocation());
 						if(towers.isEmpty()) {
 							p.sendMessage("§cCould not locate any nearby towers");
 							return;
 						}
-						p.sendMessage("");
+						List<String> msgs = new ArrayList<>();
+						int accessible = 0;
 						for (String tower : towers.keySet()) {
 							Double distances = towers.get(tower);
-							p.sendMessage("§7Tower §e" + tower + "§7:§e " + getQualityTerm(distances) + " §7(" + Math.round(distances) + " blocks)");
+							if(distances <= 600) {
+								msgs.add("§7Tower §e" + tower + "§7:§e " + getQualityTerm(distances) + " §7(" + Math.round(distances) + " blocks)");
+								accessible++;
+							}
 						}
+						msgs.add(0,"§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown");
+						p.sendMessage(msgs.toArray(new String[msgs.size()]));
 					}
 				}
 			}else if(p.getInventory().getItemInMainHand().getType() == Material.PISTON_BASE && e.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -358,9 +364,10 @@ public class InteractEvent implements Listener {
 	String getQualityTerm(Double distance) {
 		if (distance < 25)  return "§3NASA Quality";
 		if (distance < 100) return "§2Excellent";
-		if (distance < 250) return "§aGreat";
-		if (distance < 400) return "§eOK";
-		if (distance < 550) return "§cPoor";
+		if (distance < 200) return "§aDecent";
+		if (distance < 275) return "§aGreat";
+		if (distance < 450) return "§eOK";
+		if (distance < 500) return "§cPoor";
 		if (distance < 600) return "§cHorrible";
 		return "§4Unreachable";
 	}

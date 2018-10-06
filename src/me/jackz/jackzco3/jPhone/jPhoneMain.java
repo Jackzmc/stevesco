@@ -114,13 +114,13 @@ public class jPhoneMain implements Listener {
 		}
 	}
 
-	double getClosestTower(Location loc) {
+	HashMap<String,Double> getSortedTowers(Location loc) {
 		HashMap<String, Double> map = getTowers(loc);
-		map = map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-		return map.entrySet().iterator().next().getValue();
+		return map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 	}
 	boolean isInTowerRange(Location loc) {
-		double range = getClosestTower(loc);
+		HashMap<String, Double> map = getSortedTowers(loc);
+		double range = map.entrySet().iterator().next().getValue();
 		return (range < 600);
 	}
 }
