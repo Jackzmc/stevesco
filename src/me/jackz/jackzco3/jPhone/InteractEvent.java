@@ -167,6 +167,7 @@ public class InteractEvent implements Listener {
 							p.sendMessage("§cCould not locate any nearby towers");
 							return;
 						}
+						p.sendMessage("");
 						for (String tower : towers.keySet()) {
 							Double distances = towers.get(tower);
 							p.sendMessage("§7Tower §e" + tower + "§7:§e " + getQualityTerm(distances) + " §7(" + Math.round(distances) + " blocks)");
