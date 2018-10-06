@@ -355,6 +355,7 @@ public class InteractEvent implements Listener {
 
 	}
 	String getQualityTerm(Double distance) {
+		if (distance < 25)  return "§3NASA Quality";
 		if (distance < 100) return "§2Excellent";
 		if (distance < 250) return "§aGreat";
 		if (distance < 400) return "§eOK";

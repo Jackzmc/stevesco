@@ -34,7 +34,6 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -117,7 +116,7 @@ public class jPhoneMain implements Listener {
 
 	double getClosestTower(Location loc) {
 		HashMap<String, Double> map = getTowers(loc);
-		map.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+		map = map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 		return map.entrySet().iterator().next().getValue();
 	}
 	boolean isInTowerRange(Location loc) {

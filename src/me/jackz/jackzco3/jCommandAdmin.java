@@ -35,6 +35,10 @@ class jCommandAdmin {
 			p.sendMessage("§cYou are not a jackz, u fuk off m8");
 			return;
 		}
+		if(args.length == 0) {
+			p.sendMessage("put an option you fuck");
+			return;
+		}
 		switch(args[1].toLowerCase()) {
 			case "tower":
 				if(args.length < 3) {
