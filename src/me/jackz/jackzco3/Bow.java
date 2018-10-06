@@ -27,7 +27,7 @@ import java.util.Random;
 
 public class Bow implements Listener {
 	private Main plugin;
-	public Bow(Main plugin) { this.plugin = plugin; }
+	Bow(Main plugin) { this.plugin = plugin; }
 
 	private Random random = new Random();
 	private double randomnum() {
@@ -45,8 +45,9 @@ public class Bow implements Listener {
 				Vector finalV= e.getProjectile().getLocation().getDirection().multiply(v);
 				p.launchProjectile(Arrow.class,finalV);
 			}*/
-			TTA_Methods.sendActionBar(p,"Hey, why are you shooting?");
-			if(random.nextBoolean()) {
+
+			if(random.nextInt() < .2) {
+				TTA_Methods.sendActionBar(p,"Hey, why are you shooting?");
 				e.setCancelled(true);
 			}
  			/*Entity ent = p.getWorld().spawnEntity(p.getLocation(), EntityType.ARMOR_STAND);

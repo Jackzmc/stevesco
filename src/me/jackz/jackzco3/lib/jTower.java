@@ -25,8 +25,9 @@ import org.json.simple.JSONObject;
 import java.io.FileWriter;
 
 public class jTower {
-	private String name;
-	private Location location;
+	public String name;
+	public Location location;
+
 	public jTower(String name, Location location) {
 		this.name = name;
 		this.location = location;
@@ -49,14 +50,5 @@ public class jTower {
 			plugin.getLogger().warning("Writing to JSON failed.");
 			plugin.getLogger().warning(e.toString());
 		}
-	}
-
-	public String getQualityTerm(Double distance) {
-		if (distance < 100) return "§2Excellent";
-		if (distance < 250) return "§aGreat";
-		if (distance < 400) return "§eOK";
-		if (distance < 550) return "§cPoor";
-		if (distance < 600) return "§cHorrible";
-		return "§4Unreachable";
 	}
 }

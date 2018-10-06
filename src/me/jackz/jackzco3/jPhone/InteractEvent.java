@@ -43,10 +43,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class InteractEvent implements Listener {
 
@@ -157,22 +154,23 @@ public class InteractEvent implements Listener {
 				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
 					InventoryStore store = new InventoryStore(plugin,"keychain_" + p.getName(),9*3);
 					if (p.isSneaking()) {
-						/*if(new KeyChainStorage(plugin).getStorage().size() == 0) {
-							p.sendMessage("§cSorry, there is no free jKeychains at the moment.");
+						if(!jphone.isInTowerRange(p.getLocation())) {
+							p.sendMessage("§cCannot access your keychain, please get in range of a tower.");
 							return;
 						}
-						Location keyLoc = new KeyChainStorage(plugin).getKeychain(p);
-						if(keyLoc == null) {
-							p.sendMessage("§cSorry, cannot create a jKeychain at this time.");
-							return;
-						}
-						Block block = p.getWorld().getBlockAt(keyLoc);
-						ShulkerBox keystore = (ShulkerBox) block.getState();
-						p.openInventory(keystore.getInventory());*/
 						Inventory inv = store.loadInv();
 						p.openInventory(inv);
-					} else if (e.getAction() == Action.LEFT_CLICK_AIR) {
-						p.sendMessage("§cCould not locate any nearby towers");
+					} else {
+						//https://gist.github.com/Caeden117/92223ecd39b61bd3310aee64e0dfd0d0
+						HashMap<String,Double> towers = jphone.getTowers(p.getLocation());
+						if(towers.isEmpty()) {
+							p.sendMessage("§cCould not locate any nearby towers");
+							return;
+						}
+						for (String tower : towers.keySet()) {
+							Double distances = towers.get(tower);
+							p.sendMessage("§7Tower §e" + tower + "§7:§e " + getQualityTerm(distances) + " §7(" + Math.round(distances) + " blocks)");
+						}
 					}
 				}
 			}else if(p.getInventory().getItemInMainHand().getType() == Material.PISTON_BASE && e.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -355,6 +353,14 @@ public class InteractEvent implements Listener {
 			}
 		}
 
+	}
+	String getQualityTerm(Double distance) {
+		if (distance < 100) return "§2Excellent";
+		if (distance < 250) return "§aGreat";
+		if (distance < 400) return "§eOK";
+		if (distance < 550) return "§cPoor";
+		if (distance < 600) return "§cHorrible";
+		return "§4Unreachable";
 	}
 
 }

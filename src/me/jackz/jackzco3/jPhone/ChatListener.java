@@ -162,12 +162,20 @@ public class ChatListener implements Listener {
 							p.sendMessage("§cSyntax for texting: §etext <player> <message>");
 							return;
 						}
+
 						Player rec = Bukkit.getPlayer(args[1]);
 						if(rec == null) {
 							p.sendMessage("§cPlayer §e" + args[1] + " §cwas not found online");
 							return;
 						}else if(rec == p) {
 							p.sendMessage("§cYou can't text yourself!");
+							return;
+						}
+						if(!jphone.isInTowerRange(p.getLocation())) {
+							p.sendMessage("§7Failed to send message: §cNot in range of a tower.");
+							return;
+						}else if(!jphone.isInTowerRange(rec.getLocation())) {
+							p.sendMessage("§7cReceiver is out of range of any towers.");
 							return;
 						}
 						//loop rec's inventory to check for phone:

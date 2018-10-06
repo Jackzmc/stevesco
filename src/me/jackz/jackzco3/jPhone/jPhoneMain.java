@@ -20,13 +20,27 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.jTower;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.File;
+import java.io.FileReader;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Level;
+
+import static java.util.stream.Collectors.toMap;
 
 public class jPhoneMain implements Listener {
 	private final Main plugin;
@@ -75,5 +89,39 @@ public class jPhoneMain implements Listener {
 		util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
 		util.createDisplay(p, Material.GOLD_NUGGET,jPhoneMain.appswitcher,32,"§9jKeychain","§7Your private, secure, remote storage");
 		return appswitcher;
+	}
+
+	HashMap<String,Double> getTowers(Location fromLocation) throws NullPointerException{
+		HashMap<String, Double> map = new HashMap<>();
+		File towers = new File(plugin.getDataFolder().toString() + "/towers/");
+		File[] phoneLists = towers.listFiles();
+		if (phoneLists != null) {
+			for (File phoneList : phoneLists) {
+				try {
+					if (phoneList.isFile()) {
+						if (!phoneList.getName().contains("tower")) continue;
+						JSONParser parser = new JSONParser();
+						JSONObject obj = (JSONObject) parser.parse(new FileReader(phoneList));
+						jTower tower = new jTower(obj, fromLocation.getWorld());
+						map.put(tower.name, fromLocation.distance(tower.location));
+					}
+				} catch (Exception e) {
+					Bukkit.getLogger().log(Level.WARNING,"getTowers issue reading",e);
+				}
+			}
+			return map;
+		}else{
+			return null;
+		}
+	}
+
+	double getClosestTower(Location loc) {
+		HashMap<String, Double> map = getTowers(loc);
+		map.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+		return map.entrySet().iterator().next().getValue();
+	}
+	boolean isInTowerRange(Location loc) {
+		double range = getClosestTower(loc);
+		return (range < 600);
 	}
 }
