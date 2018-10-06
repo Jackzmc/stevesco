@@ -35,7 +35,7 @@ class jCommandAdmin {
 			p.sendMessage("§cYou are not a jackz, u fuk off m8");
 			return;
 		}
-		if(args.length == 0) {
+		if(args.length < 2) {
 			p.sendMessage("put an option you fuck");
 			return;
 		}
