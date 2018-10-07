@@ -26,6 +26,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -107,6 +108,7 @@ public class ChatListener implements Listener {
 								"§ejcloud §7manage your jCloud account",
 								"§edate/time §7view the current time or date",
 								"§esettings §7view/Set your phone's settings",
+								"§eping §7ping all known towers",
 								"§eexit §7exit terminal mode"
 						));
 						final int pageResults = 10;
@@ -115,6 +117,7 @@ public class ChatListener implements Listener {
 							for (int i = 0; i < cmds.size(); i++)
 								if (i % pageResults == 0) {
 									//index of:
+
 									int endsize = (i+(pageResults - 1)) > cmds.size() ? cmds.size() : i+(pageResults - 1);
 									List<String> list = new ArrayList<>(cmds.subList(i, endsize));
 									commands.add(list);
@@ -155,6 +158,24 @@ public class ChatListener implements Listener {
 							p.sendMessage("§7Claimed device as §e" + p.getUniqueId().toString());
 							p.getInventory().setItemInMainHand(nbt.getItem());
 						}
+						break;
+					case "ping":
+					case "towers":
+						p.sendMessage("§7Pinging towers...");
+						Bukkit.getScheduler().runTaskLater(plugin, () -> {
+							HashMap<String,Double> towers = jphone.getSortedTowers(p.getLocation());
+							for (String tower : towers.keySet()) {
+								double dist = towers.get(tower);
+								if(dist > 1000) {
+									p.sendMessage("§7Tower §e" + tower + "§7 is §e" + jphone.getTowerQuality(dist));
+									continue;
+								}else if(dist > 600) {
+									p.sendMessage("§7Tower §e" + tower + "§7 (§cPoor§7) is §e" + Math.round(randomizeDouble(dist,p.getLocation())) + "§7 blocks away");
+									continue;
+								}
+								p.sendMessage("§7Tower §e" + tower + "§7 is §e" + Math.round(dist) + "§7 blocks away.");
+							}
+						},40L);
 						break;
 					case "text":
 						//text 'player' 'message' [3 args]
@@ -358,5 +379,15 @@ public class ChatListener implements Listener {
 
 			}
 		}
+	}
+	double randomizeDouble(Double d, Location loc) {
+		int seed = (int)loc.getX() + (int)loc.getY() + (int)loc.getZ();
+		return randomizeDouble(d,seed);
+	}
+	double randomizeDouble(Double d, int seed) {
+		Random random = new Random(seed);
+		//300 blocks -> down to 250 to 350
+		double range = ((d + 50) - (d - 50)) + 1;
+		return (int)(Math.random() * range) + (d - 50);
 	}
 }

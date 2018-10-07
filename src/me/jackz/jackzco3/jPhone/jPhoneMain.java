@@ -123,4 +123,14 @@ public class jPhoneMain implements Listener {
 		double range = map.entrySet().iterator().next().getValue();
 		return (range < 600);
 	}
+	String getTowerQuality(Double distance) {
+		if (distance < 25)  return "§3NASA Quality";
+		if (distance < 100) return "§2Excellent";
+		if (distance < 200) return "§aDecent";
+		if (distance < 275) return "§aGreat";
+		if (distance < 450) return "§eOK";
+		if (distance < 500) return "§cPoor";
+		if (distance < 600) return "§cHorrible";
+		return "§4Unreachable";
+	}
 }
