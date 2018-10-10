@@ -208,6 +208,7 @@ public class ChatListener implements Listener {
 							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
 								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
 								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
+								rec.playSound(rec.getLocation(),Sound.BLOCK_NOTE_BELL,1,1); //todo: customizable
 								p.playSound(p.getLocation(),Sound.BLOCK_NOTE_FLUTE,1,1);
 								return;
 							}
@@ -349,8 +350,12 @@ public class ChatListener implements Listener {
 							message.addExtra(ownermsg);
 							message.addExtra("\n");
 						}
-						message.addExtra("§7No other settings found.\n");
+						if(!nbt.hasKey("txtsound")) nbt.setString("txtsound","bell");
+						BaseComponent txt_sound = new TextComponent("§9Text Sound: §e" + nbt.getString("txtsound"));
+						message.addExtra(txt_sound);
+						message.addExtra("\n§7No other settings found.\n");
 						p.spigot().sendMessage(message);
+						break;
 					case "lookup":
 						p.sendMessage("§7Looking up player from UUID...");
 						try {

@@ -71,6 +71,7 @@ public class jPhoneMain implements Listener {
 		nbt.setBoolean("firstuse",true);
 		nbt.setBoolean("locked",locked);
 		nbt.setBoolean("state",true);
+		nbt.setString("txtsound","bell");
 		ItemStack item = nbt.getItem();
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);

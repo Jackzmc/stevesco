@@ -2,7 +2,7 @@ name: jackzco3
 version: 3.0.0
 author: Jackz
 main: me.jackz.jackzco3.Main
-softdepend: [WorldGuard,GlowAPI]
+softdepend: [WorldGuard,GlowAPI,Citizens]
 depend: [TTA]
 commands:
   jackzco:
