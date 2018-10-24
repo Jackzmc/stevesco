@@ -27,7 +27,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="spigot-api-1.12.2-R0.1-SNAPSHOT-shaded" level="project" />
+    <orderEntry type="library" name="spigot-api-1.13.2-R0.1-SNAPSHOT-shaded" level="project" />
     <orderEntry type="library" name="TTA-4.2" level="project" />
     <orderEntry type="library" name="item-nbt-api-plugin-1.8.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="worldguard-bukkit-6.2.2" level="project" />
