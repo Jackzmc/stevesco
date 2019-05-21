@@ -18,10 +18,16 @@
 package me.jackz.jackzco3;
 
 import de.Herbystar.TTA.TTA_Methods;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.util.BlockIterator;
 
 import java.util.Random;
 
@@ -46,13 +52,36 @@ public class Bow implements Listener {
 				p.launchProjectile(Arrow.class,finalV);
 			}*/
 
-			if(random.nextFloat() < .1f) {
+			if(random.nextFloat() < .01f) {
 				TTA_Methods.sendActionBar(p,"Hey, why are you shooting?");
 				e.setCancelled(true);
 			}
  			/*Entity ent = p.getWorld().spawnEntity(p.getLocation(), EntityType.ARMOR_STAND);
 			e.getProjectile().setGlowing(true);
 			e.getProjectile().addPassenger(ent);*/
+		}
+	}
+	private int radius = 1;
+	@EventHandler
+	public void onProjectileLand(ProjectileHitEvent e) {
+		Projectile proj = e.getEntity();
+		if(proj instanceof Arrow) {
+			Arrow arrow = (Arrow) proj;
+			BlockIterator iterator = new BlockIterator(arrow.getWorld(),arrow.getLocation().toVector(), arrow.getVelocity().normalize(), 0.0D, 4);
+			Block hitBlock = iterator.next();
+
+
+			switch(hitBlock.getType()) {
+				case GLASS:
+				case THIN_GLASS:
+					hitBlock.setType(Material.AIR);
+					arrow.remove();
+					break;
+				default:
+					if(arrow.getLocation().getBlock().getType() == Material.AIR) arrow.getLocation().getBlock().setType(Material.FIRE);
+			}
+
+
 		}
 	}
 }
