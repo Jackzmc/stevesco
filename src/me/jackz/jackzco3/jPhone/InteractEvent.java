@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ public class InteractEvent implements Listener {
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
-				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_HEAD) {
+				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON) {
 					if (new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
 						if (nbti.getInteger("battery") == 100) {
 							p.sendMessage("§7Your phone is already at §e100%");
@@ -177,7 +177,7 @@ public class InteractEvent implements Listener {
 						p.sendMessage(msgs.toArray(new String[msgs.size()]));
 					}
 				}
-			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON_HEAD && e.getAction() == Action.RIGHT_CLICK_AIR) {
+			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON && e.getAction() == Action.RIGHT_CLICK_AIR) {
 				if (meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
 					e.setCancelled(true);
 					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
@@ -194,7 +194,7 @@ public class InteractEvent implements Listener {
 					return;
 				}
 				List<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
-						Material.PISTON_HEAD,
+						Material.PISTON,
 						Material.STICKY_PISTON,
 						Material.IRON_DOOR,
 						Material.DISPENSER,

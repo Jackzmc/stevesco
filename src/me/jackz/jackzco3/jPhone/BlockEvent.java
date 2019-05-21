@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ public class BlockEvent implements Listener {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent e) {
 		Player p = e.getPlayer();
-		if(e.getBlockPlaced().getType().equals(Material.PISTON_HEAD)) {
+		if(e.getBlockPlaced().getType().equals(Material.PISTON)) {
 			ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
 			if(meta == null || !meta.getDisplayName().equals("§fjCharger")){
 				return;
@@ -67,12 +67,12 @@ public class BlockEvent implements Listener {
 	@EventHandler
 	public void onBreak(BlockBreakEvent e) {
 		Player p = e.getPlayer();
-		if(e.getBlock().getType().equals(Material.PISTON_HEAD)) {
+		if(e.getBlock().getType().equals(Material.PISTON)) {
 			boolean isCharger = new LocationStore(plugin).getBoolean(e.getBlock().getLocation());
 			if(isCharger) {
 				if(p.isSneaking()) {
 					new LocationStore(plugin).deleteValue(e.getBlock().getLocation()); //todo: make .deleteValue()
-					p.getInventory().addItem(util.getCustomItem(Material.PISTON_HEAD,"§fjCharger"));
+					p.getInventory().addItem(util.getCustomItem(Material.PISTON,"§fjCharger"));
 					p.sendMessage("§cSuccessfully removed jCharger");
 				}else{
 					e.setCancelled(true);

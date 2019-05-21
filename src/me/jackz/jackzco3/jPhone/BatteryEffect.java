@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public class BatteryEffect implements Runnable {
 				for (int y = radius; y >= -radius; y--) {
 					for (int z = radius; z >= -radius; z--) {
 						Block bk = p.getLocation().getBlock().getRelative(x, y, z);
-						/*if (bk.getType().equals(Material.PISTON_HEAD)) {
+						/*if (bk.getType().equals(Material.PISTON)) {
 							if (new LocationStore(plugin).getBoolean(bk.getLocation())) {
 								Location loc = util.getCenterLocation(bk.getLocation());
 								p.spawnParticle(Particle.ENCHANTMENT_TABLE, loc.add(0, 3, 0), 10, 0.5, 5, 0.5);
