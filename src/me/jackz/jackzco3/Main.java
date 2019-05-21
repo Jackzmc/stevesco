@@ -26,9 +26,6 @@ import me.jackz.jackzco3.jPhone.KeyChainStorage;
 import me.jackz.jackzco3.jPhone.jPhoneMain;
 import me.jackz.jackzco3.lib.Config;
 import me.jackz.jackzco3.lib.jTower;
-import me.jackz.jackzco3.traits.TestTrait;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.trait.TraitInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -48,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
@@ -86,22 +82,12 @@ public class Main extends JavaPlugin {
         if(config.getBoolean("updatecheck.enabled")) {
 	        getServer().getScheduler().runTaskTimer(this, this::checkForUpdates,0L,config.getInt("updatecheck.interval")*20L);
         }
-        try {
-            if(Bukkit.getPluginManager().getPlugin("Citizens") != null) {
-                if (CitizensAPI.getTraitFactory().getTrait(TestTrait.class) == null) {
-                    getLogger().info("TestTrait is loaded");
-                    CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(TestTrait.class));
-                }
 
-            }
-        }catch(Exception ex) {
-            Bukkit.getLogger().log(Level.WARNING,"Citizens onEnable",ex);
-        }
     }
 
     @Override
     public void onDisable() {
-        CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(TestTrait.class));
+        //CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(TestTrait.class));
        // new KeyChainStorage(this).saveMap(keychainMap); //hopefully saves map
 		//getServer().getScheduler().cancelAllTasks();
     }
@@ -123,7 +109,7 @@ public class Main extends JavaPlugin {
                     Player jackz = getServer().getPlayer(UUID.fromString("b0c16432-67a6-4e3d-b49a-61b323c49b03"));
                     if(jackz != null) {
                         jackz.sendMessage(jackzco_prefix + "§7Auto updating & reloading jackzco");
-                        jackz.playSound(jackz.getLocation(), Sound.BLOCK_NOTE_PLING,1,1);
+                        jackz.playSound(jackz.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING,1,1);
                     }
                 },20L * 2);
 
@@ -155,6 +141,7 @@ public class Main extends JavaPlugin {
         return checkRegion(loc,jackzco_regions);
     }
     public boolean checkRegion(Location loc, List<String> regions) {
+        if(true) return false;
         if(getWorldGuard() != null) {
             RegionContainer container = getWorldGuard().getRegionContainer();
             RegionQuery query = container.createQuery();
@@ -173,6 +160,7 @@ public class Main extends JavaPlugin {
     }
 
     public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
+        if(true) return false;
         if(getWorldGuard() != null) {
             RegionContainer container = getWorldGuard().getRegionContainer();
             RegionQuery query = container.createQuery();

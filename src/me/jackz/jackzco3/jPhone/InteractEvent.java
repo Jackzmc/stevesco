@@ -26,11 +26,10 @@ import me.jackz.jackzco3.lib.Util;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,8 +39,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.*;
 
@@ -70,12 +67,12 @@ public class InteractEvent implements Listener {
 		ItemMeta meta = item.getItemMeta();
 		if (e.getHand().equals(EquipmentSlot.HAND)) {
 			//spacing so i dont get confused. rightclick
-			if (item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
+			if (item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
 				e.setCancelled(true);
 				//cancel event, then set the item in hand to itself, fixing ghosting
 				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
-				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_BASE) {
+				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON_HEAD) {
 					if (new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
 						if (nbti.getInteger("battery") == 100) {
 							p.sendMessage("§7Your phone is already at §e100%");
@@ -96,7 +93,7 @@ public class InteractEvent implements Listener {
 								p.sendMessage("§7Charging aborted - you must hold your phone.");
 								return;
 							}
-							p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_CHIME, 1, 1);
+							p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 							nbti.setInteger("battery", 100);
 							p.sendMessage("§aYour phone has been charged!");
 							p.getInventory().setItemInMainHand(nbti.getItem());
@@ -123,7 +120,7 @@ public class InteractEvent implements Listener {
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if (p.isSneaking()) {
 						p.openInventory(jphone.getAppSwitcher(p));
-						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING, 0.2F, 5);
+						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2F, 5);
 					} else {
 						Integer battery = nbti.getInteger("battery");
 						p.sendMessage(" ");
@@ -180,7 +177,7 @@ public class InteractEvent implements Listener {
 						p.sendMessage(msgs.toArray(new String[msgs.size()]));
 					}
 				}
-			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON_BASE && e.getAction() == Action.RIGHT_CLICK_AIR) {
+			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON_HEAD && e.getAction() == Action.RIGHT_CLICK_AIR) {
 				if (meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
 					e.setCancelled(true);
 					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
@@ -197,12 +194,12 @@ public class InteractEvent implements Listener {
 					return;
 				}
 				List<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
-						Material.PISTON_BASE,
-						Material.PISTON_STICKY_BASE,
+						Material.PISTON_HEAD,
+						Material.STICKY_PISTON,
 						Material.IRON_DOOR,
 						Material.DISPENSER,
 						Material.CHEST,
-						Material.WOOD_DOOR,
+						Material.OAK_DOOR,
 						Material.DROPPER
 				));
 				if (e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -217,19 +214,14 @@ public class InteractEvent implements Listener {
 						Directional dir = (Directional) b;
 						BlockFace direction = dir.getFacing();
 						dir.setFacingDirection(BlockFace.EAST_NORTH_EAST);*/
-						if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-							/*int index = java.util.Arrays.binarySearch(directions,direction);
-							if(index+1 == directions.length) {
-								dir.setFacingDirection(directions[0]);
-							}else{
-								dir.setFacingDirection(directions[++index]);
-							}*/
+						/*if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 							int data = b.getData();
 							b.setData((byte) ((data == 5) ? 0 : ++data));
 						} else if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
 							int data = b.getData();
 							b.setData((byte) ((data == 0) ? 5 : --data));
-						}
+						}*/
+						p.sendMessage("§cSorry, but the jWrench has been disabled until further notice.");
 
 					} catch (IllegalArgumentException ex) {
 						plugin.getLogger().warning("Wrench failure: " + ex.toString());
@@ -239,114 +231,15 @@ public class InteractEvent implements Listener {
 				} else {
 					p.sendMessage("§cPlease left/right click a block");
 				}
-			} else if (p.getInventory().getItemInMainHand().getType() == Material.NETHER_STAR) {
-				if (p.isSneaking()) {
-					if (!plugin.checkRegion(p.getLocation(), "horsechaos")) {
-						p.sendMessage("§cYou must be in the horsechaos region");
-						return;
-					}
-					if (e.getAction() == Action.LEFT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_AIR) {
-						for (int i = 0; i < 50; i++) {
-							double rnd = Math.random();
-							Material mt;
-							if (rnd < .25) {
-								mt = Material.WOOL;
-							} else if (rnd >= .25 && rnd < .5) {
-								mt = Material.STAINED_CLAY;
-							} else if (rnd >= .5 && rnd < .75) {
-								mt = Material.CONCRETE;
-							} else {
-								mt = Material.CONCRETE_POWDER;
-							}
-							@SuppressWarnings("deprecation")
-							FallingBlock fb = p.getWorld().spawnFallingBlock(p.getEyeLocation(), mt, (byte) random.nextInt(16));
-							fb.setHurtEntities(false);
-							fb.setDropItem(false);
-							GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
-							Vector v = p.getEyeLocation().getDirection();
-							v = v.add(new Vector(random.nextInt((1 - -1) + 1) + -1, 0, random.nextInt((1 - -1) + 1) + -1));
-							fb.setVelocity(v.multiply(2));
-
-						}
-						return;
-					}
-					Block targetbk = p.getTargetBlock(null, 100);
-					Location targetloc;
-					if (targetbk == null) {
-						p.sendMessage("§cCan't find block, must be within 100 blocks");
-						return;
-					} else if (targetbk.getType().equals(Material.GLASS)) {
-						p.sendMessage("§cGlass is blacklisted, try some other block.");
-						return;
-					}
-					targetloc = targetbk.getLocation();
-					if (!plugin.checkRegion(targetloc, "horsechaos")) {
-						p.sendMessage("§cYou must be in the horsechaos region");
-						return;
-					}
-					p.getWorld().createExplosion(targetloc, 0);
-
-					for (int i = 0; i < 50; i++) {
-						double rnd = Math.random();
-						Material mt;
-						if (rnd < .25) {
-							mt = Material.WOOL;
-						} else if (rnd >= .25 && rnd < .5) {
-							mt = Material.STAINED_CLAY;
-						} else if (rnd >= .5 && rnd < .75) {
-							mt = Material.CONCRETE;
-						} else {
-							mt = Material.CONCRETE_POWDER;
-						}
-						@SuppressWarnings("deprecation")
-						FallingBlock fb = p.getWorld().spawnFallingBlock(targetloc, mt, (byte) random.nextInt(16));
-						fb.setHurtEntities(false);
-						fb.setDropItem(false);
-						GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
-						Vector v = new Vector(randomnum(), randomnum(), randomnum());
-						fb.setVelocity(v.multiply(2));
-					}
-				} else {
-					if (!plugin.checkRegion(p.getLocation(), "horsechaos")) {
-						p.sendMessage("§cYou must be in the horsechaos region");
-						return;
-					}
-					final Horse entity = (Horse) p.getWorld().spawnEntity(p.getEyeLocation(), EntityType.HORSE);
-					entity.setStyle(Horse.Style.NONE);
-					e.setCancelled(true);
-					entity.setVelocity(p.getEyeLocation().getDirection().multiply((e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) ? 5 : 2));
-					Bukkit.getScheduler().runTaskLater(plugin, () -> {
-						entity.getWorld().createExplosion(entity.getLocation(), 0);
-						entity.remove();
-						for (int i = 0; i < 100; i++) {
-							double rnd = Math.random();
-							Material mt;
-							if (rnd < .25) {
-								mt = Material.WOOL;
-							} else if (rnd >= .25 && rnd < .5) {
-								mt = Material.STAINED_CLAY;
-							} else if (rnd >= .5 && rnd < .75) {
-								mt = Material.CONCRETE;
-							} else {
-								mt = Material.CONCRETE_POWDER;
-							}
-							@SuppressWarnings("deprecation")
-							FallingBlock fb = entity.getWorld().spawnFallingBlock(entity.getLocation(), mt, (byte) random.nextInt(16));
-							fb.setHurtEntities(false);
-							fb.setDropItem(false);
-							GlowAPI.setGlowing(fb, GlowAPI.Color.WHITE, p);
-							Vector v = new Vector(randomnum(), randomnum(), randomnum());
-							fb.setVelocity(v.multiply(2));
-						}
-					}, 15);
-				}
 			} else if (item.getType().equals(Material.TORCH) && meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjLight")) {
 				e.setCancelled(true);
 				if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 					ItemStack phone = p.getInventory().getItemInMainHand();
 					ItemMeta phoneMeta = phone.getItemMeta();
 					phone.setType(Material.TRIPWIRE_HOOK);
-					phoneMeta.setDisplayName(jphone.phoneName); //check if 2X
+					if (phoneMeta != null) {
+						phoneMeta.setDisplayName(jPhoneMain.phoneName); //check if 2X
+					}
 					phone.setItemMeta(phoneMeta);
 					p.getInventory().setItemInMainHand(phone);
 				}
@@ -355,7 +248,7 @@ public class InteractEvent implements Listener {
 			//below is the stupid way to stop offhand placement. I don't know if two setcancels will fuck it up but i hope not
 		}
 		if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-			if (item.getType() == Material.TRIPWIRE_HOOK && meta != null && meta.getDisplayName() != null && meta.getDisplayName().contains(jphone.phoneName)) {
+			if (item.getType() == Material.TRIPWIRE_HOOK && meta != null && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
 				e.setCancelled(true);
 			}
 		}

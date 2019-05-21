@@ -29,7 +29,8 @@ public class MoveHandler implements Listener {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
-
+		if(true) return;
+		//TODO: FIX ABOVE! BROKEN
 
 		if(!plugin.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
@@ -54,7 +55,7 @@ public class MoveHandler implements Listener {
 					},600L);
 					scanTimeImmune.put(p.getUniqueId().toString(),true);
 					//noinspection deprecation
-					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™");
+					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™",0,40,0);
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();
 					for(ItemStack item  : p.getInventory()) {

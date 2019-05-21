@@ -23,7 +23,7 @@ public class Wand implements Listener {
     @EventHandler
     void noLitter(PlayerDropItemEvent e) {
         ItemStack item = e.getItemDrop().getItemStack();
-        if(item.getType().equals(Material.INK_SACK) & item.getDurability() == (byte) 4) {
+        if(item.getType().equals(Material.INK_SAC)) {
             Player p = e.getPlayer();
             e.setCancelled(true);
             p.sendMessage("dude, no littering u fuck");

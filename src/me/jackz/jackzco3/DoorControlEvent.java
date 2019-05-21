@@ -37,7 +37,7 @@ class DoorControlEvent implements Listener {
             Player p = e.getPlayer();
             try {
 
-                if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.IRON_DOOR_BLOCK) {
+                if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.LEGACY_IRON_DOOR_BLOCK) {
                     if(!plugin.checkRegion(clickedBlock.getLocation(),new ArrayList<>(Arrays.asList("stevesco", "minishco")))) return;
                     boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();

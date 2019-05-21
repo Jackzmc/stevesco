@@ -208,8 +208,8 @@ public class ChatListener implements Listener {
 							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
 								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
 								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
-								rec.playSound(rec.getLocation(),Sound.BLOCK_NOTE_BELL,1,1); //todo: customizable
-								p.playSound(p.getLocation(),Sound.BLOCK_NOTE_FLUTE,1,1);
+								rec.playSound(rec.getLocation(),Sound.BLOCK_NOTE_BLOCK_BELL,1,1); //todo: customizable
+								p.playSound(p.getLocation(),Sound.BLOCK_NOTE_BLOCK_FLUTE,1,1);
 								return;
 							}
 						}
@@ -218,7 +218,7 @@ public class ChatListener implements Listener {
 					case "charge":
 						nbt.setInteger("battery", 100);
 						p.getInventory().setItemInMainHand(nbt.getItem());
-						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_PLING,1,1);
+						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING,1,1);
 						p.sendMessage("§aYour phone has been charged using the power of BlockChain(TM)");
 						break;
 					case "trash":

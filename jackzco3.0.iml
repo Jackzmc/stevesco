@@ -16,24 +16,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/scripts" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="10" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://D:/Servers/SpigotServer/BuildTools/Spigot/Spigot-API/target/spigot-api-1.12.2-R0.1-SNAPSHOT-shaded.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="spigot-api-1.12.2-R0.1-SNAPSHOT-shaded" level="project" />
-    <orderEntry type="library" name="TTA-4.2" level="project" />
+    <orderEntry type="library" name="TTA" level="project" />
     <orderEntry type="library" name="item-nbt-api-plugin-1.8.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="worldguard-bukkit-6.2.2" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="ParticleAnimationApi" level="project" />
-    <orderEntry type="library" name="GlowAPI_v1.4.7-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="citizens-2.0.24-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="GlowAPI" level="project" />
+    <orderEntry type="library" exported="" scope="PROVIDED" name="spigot-api" level="project" />
   </component>
 </module>

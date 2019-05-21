@@ -36,11 +36,11 @@ public class Util {
     }
     public static boolean isSafeLocation(Location location) {
         Block feet = location.getBlock();
-        if (!feet.getType().isTransparent() && !feet.getLocation().add(0, 1, 0).getBlock().getType().isTransparent()) {
+        if (feet.getType().isSolid() || feet.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
             return false; // not transparent (will suffocate)
         }
         Block head = feet.getRelative(BlockFace.UP);
-        if (!head.getType().isTransparent()) {
+        if (head.getType().isSolid()) {
             return false; // not transparent (will suffocate)
         }
         Block ground = feet.getRelative(BlockFace.DOWN);
@@ -54,7 +54,7 @@ public class Util {
         ItemMeta meta = item.getItemMeta();
 
         name = name.replaceAll("%name%", p.getName()); //convert vars
-        name = name.replaceAll("%display name%", p.getCustomName());
+        name = name.replaceAll("%display name%", (p.getCustomName() == null) ? p.getName() : p.getCustomName());
         lore = lore.replaceAll("%name%", p.getName());
         lore = lore.replaceAll("%display name%", p.getCustomName());
 

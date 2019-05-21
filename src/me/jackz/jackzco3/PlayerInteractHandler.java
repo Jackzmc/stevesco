@@ -18,14 +18,10 @@
 package me.jackz.jackzco3;
 
 import me.jackz.jackzco3.lib.LocationStore;
-import me.jackz.jackzco3.traits.TestTrait;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -76,10 +72,10 @@ class PlayerInteractHandler implements Listener {
 					p.sendMessage("§cCitizens is not installed.");
 					return;
 				}
-				NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER,"NPC_" + p.getName());
+				/*NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER,"NPC_" + p.getName());
 				//npc.getEntity().teleport(p.getLocation());
 				npc.addTrait(new TestTrait());
-				npc.spawn(e.getClickedBlock().getLocation().add(0,1,0));
+				npc.spawn(e.getClickedBlock().getLocation().add(0,1,0));*/
 			}
 		}
 	}
@@ -88,9 +84,9 @@ class PlayerInteractHandler implements Listener {
 	void onEntityInteract(PlayerInteractEntityEvent e) {
 		Player p = e.getPlayer();
 		Entity ent = e.getRightClicked();
-		if(ent.getMetadata("npc") != null) {
+		/*if(ent.getMetadata("npc") != null) {
 			NPC npc = CitizensAPI.getNPCRegistry().getNPC(ent);
 			p.sendMessage("§7You rightclicked an NPC: §e" + npc.getFullName());
-		}
+		}*/
 	}
 }

@@ -97,6 +97,8 @@ public class jCommandLoader implements CommandExecutor {
                     p.sendMessage("§cYou must be an OP to get the jPhone Test Phone.");
                     return true;
                 }
+                p.getInventory().addItem(new me.jackz.jackzco3.jPhone.jPhoneMain(plugin).givePhone(p,"§3jPhone 2",false));
+                p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();
                 newPhoneMeta.setDisplayName("§3jPhone Development Phone");
