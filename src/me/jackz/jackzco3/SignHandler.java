@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3;
 
 import me.jackz.jackzco3.jPhone.jPhoneMain;
@@ -14,6 +31,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -30,7 +48,7 @@ public class SignHandler implements Listener {
 		if(e.getAction() != Action.RIGHT_CLICK_BLOCK || e.getHand() != EquipmentSlot.HAND) return; //check if rightclicking a block with main hand
 		if(block == null) return; //make sure block not null
 
-		if(block.getType() == Material.SIGN_POST || block.getType() == Material.WALL_SIGN) {
+		if(block.getType() == Material.OAK_SIGN || block.getType() == Material.OAK_WALL_SIGN) { //todo: use tag.signs
 			Sign sign = (Sign) block.getState();
 			String[] lines = sign.getLines();
 			if(lines[0].startsWith("[jGate")) {
@@ -44,7 +62,8 @@ public class SignHandler implements Listener {
 	}
 	@EventHandler
 	public void onInvClick(InventoryClickEvent e) {
-		if(e.getClickedInventory() != null && e.getClickedInventory().getName().equals(jstore.getName())) {
+		InventoryView view = e.getView();
+		if(e.getClickedInventory() != null && view.getTitle().equals("§cJackzCo Store")) {
 			Player p = (Player) e.getWhoClicked();
 			ItemStack item = e.getCurrentItem();
 			e.setCancelled(true);
@@ -69,8 +88,8 @@ public class SignHandler implements Listener {
 							p.sendMessage("§cInvalid phone");
 					}
 					break;
-				case PISTON_BASE:
-					ItemStack jcharger = new ItemStack(Material.PISTON_BASE);
+				case PISTON:
+					ItemStack jcharger = new ItemStack(Material.PISTON);
 					ItemMeta meta = jcharger.getItemMeta();
 					meta.setDisplayName("§fjCharger");
 					jcharger.setItemMeta(meta);
@@ -92,7 +111,7 @@ public class SignHandler implements Listener {
 		Util util = new Util();
 		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$Unknown");
 		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$Unknown+$100");
-		util.createDisplay(p,Material.PISTON_BASE,jstore,9+5,"§fjCharger","§7Ultra fast charger");
+		util.createDisplay(p,Material.PISTON,jstore,9+5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
 		return jstore;
 	}

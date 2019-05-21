@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Piston;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,13 +46,14 @@ public class BlockEvent implements Listener {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent e) {
 		Player p = e.getPlayer();
-		if(e.getBlockPlaced().getType().equals(Material.PISTON_BASE)) {
+		if(e.getBlockPlaced().getType().equals(Material.PISTON)) {
 			ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-			if(meta == null || meta.getDisplayName() == null || !meta.getDisplayName().equals("§fjCharger")){
+			if(meta == null || !meta.hasDisplayName() || !meta.getDisplayName().equals("§fjCharger")){
 				return;
 			}
 			if(e.getBlockAgainst().getType().equals(Material.GOLD_BLOCK)) {
-				e.getBlockPlaced().setData((byte) 1);
+				Piston piston = (Piston) e.getBlockPlaced();
+				piston.setFacing(BlockFace.UP);
 				p.getWorld().playSound(e.getBlockPlaced().getLocation(), Sound.BLOCK_ANVIL_PLACE, SoundCategory.BLOCKS,1,1);
 				p.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE,util.getCenterLocation(e.getBlockPlaced().getLocation()),400,0.5,20,0.5);
 				new LocationStore(plugin).setBoolean(e.getBlockPlaced().getLocation(),true);
@@ -64,12 +67,12 @@ public class BlockEvent implements Listener {
 	@EventHandler
 	public void onBreak(BlockBreakEvent e) {
 		Player p = e.getPlayer();
-		if(e.getBlock().getType().equals(Material.PISTON_BASE)) {
+		if(e.getBlock().getType().equals(Material.PISTON)) {
 			boolean isCharger = new LocationStore(plugin).getBoolean(e.getBlock().getLocation());
 			if(isCharger) {
 				if(p.isSneaking()) {
 					new LocationStore(plugin).deleteValue(e.getBlock().getLocation()); //todo: make .deleteValue()
-					p.getInventory().addItem(util.getCustomItem(Material.PISTON_BASE,"§fjCharger"));
+					p.getInventory().addItem(util.getCustomItem(Material.PISTON,"§fjCharger"));
 					p.sendMessage("§cSuccessfully removed jCharger");
 				}else{
 					e.setCancelled(true);

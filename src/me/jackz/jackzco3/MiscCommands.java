@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,14 @@
 
 package me.jackz.jackzco3;
 
+import me.jackz.jackzco3.lib.Util;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -32,88 +38,122 @@ import java.util.logging.Level;
 
 class MiscCommands {
 	boolean onCommand(Main plugin,CommandSender sender, Command command, String label, String[] args) {
-		if(command.getName().equalsIgnoreCase("setname")) {
-			if (sender instanceof Player) {
-				try {
+		String cmd = command.getName().toLowerCase();
+		switch (cmd) {
+			case "openchant":
+			case "opchant":
+				if (sender instanceof Player) {
 					Player p = (Player) sender;
-					ItemStack item = p.getInventory().getItemInMainHand();
-					if (item == null) {
-						p.sendMessage("§cYou must have an item in your primary hand!");
-						return true;
+					if (args.length < 2) {
+						p.sendMessage("§cUsage: /openchant <enchant> <level>");
 					} else {
-
-						String msg = args[0].replace("_", " ");
-						msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
-
-						ItemMeta itemMeta = item.getItemMeta();
-						itemMeta.setDisplayName(msg);
-						item.setItemMeta(itemMeta);
-
+						if (p.getInventory().getItemInMainHand().equals(Material.AIR)) {
+							p.sendMessage("§cPlease hold an item in your hand to enchant");
+						} else {
+							Enchantment enchantment = EnchantmentWrapper.getByKey(NamespacedKey.minecraft(args[0]));
+							if (enchantment == null) {
+								p.sendMessage("§cThe enchantment §e" + args[0] + "§c was not found.");
+							} else {
+								int level = 0;
+								if (Util.isInteger(args[1])) {
+									level = Integer.parseInt(args[1]);
+								} else {
+									p.sendMessage("§cInvalid level. Usage: /openchant <enchant> <level>");
+								}
+								p.playSound(p.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE,1,0);
+								p.getInventory().getItemInMainHand().addUnsafeEnchantment(enchantment, level);
+							}
+						}
 					}
-				} catch (Exception err) {
-					sender.sendMessage("Failed: §c" + err.toString());
-					plugin.getLogger().log(Level.INFO, "setname!", err);
+					// /openchant
+				} else {
+					sender.sendMessage("You must be a player");
 				}
-			} else {
-				sender.sendMessage("You must be a player");
-			}
-			return true;
-		}else if(command.getName().equalsIgnoreCase("jstore")) {
-			if(!(sender instanceof Player)) {
-				sender.sendMessage("§7Must be a player");
+				return true;
+			case "setname":
+				if (sender instanceof Player) {
+					try {
+						Player p = (Player) sender;
+						ItemStack item = p.getInventory().getItemInMainHand();
+						if (item == null) {
+							p.sendMessage("§cYou must have an item in your primary hand!");
+							return true;
+						} else {
+
+							String msg = args[0].replace("_", " ");
+							msg = msg.trim().replaceAll("(&([a-f0-9]))", "\u00A7$2");
+
+							ItemMeta itemMeta = item.getItemMeta();
+							itemMeta.setDisplayName(msg);
+							item.setItemMeta(itemMeta);
+
+						}
+					} catch (Exception err) {
+						sender.sendMessage("Failed: §c" + err.toString());
+						plugin.getLogger().log(Level.INFO, "setname!", err);
+					}
+				} else {
+					sender.sendMessage("You must be a player");
+				}
+				return true;
+			case "jstore": {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage("§7Must be a player");
+					return true;
+				}
+				Player p = (Player) sender;
+				new SignHandler(plugin).getStore(p);
 				return true;
 			}
-			Player p = (Player) sender;
-			new SignHandler(plugin).getStore(p);
-			return true;
-		} else if (command.getName().equalsIgnoreCase("uuid")) {
-			if(!(sender instanceof Player)) {
-				sender.sendMessage("§7Must be a player");
+			case "uuid": {
+				if (!(sender instanceof Player)) {
+					sender.sendMessage("§7Must be a player");
+					return true;
+				}
+				Player p = (Player) sender;
+				sender.sendMessage("Your UUID is §e" + p.getUniqueId());
 				return true;
 			}
-			Player p = (Player) sender;
-			sender.sendMessage("Your UUID is §e" + p.getUniqueId());
-			return true;
-		}else if(command.getName().equalsIgnoreCase("getlogs")) {
-			try {
+			case "getlogs":
+				try {
 
-				String log = plugin.getDataFolder().toPath() + "/../../logs/latest.log";
-				FileInputStream in = new FileInputStream(log);
-				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+					String log = plugin.getDataFolder().toPath() + "/../../logs/latest.log";
+					FileInputStream in = new FileInputStream(log);
+					BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-				List<String> lines = new LinkedList<>();
-				for (String tmp; (tmp = br.readLine()) != null; )
-					if (lines.add(tmp) && lines.size() > 5)
-						lines.remove(0);
+					List<String> lines = new LinkedList<>();
+					for (String tmp; (tmp = br.readLine()) != null; )
+						if (lines.add(tmp) && lines.size() > 5)
+							lines.remove(0);
 
-				for (String line : lines) {
-					sender.sendMessage(line);
+					for (String line : lines) {
+						sender.sendMessage(line);
+					}
+				} catch (Exception ex) {
+					sender.sendMessage("Failed to get file: " + ex.toString());
+					plugin.getLogger().log(Level.INFO, "getlogs!", ex);
 				}
-			} catch (Exception ex) {
-				sender.sendMessage("Failed to get file: " + ex.toString());
-				plugin.getLogger().log(Level.INFO, "getlogs!", ex);
-			}
 
-			return true;
-		}else if(command.getName().equalsIgnoreCase("getname")) {
-			if(sender instanceof Player) {
-				Player p = (Player) sender;
-				ItemStack itm = p.getInventory().getItemInMainHand();
-				if(itm == null) {
-					p.sendMessage("§cYou must have an item in your hand!");
-				}else{
-					p.sendMessage("Item is: §e" + itm.getType().toString());
+				return true;
+			case "getname":
+				if (sender instanceof Player) {
+					Player p = (Player) sender;
+					ItemStack itm = p.getInventory().getItemInMainHand();
+					if (itm == null) {
+						p.sendMessage("§cYou must have an item in your hand!");
+					} else {
+						p.sendMessage("Item is: §e" + itm.getType().toString());
+					}
 				}
-			}
-			return true;
-		}else if(command.getName().equalsIgnoreCase("test")) {
-			sender.sendMessage(plugin.getJackzCo().getString("motd"));
-			if(sender instanceof Player) {
-				Player p = (Player) sender;
-				sender.sendMessage("In JackzCo Region: " + plugin.isJackzCoRegion(p.getLocation()));
-			}
+				return true;
+			case "test":
+				sender.sendMessage(plugin.getJackzCo().getString("motd"));
+				if (sender instanceof Player) {
+					Player p = (Player) sender;
+					sender.sendMessage("In JackzCo Region: " + plugin.isJackzCoRegion(p.getLocation()));
+				}
 
-			return true;
+				return true;
 		}
 		return false;
 	}

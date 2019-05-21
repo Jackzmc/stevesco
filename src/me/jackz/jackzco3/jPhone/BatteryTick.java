@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ public class BatteryTick implements Runnable {
 				ItemStack item = p.getInventory().getItem(i);
 				if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
 				ItemMeta meta = item.getItemMeta();
-				if (meta.getDisplayName() == null) continue;
-				if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone") || meta.getDisplayName().equals("§3jWrench")) { //check if tripwire hook is jPhone || jLight
+				String dpname = (meta != null && meta.hasDisplayName()) ? meta.getDisplayName() : null;
+				if (meta.hasDisplayName() && dpname.equals("§fjLight") || dpname.equals("§3jPhone") || dpname.equals("§3jWrench")) { //check if tripwire hook is jPhone || jLight
 
 					NBTItem nbt = ItemNBTAPI.getNBTItem(item);
 					if (nbt.getBoolean("state")) { //If phone on

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3;
 
 import org.bukkit.Bukkit;
@@ -97,6 +114,8 @@ public class jCommandLoader implements CommandExecutor {
                     p.sendMessage("§cYou must be an OP to get the jPhone Test Phone.");
                     return true;
                 }
+                p.getInventory().addItem(new me.jackz.jackzco3.jPhone.jPhoneMain(plugin).givePhone(p,"§3jPhone 2",false));
+                p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();
                 newPhoneMeta.setDisplayName("§3jPhone Development Phone");

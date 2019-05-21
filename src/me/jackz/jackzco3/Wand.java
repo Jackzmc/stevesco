@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3;
 
 import org.bukkit.Location;
@@ -23,7 +40,7 @@ public class Wand implements Listener {
     @EventHandler
     void noLitter(PlayerDropItemEvent e) {
         ItemStack item = e.getItemDrop().getItemStack();
-        if(item.getType().equals(Material.INK_SACK) & item.getDurability() == (byte) 4) {
+        if(item.getType().equals(Material.INK_SAC)) {
             Player p = e.getPlayer();
             e.setCancelled(true);
             p.sendMessage("dude, no littering u fuck");

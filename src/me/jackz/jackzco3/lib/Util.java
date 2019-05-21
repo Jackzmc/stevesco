@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3.lib;
 
 import org.bukkit.ChatColor;
@@ -36,11 +53,11 @@ public class Util {
     }
     public static boolean isSafeLocation(Location location) {
         Block feet = location.getBlock();
-        if (!feet.getType().isTransparent() && !feet.getLocation().add(0, 1, 0).getBlock().getType().isTransparent()) {
+        if (feet.getType().isSolid() || feet.getLocation().add(0, 1, 0).getBlock().getType().isSolid()) {
             return false; // not transparent (will suffocate)
         }
         Block head = feet.getRelative(BlockFace.UP);
-        if (!head.getType().isTransparent()) {
+        if (head.getType().isSolid()) {
             return false; // not transparent (will suffocate)
         }
         Block ground = feet.getRelative(BlockFace.DOWN);
@@ -54,7 +71,7 @@ public class Util {
         ItemMeta meta = item.getItemMeta();
 
         name = name.replaceAll("%name%", p.getName()); //convert vars
-        name = name.replaceAll("%display name%", p.getCustomName());
+        name = name.replaceAll("%display name%", (p.getCustomName() == null) ? p.getName() : p.getCustomName());
         lore = lore.replaceAll("%name%", p.getName());
         lore = lore.replaceAll("%display name%", p.getCustomName());
 

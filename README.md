@@ -1,5 +1,11 @@
 # StevesCo
-This is a test/fun project I made for spigotmc plugin development. It is just me learning java and creating some type of plugin. 
-You could call this a competition with my friend.
+This is just a test and learning project for java. It is for [spigotmc](spigot), and mostly to just learn some java shit while making something useful and fun.
 
-Should work but what do I know, its my code.
+Of course I don't  care what you do with the code, and there's no warranty (why would there?). 
+It may work, may not on your install. Not my problem sorry.
+
+Created by Jackz.
+
+
+## What is "StevesCo"?
+A few years ago me and my friend decided to make fake companies to compete against each other in coding, cause why not? It evolved from "jackzco" which you can tell from my name why it was called that. "StevesCo" came from a joke based on "steve" from playing a game.

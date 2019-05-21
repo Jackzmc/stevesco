@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -81,10 +81,10 @@ public class jPhoneMain implements Listener {
 
 	Inventory getAppSwitcher(Player p) {
 		me.jackz.jackzco3.lib.Util util = new me.jackz.jackzco3.lib.Util();
-		util.createDisplay(p, Material.BOOK_AND_QUILL, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
-		util.createDisplay(p, Material.SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
+		util.createDisplay(p, Material.WRITABLE_BOOK, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
+		util.createDisplay(p, Material.OAK_SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
 		util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
-		util.createDisplay(p, Material.REDSTONE_LAMP_OFF, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
+		util.createDisplay(p, Material.REDSTONE_LAMP, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
 		util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
 		util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
 		util.createDisplay(p, Material.GOLD_NUGGET,jPhoneMain.appswitcher,32,"§9jKeychain","§7Your private, secure, remote storage");

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Jackson Bixby
+ * Copyright (C) 2019 Jackson Bixby
  *
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -47,10 +48,11 @@ public class InventoryClick implements Listener {
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) { //move to own class?
+		InventoryView view = event.getView();
 		Player p = (Player) event.getWhoClicked(); // The player that clicked the item
 		ItemStack clicked = event.getCurrentItem(); // The item that was clicked
 		Inventory inventory = event.getInventory(); // The inventory that was clicked in
-		if(inventory.getName().equals(jPhoneMain.appswitcher.getName())) {
+		if(view.getTitle().equals("§9jPhone App Switcher")) { //todo: fix?
 			//If name of inventory is same as app switcher
 			event.setCancelled(true);
 			if(!(p.getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK))) {
@@ -70,11 +72,11 @@ public class InventoryClick implements Listener {
 					item.setType(Material.TORCH);
 					p.getInventory().setItemInMainHand(item);
 					break;
-				} case BOOK_AND_QUILL:
+				} case WRITABLE_BOOK:
 					p.performCommand("settings");
 					//p.sendMessage("§7Type /jphone claim to claim");
 					break;
-				case SIGN:
+				case OAK_SIGN:
 					if(nbti.getBoolean("terminal")) {
 						//ON to OFF
 						nbti.setBoolean("terminal", false);
@@ -95,7 +97,7 @@ public class InventoryClick implements Listener {
 					item.setType(Material.BONE);
 					p.getInventory().setItemInMainHand(item);
 					break;
-				} case REDSTONE_LAMP_OFF:
+				} case REDSTONE_LAMP:
 					nbti.setBoolean("state",false);
 					p.getInventory().setItemInMainHand(nbti.getItem());
 					p.sendMessage("§7Phone has been switched off.");
@@ -108,7 +110,7 @@ public class InventoryClick implements Listener {
 					break;
 				case NOTE_BLOCK:
 					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
-					util.createDisplay(p,Material.RECORD_3,jPhoneMain.stunes,2,"§9Legacy Player");
+					util.createDisplay(p,Material.MUSIC_DISC_MELLOHI,jPhoneMain.stunes,2,"§9Legacy Player");
 					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 						p.openInventory(jPhoneMain.stunes);
 					},1L);
@@ -118,16 +120,16 @@ public class InventoryClick implements Listener {
 					p.sendMessage("That item is not configured correctly.");
 			}
 			p.closeInventory(); //close it
-		}else if(inventory.getName().equals(jPhoneMain.stunes.getName())) {
+		}else if(view.getTitle().equals("§9Steves Tunes Player")) {
 			event.setCancelled(true);
 			switch(clicked.getType()) {
-				case RECORD_3:
+				case MUSIC_DISC_MELLOHI:
 					p.performCommand("music");
 					break;
 				default:
 					p.sendMessage("§7The §3Steves Tunes §7player is currently §cin development");
 			}
-		}else if(inventory.getName().startsWith("keychain")) {
+		}else if(view.getTitle().startsWith("keychain")) {
 			String[] phonenames = {
 					"§3jPhone",
 					jPhoneMain.phoneName,
@@ -136,7 +138,7 @@ public class InventoryClick implements Listener {
 					"§3jPhone XL"
 			};
 			ItemMeta meta = clicked.getItemMeta();
-			if(meta.getDisplayName() != null) {
+			if(meta.hasDisplayName()) {
 				for (String phonename : phonenames) {
 					if(meta.getDisplayName().startsWith(phonename)) {
 						event.setCancelled(true);
@@ -149,9 +151,10 @@ public class InventoryClick implements Listener {
 	@EventHandler
 	public void onInvClose(InventoryCloseEvent e) {
 		Inventory inv = e.getInventory();
-		if(inv.getName().startsWith("keychain")) {
+		InventoryView view = e.getView();
+		if(view.getTitle().startsWith("keychain")) {
 			try {
-				new InventoryStore(plugin,inv.getName(),9*3).saveInv(inv);
+				new InventoryStore(plugin,view.getTitle(),9*3).saveInv(inv);
 			} catch (IOException e1) {
 				e.getPlayer().sendMessage("§7Failed to save your KeyChain: §e" + e1.toString());
 			}

@@ -1,7 +1,8 @@
 name: jackzco3
-version: 3.0.0
+version: 3.1.0
 author: Jackz
 main: me.jackz.jackzco3.Main
+api-version: 1.14
 softdepend: [WorldGuard,GlowAPI,Citizens]
 depend: [TTA]
 commands:
@@ -35,3 +36,6 @@ commands:
   jstore:
     description: open the jstore
     usage: /jstore
+  openchant:
+    description: super enchant
+    usage: /openchant <enchantment> <level>

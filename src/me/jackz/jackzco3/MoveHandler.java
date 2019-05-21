@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2019 Jackson Bixby
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package me.jackz.jackzco3;
 
 import org.bukkit.Location;
@@ -29,7 +46,8 @@ public class MoveHandler implements Listener {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
-
+		if(true) return;
+		//TODO: FIX ABOVE! BROKEN
 
 		if(!plugin.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
@@ -54,7 +72,7 @@ public class MoveHandler implements Listener {
 					},600L);
 					scanTimeImmune.put(p.getUniqueId().toString(),true);
 					//noinspection deprecation
-					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™");
+					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™",0,40,0);
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();
 					for(ItemStack item  : p.getInventory()) {
