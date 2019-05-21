@@ -33,8 +33,8 @@ public class BatteryTick implements Runnable {
 				ItemStack item = p.getInventory().getItem(i);
 				if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
 				ItemMeta meta = item.getItemMeta();
-				if (meta.getDisplayName() == null) continue;
-				if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone") || meta.getDisplayName().equals("§3jWrench")) { //check if tripwire hook is jPhone || jLight
+				String dpname = (meta != null && meta.hasDisplayName()) ? meta.getDisplayName() : null;
+				if (meta.hasDisplayName() && dpname.equals("§fjLight") || dpname.equals("§3jPhone") || dpname.equals("§3jWrench")) { //check if tripwire hook is jPhone || jLight
 
 					NBTItem nbt = ItemNBTAPI.getNBTItem(item);
 					if (nbt.getBoolean("state")) { //If phone on

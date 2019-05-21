@@ -36,3 +36,6 @@ commands:
   jstore:
     description: open the jstore
     usage: /jstore
+  openchant:
+    description: super enchant
+    usage: /openchant <enchantment> <level>

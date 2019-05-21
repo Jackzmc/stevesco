@@ -48,7 +48,7 @@ public class BlockEvent implements Listener {
 		Player p = e.getPlayer();
 		if(e.getBlockPlaced().getType().equals(Material.PISTON)) {
 			ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-			if(meta == null || !meta.getDisplayName().equals("§fjCharger")){
+			if(meta == null || !meta.hasDisplayName() || !meta.getDisplayName().equals("§fjCharger")){
 				return;
 			}
 			if(e.getBlockAgainst().getType().equals(Material.GOLD_BLOCK)) {
