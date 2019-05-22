@@ -52,6 +52,7 @@ public class ChatListener implements Listener {
 		this.plugin = plugin;
 		this.jphone = jphone;
 	}
+	@SuppressWarnings("SpellCheckingInspection")
 	@EventHandler
 	public void jPhoneChat(AsyncPlayerChatEvent e) {
 		Player p = e.getPlayer();
@@ -167,7 +168,7 @@ public class ChatListener implements Listener {
 							for (String tower : towers.keySet()) {
 								double dist = towers.get(tower);
 								if(dist > 1000) {
-									p.sendMessage("§7Tower §e" + tower + "§7 is §e" + jphone.getTowerQuality(dist));
+									p.sendMessage("§7Tower §e" + tower + "§7 is §e" + jPhoneMain.getTowerQuality(dist));
 									continue;
 								}else if(dist > 600) {
 									p.sendMessage("§7Tower §e" + tower + "§7 (§cPoor§7) is §e" + Math.round(randomizeDouble(dist,p.getLocation())) + "§7 blocks away");

@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.Herbystar.TTA.TTA_Methods;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
+import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +31,7 @@ public class Timing implements Runnable {
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			ItemStack item = p.getInventory().getItemInMainHand();
 			if(item != null) {
-				if(new me.jackz.jackzco3.lib.Util().checkItem(item,Material.TRIPWIRE_HOOK,"§3jPhone")) {
+				if(Util.checkItem(item,Material.TRIPWIRE_HOOK,"§3jPhone")) {
 					NBTItem nbt = ItemNBTAPI.getNBTItem(item);
 					int battery = nbt.getInteger("battery");
 					String color = (battery > 85) ? "§a" : (battery < 20) ? "§c" : "§e";

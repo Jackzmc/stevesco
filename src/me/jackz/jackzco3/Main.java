@@ -77,8 +77,7 @@ public class Main extends JavaPlugin {
                 new MessageHandler(this),
 		        new MoveHandler(this),
                 new SignHandler(this),
-                new PlayerInteractHandler(this),
-                new Bow(this)
+                new PlayerInteractHandler(this)
         );
         //new LocVarLib(this);
         config = new Config().setupConfig(this);
@@ -126,10 +125,10 @@ public class Main extends JavaPlugin {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        return new MiscCommands().onCommand(this,sender,command,label,args);
+        return new MiscCommands(this).onCommand(this,sender,command,label,args);
     }
 
-    WorldGuard getWorldGuard() {
+    static WorldGuard getWorldGuard() {
         WorldGuard wg = WorldGuard.getInstance();
         // WorldGuard may not be loaded
         if (wg == null) {
@@ -143,7 +142,7 @@ public class Main extends JavaPlugin {
         plugin.getLogger().info("[isJackzCoRegion] Checking location. Regions: " + jackzco_regions.toString());
         return checkRegion(loc,jackzco_regions);
     }
-    public boolean checkRegion(Location loc, List<String> regions) {
+    public static boolean checkRegion(Location loc, List<String> regions) {
         if(getWorldGuard() != null) {
             //RegionContainer container = getWorldGuard().getRegionContainer();
             RegionContainer container = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
@@ -162,7 +161,7 @@ public class Main extends JavaPlugin {
         return false;
     }
 
-    public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
+    public static boolean checkRegion(Location loc, String region_name) { //should simplify but eh
         if(getWorldGuard() != null) {
             RegionContainer container = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();

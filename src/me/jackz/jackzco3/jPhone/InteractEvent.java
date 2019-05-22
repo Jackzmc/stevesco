@@ -46,12 +46,10 @@ public class InteractEvent implements Listener {
 
 
 	private final Main plugin;
-	private final Util util;
 	private jPhoneMain jphone;
 	InteractEvent(Main plugin,jPhoneMain jphone) {
 		this.plugin = plugin;
 		this.jphone = jphone;
-		this.util = new Util();
 	}
 
 	private Random random = new Random();
@@ -79,11 +77,11 @@ public class InteractEvent implements Listener {
 							return;
 						}
 						//charge phone
-						p.getWorld().spawnParticle(Particle.SPELL_INSTANT, util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
+						p.getWorld().spawnParticle(Particle.SPELL_INSTANT, Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
 						p.sendMessage("§7Charging...");
 						for (int i = 0; i < 59; i++) {
 							plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
-									util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
+									Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
 									10, 0.5, 3, 0.5),
 									i
 							);
@@ -119,7 +117,7 @@ public class InteractEvent implements Listener {
 				}
 				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if (p.isSneaking()) {
-						p.openInventory(jphone.getAppSwitcher(p));
+						p.openInventory(jPhoneMain.getAppSwitcher(p));
 						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2F, 5);
 					} else {
 						Integer battery = nbti.getInteger("battery");
@@ -169,12 +167,12 @@ public class InteractEvent implements Listener {
 						for (String tower : towers.keySet()) {
 							Double distances = towers.get(tower);
 							if (distances <= 600) {
-								msgs.add("§7Tower §e" + tower + "§7:§e " + jphone.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
+								msgs.add("§7Tower §e" + tower + "§7:§e " + jPhoneMain.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
 								accessible++;
 							}
 						}
 						msgs.add(0, "§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown");
-						p.sendMessage(msgs.toArray(new String[msgs.size()]));
+						p.sendMessage(msgs.toArray(new String[0]));
 					}
 				}
 			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON && e.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -183,12 +181,12 @@ public class InteractEvent implements Listener {
 					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
 					return;
 				}
-			} else if (util.checkItem(item, Material.BONE, "§3jWrench")) {
+			} else if (Util.checkItem(item, Material.BONE, "§3jWrench")) {
 				e.setCancelled(true);
 				if (p.isSneaking()) {
 					ItemMeta phoneMeta = item.getItemMeta();
 					item.setType(Material.TRIPWIRE_HOOK);
-					phoneMeta.setDisplayName(jphone.phoneName); //check if 2X
+					phoneMeta.setDisplayName(jPhoneMain.phoneName); //check if 2X
 					item.setItemMeta(phoneMeta);
 					p.getInventory().setItemInMainHand(item);
 					return;

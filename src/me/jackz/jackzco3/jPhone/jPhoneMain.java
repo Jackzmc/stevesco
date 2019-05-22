@@ -20,6 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import de.tr7zw.itemnbtapi.ItemNBTAPI;
 import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
+import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -28,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,7 +51,7 @@ public class jPhoneMain implements Listener {
 
 	static String phoneName = "§3jPhone";
 
-	public jPhoneMain(Main plugin) {
+	 public jPhoneMain(Main plugin) {
 		this.plugin = plugin; // Store the plugin in situations where you need it.
 		plugin.getServer().getPluginManager().registerEvents(new ChatListener(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InteractEvent(plugin,this),plugin);
@@ -63,7 +65,7 @@ public class jPhoneMain implements Listener {
 		//plugin.getServer().getScheduler().runTaskTimer(plugin, new BatteryTick(), 0L,200L);
 	}
 
-	public ItemStack givePhone(Player p, String name, boolean locked) {
+	static public ItemStack givePhone(Player p, String name, boolean locked) {
 		NBTItem nbt = ItemNBTAPI.getNBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
 		nbt.setInteger("battery",100);
 		if(!locked) nbt.setString("owner",p.getUniqueId().toString());
@@ -79,15 +81,15 @@ public class jPhoneMain implements Listener {
 		return item;
 	}
 
-	Inventory getAppSwitcher(Player p) {
+	static Inventory getAppSwitcher(Player p) {
 		me.jackz.jackzco3.lib.Util util = new me.jackz.jackzco3.lib.Util();
-		util.createDisplay(p, Material.WRITABLE_BOOK, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
-		util.createDisplay(p, Material.OAK_SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
-		util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
-		util.createDisplay(p, Material.REDSTONE_LAMP, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
-		util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
-		util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
-		util.createDisplay(p, Material.GOLD_NUGGET,jPhoneMain.appswitcher,32,"§9jKeychain","§7Your private, secure, remote storage");
+		Util.createDisplay(p, Material.WRITABLE_BOOK, jPhoneMain.appswitcher, 10, "&9Settings", "&7Configure your phone");
+		Util.createDisplay(p, Material.OAK_SIGN, jPhoneMain.appswitcher, 12, "&9Terminal", "&7Open the console/terminal");
+		Util.createDisplay(p, Material.TORCH, jPhoneMain.appswitcher, 14, "&9Flashlight", "&7Illuminate the world!|&7(Left click to turn off)");
+		Util.createDisplay(p, Material.REDSTONE_LAMP, jPhoneMain.appswitcher, 16, "§9Power off", "§7Turn the phone off");
+		Util.createDisplay(p, Material.NOTE_BLOCK, jPhoneMain.appswitcher, 28, "§9Steves Tunes", "§7Your music, the way you want");
+		Util.createDisplay(p, Material.BONE,jPhoneMain.appswitcher,30,"§9Wrench","§7Rotate inventories, and blocks.");
+		Util.createDisplay(p, Material.GOLD_NUGGET,jPhoneMain.appswitcher,32,"§9jKeychain","§7Your private, secure, remote storage");
 		return appswitcher;
 	}
 
@@ -124,7 +126,7 @@ public class jPhoneMain implements Listener {
 		double range = map.entrySet().iterator().next().getValue();
 		return (range < 600);
 	}
-	String getTowerQuality(Double distance) {
+	static String getTowerQuality(Double distance) {
 		if (distance < 25)  return "§3NASA Quality";
 		if (distance < 100) return "§2Excellent";
 		if (distance < 200) return "§aDecent";
@@ -133,5 +135,31 @@ public class jPhoneMain implements Listener {
 		if (distance < 500) return "§cPoor";
 		if (distance < 600) return "§cHorrible";
 		return "§4Unreachable";
+	}
+	public static ItemStack getIntroBook() {
+		String[] pages = {
+				"Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
+				"You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
+		};
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta meta = (BookMeta) book.getItemMeta();
+		meta.setAuthor("StevesCo");
+		meta.setTitle("jPhone Docs");
+		meta.addPage(pages);
+		book.setItemMeta(meta);
+		return book;
+	}
+	public static ItemStack getWarrantyBook() {
+		String[] pages = {
+				"Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
+				"You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
+		};
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta meta = (BookMeta) book.getItemMeta();
+		meta.setAuthor("StevesCo");
+		meta.setTitle("jPhone Warranty Information");
+		meta.addPage(pages);
+		book.setItemMeta(meta);
+		return book;
 	}
 }

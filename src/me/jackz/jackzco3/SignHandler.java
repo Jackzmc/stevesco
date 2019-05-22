@@ -76,16 +76,18 @@ public class SignHandler implements Listener {
 				case TRIPWIRE_HOOK:
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
 						case "§fjPhone 2": {
-							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2",false));
-							p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
+							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2",false));
+							p.getInventory().addItem(jPhoneMain.getIntroBook());
+							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
 							break;
 						} case "§fjPhone 2X": {
-							p.getInventory().addItem(jphone.givePhone(p,"§3jPhone 2X",false));
-							p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
+							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2X",false));
+							p.getInventory().addItem(jPhoneMain.getIntroBook());
+							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
 							break;
 						} default:
 							p.sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());
-							p.sendMessage("§cInvalid phone");
+							p.sendMessage("§cSorry we don't support that phone. Please contact our support team if you have any questions");
 					}
 					break;
 				case PISTON:
@@ -107,12 +109,10 @@ public class SignHandler implements Listener {
 			}
 		}
 	}
-	Inventory getStore(Player p) {
-		Util util = new Util();
-		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$Unknown");
-		util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$Unknown+$100");
-		util.createDisplay(p,Material.PISTON,jstore,9+5,"§fjCharger","§7Ultra fast charger");
+	static void getStore(Player p) {
+		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$Unknown");
+		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$Unknown+$100");
+		Util.createDisplay(p,Material.PISTON,jstore,9+5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
-		return jstore;
 	}
 }

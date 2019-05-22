@@ -35,12 +35,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class BlockEvent implements Listener {
 	private final Main plugin;
-	private final Util util;
-	private jPhoneMain jphone;
+
 	BlockEvent(Main plugin, jPhoneMain jphone) {
 		this.plugin = plugin;
-		this.jphone = jphone;
-		this.util = new Util();
 	}
 
 	@EventHandler
@@ -55,9 +52,9 @@ public class BlockEvent implements Listener {
 				Piston piston = (Piston) e.getBlockPlaced();
 				piston.setFacing(BlockFace.UP);
 				p.getWorld().playSound(e.getBlockPlaced().getLocation(), Sound.BLOCK_ANVIL_PLACE, SoundCategory.BLOCKS,1,1);
-				p.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE,util.getCenterLocation(e.getBlockPlaced().getLocation()),400,0.5,20,0.5);
+				p.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, Util.getCenterLocation(e.getBlockPlaced().getLocation()),400,0.5,20,0.5);
 				new LocationStore(plugin).setBoolean(e.getBlockPlaced().getLocation(),true);
-				p.sendMessage("§aSuccessflly added jCharger");
+				p.sendMessage("§aSuccessfully added jCharger");
 			}else{
 				e.setCancelled(true);
 				p.sendMessage("§7Must be placed on a gold block");
@@ -72,7 +69,7 @@ public class BlockEvent implements Listener {
 			if(isCharger) {
 				if(p.isSneaking()) {
 					new LocationStore(plugin).deleteValue(e.getBlock().getLocation()); //todo: make .deleteValue()
-					p.getInventory().addItem(util.getCustomItem(Material.PISTON,"§fjCharger"));
+					p.getInventory().addItem(Util.getCustomItem(Material.PISTON,"§fjCharger"));
 					p.sendMessage("§cSuccessfully removed jCharger");
 				}else{
 					e.setCancelled(true);

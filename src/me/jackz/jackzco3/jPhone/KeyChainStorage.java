@@ -140,6 +140,7 @@ public class KeyChainStorage {
 			}
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public void saveMap(Map<String,Location> map) {
 		try {
 			FileWriter fw = new FileWriter(jsonMap);
@@ -173,9 +174,7 @@ public class KeyChainStorage {
 			return false;
 		}
 	}
-	public boolean isAdded(Location loc) {
-		return false; //TODO: todo this
-	}
+
 	private void saveArray(JSONArray array) {
 		try {
 			FileWriter fw = new FileWriter(file);

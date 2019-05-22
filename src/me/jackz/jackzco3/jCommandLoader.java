@@ -17,6 +17,7 @@
 
 package me.jackz.jackzco3;
 
+import me.jackz.jackzco3.jPhone.jPhoneMain;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -102,7 +103,7 @@ public class jCommandLoader implements CommandExecutor {
                 p.getInventory().addItem(newPhone);
                 p.sendMessage("§7Thank you for being apart of the §3jPhone Beta Program");
                 p.sendMessage("§7We have provided you a documentation book to get started with the phone. Thank you for choosing JackzCo!");
-                p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
+                p.getInventory().addItem(jPhoneMain.getIntroBook());
                 break;
             } case "dev": {
                 if (!(sender instanceof Player)) {
@@ -114,8 +115,9 @@ public class jCommandLoader implements CommandExecutor {
                     p.sendMessage("§cYou must be an OP to get the jPhone Test Phone.");
                     return true;
                 }
-                p.getInventory().addItem(new me.jackz.jackzco3.jPhone.jPhoneMain(plugin).givePhone(p,"§3jPhone 2",false));
-                p.getInventory().addItem(new me.jackz.jackzco3.lib.Util().getIntroBook());
+                new jPhoneMain(plugin);
+                p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2",false));
+                p.getInventory().addItem(jPhoneMain.getIntroBook());
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();
                 newPhoneMeta.setDisplayName("§3jPhone Development Phone");

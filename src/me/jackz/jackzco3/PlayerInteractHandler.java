@@ -18,6 +18,7 @@
 package me.jackz.jackzco3;
 
 import me.jackz.jackzco3.lib.LocationStore;
+import me.jackz.jackzco3.lib.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ class PlayerInteractHandler implements Listener {
 		Player p = e.getPlayer();
 		if(e.getHand() == EquipmentSlot.HAND) {
 			ItemStack hand = p.getInventory().getItemInMainHand();
-			if(new me.jackz.jackzco3.lib.Util().checkItem(hand,Material.STICK,"§6LocationStore Checker")) {
+			if(Util.checkItem(hand,Material.STICK,"§6LocationStore Checker")) {
 				/*
 					name = §9Debugger
 					lore[0] = <filename here>
@@ -67,7 +68,7 @@ class PlayerInteractHandler implements Listener {
 
 					}
 				}
-			}else if(new me.jackz.jackzco3.lib.Util().checkItem(hand,Material.DIAMOND,"ok")) {
+			}else if(Util.checkItem(hand,Material.DIAMOND,"ok")) {
 				if(Bukkit.getPluginManager().getPlugin("Citizens") == null) {
 					p.sendMessage("§cCitizens is not installed.");
 					return;

@@ -30,10 +30,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class Wand implements Listener {
-    private final Main plugin;
 
     public Wand(Main plugin) {
-        this.plugin = plugin;
     }
 
 
@@ -56,7 +54,7 @@ public class Wand implements Listener {
                 ItemStack item = p.getInventory().getItemInMainHand();
                 if(item.getType().equals(Material.SPECTRAL_ARROW)) {
                     e.setCancelled(true);
-                    Integer wandSlot = p.getInventory().getHeldItemSlot();
+                    int wandSlot = p.getInventory().getHeldItemSlot();
                     wandSlot = (wandSlot >= 8) ? 0 : ++wandSlot;
                     ItemStack buildBlock = p.getInventory().getItem(wandSlot);
                     if(buildBlock != null && buildBlock.getType().isBlock()) {

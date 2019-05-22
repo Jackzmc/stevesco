@@ -28,9 +28,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class MainListener implements Listener {
-    private final Main plugin;
     public MainListener(Main plugin) {
-        this.plugin = plugin;
     }
 
     @EventHandler

@@ -45,6 +45,7 @@ class DoorControlEvent implements Listener {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("SpellCheckingInspection")
     @EventHandler
     void DoorClick(PlayerInteractEvent e) {
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getHand() == EquipmentSlot.HAND) {
@@ -56,7 +57,7 @@ class DoorControlEvent implements Listener {
                 if(clickedBlock.getType() == Material.IRON_DOOR) {
                     p.sendMessage("§7debug: passed material check");
 
-                    if(!plugin.checkRegion(clickedBlock.getLocation(),"jackzco")) return;
+                    if(!Main.checkRegion(clickedBlock.getLocation(),"jackzco")) return;
                     p.sendMessage("§cdebug: passed region test");
                     boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();

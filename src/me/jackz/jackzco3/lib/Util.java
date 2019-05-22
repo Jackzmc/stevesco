@@ -25,7 +25,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
@@ -63,10 +62,10 @@ public class Util {
         Block ground = feet.getRelative(BlockFace.DOWN);
         return ground.getType().isSolid();
     }
-    public void createDisplay(Player p, Material material, Inventory inv, int slot, String name) {
+    public static void createDisplay(Player p, Material material, Inventory inv, int slot, String name) {
         createDisplay(p,material,inv,slot,name,"");
     }
-    public void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
+    public static void createDisplay(Player p, Material material, Inventory inv, int Slot, String name, String lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
 
@@ -86,10 +85,10 @@ public class Util {
         item.setItemMeta(meta);
         inv.setItem(Slot, item);
     }
-    public ItemStack getCustomItem(Material mt, String name) {
+    public static ItemStack getCustomItem(Material mt, String name) {
         return getCustomItem(mt,name,new ArrayList<>());
     }
-    public ItemStack getCustomItem(Material mt, String name, List<String> lore) {
+    public static ItemStack getCustomItem(Material mt, String name, List<String> lore) {
         ItemStack item = new ItemStack(mt);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
@@ -97,10 +96,10 @@ public class Util {
         item.setItemMeta(meta);
         return item;
     }
-    public Location getCenterLocation(Location loc) {
+    public static Location getCenterLocation(Location loc) {
         return loc.add((loc.getX() > 0 ? 0.5 : -0.5), 0.0, (loc.getZ() > 0 ? 0.5 : -0.5));
     }
-    public boolean checkItem(ItemStack input, String name) {
+    public static boolean checkItem(ItemStack input, String name) {
         ItemMeta meta = input.getItemMeta();
         if(meta == null || meta.getDisplayName() == null) {
             return false;
@@ -108,21 +107,9 @@ public class Util {
             return meta.getDisplayName().equals(name);
         }
     }
-    public boolean checkItem(ItemStack input, Material mt, String name) {
+    public static boolean checkItem(ItemStack input, Material mt, String name) {
         if(input == null || input.getType() != mt) return false;
         return checkItem(input,name);
     }
-    public ItemStack getIntroBook() {
-        String[] pages = {
-                "Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
-                "You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
-        };
-        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-        BookMeta meta = (BookMeta) book.getItemMeta();
-        meta.setAuthor("JackzCo");
-        meta.setTitle("jPhone Docs");
-        meta.addPage(pages);
-        book.setItemMeta(meta);
-        return book;
-    }
+
 }

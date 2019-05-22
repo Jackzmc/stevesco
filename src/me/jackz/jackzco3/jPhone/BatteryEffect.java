@@ -23,11 +23,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class BatteryEffect implements Runnable {
-	private final Main plugin;
-	private me.jackz.jackzco3.lib.Util util;
+
 	BatteryEffect(Main plugin) {
-		this.plugin = plugin;
-		this.util = new me.jackz.jackzco3.lib.Util();
 	}
 
 	@Override

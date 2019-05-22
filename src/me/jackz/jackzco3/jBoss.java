@@ -33,11 +33,8 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class jBoss implements CommandExecutor {
-	private final Main plugin;
-	private String prefix;
+
 	jBoss(Main plugin) {
-		prefix = Main.jackzco_prefix;
-		this.plugin = plugin;
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

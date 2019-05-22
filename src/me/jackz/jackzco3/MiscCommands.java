@@ -38,6 +38,10 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 class MiscCommands {
+	Main plugin;
+	MiscCommands(Main plugin) {
+		this.plugin = plugin;
+	}
 	boolean onCommand(Main plugin,CommandSender sender, Command command, String label, String[] args) {
 		String cmd = command.getName().toLowerCase();
 		switch (cmd) {
@@ -48,7 +52,7 @@ class MiscCommands {
 					if (args.length < 2) {
 						p.sendMessage("§cUsage: /openchant <enchant> <level>");
 					} else {
-						if (p.getInventory().getItemInMainHand().equals(Material.AIR)) {
+						if (p.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
 							p.sendMessage("§cPlease hold an item in your hand to enchant");
 						} else {
 							Enchantment enchantment = EnchantmentWrapper.getByKey(NamespacedKey.minecraft(args[0]));
@@ -103,7 +107,7 @@ class MiscCommands {
 					return true;
 				}
 				Player p = (Player) sender;
-				new SignHandler(plugin).getStore(p);
+				SignHandler.getStore(p);
 				return true;
 			}
 			case "uuid": {
@@ -154,7 +158,7 @@ class MiscCommands {
 				if (sender instanceof Player) {
 					Player p = (Player) sender;
 					ItemStack itm = p.getInventory().getItemInMainHand();
-					if (itm == null) {
+					if (itm.getType().equals(Material.AIR)) {
 						p.sendMessage("§cYou must have an item in your hand!");
 					} else {
 						p.sendMessage("Item is: §e" + itm.getType().toString());

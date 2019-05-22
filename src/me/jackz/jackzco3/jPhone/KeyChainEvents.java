@@ -37,7 +37,7 @@ class KeyChainEvents implements Listener {
 		Player p = e.getPlayer();
 		if(e.getHand() == EquipmentSlot.HAND) {
 			if(e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				if(new Util().checkItem(e.getItem(), Material.BLAZE_ROD,"§6jKeychain Creator")) {
+				if(Util.checkItem(e.getItem(), Material.BLAZE_ROD,"§6jKeychain Creator")) {
 					//todo: check if inventory
 					//todo: convert name
 					e.setCancelled(true);

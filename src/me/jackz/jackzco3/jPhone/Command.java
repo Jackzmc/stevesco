@@ -22,10 +22,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class Command implements CommandExecutor {
-	private Main plugin;
 	private jPhoneMain jphone;
 	Command(Main plugin,jPhoneMain jphone) {
-		this.plugin = plugin;
+		Main plugin1 = plugin;
 		this.jphone = jphone;
 	}
 

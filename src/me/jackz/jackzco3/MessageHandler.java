@@ -24,10 +24,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class MessageHandler implements Listener {
-    private Main plugin;
 
     MessageHandler(Main plugin) {
-        this.plugin = plugin;
     }
     @EventHandler
     public void chatEvent(AsyncPlayerChatEvent e) {

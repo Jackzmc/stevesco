@@ -48,7 +48,7 @@ class jCommandAdmin {
 					//id = UUID.randomUUID().toString();
 					p.sendMessage("§7Using §e" + id + " §7as ID of tower.");
 				}else{
-					id = (Util.isInteger(args[2]))? String.format("%03d", Integer.parseInt(args[2])) : args[2].toLowerCase();;
+					id = (Util.isInteger(args[2]))? String.format("%03d", Integer.parseInt(args[2])) : args[2].toLowerCase();
 				}
 				//args[0], args[1], args[2]
 				jTower twr = new jTower(id,p.getLocation());
@@ -56,7 +56,7 @@ class jCommandAdmin {
 				p.sendMessage("§ajTower §e" + id + " §acreated");
 				break;
 			case "keychain":
-				p.getInventory().addItem(new Util().getCustomItem(Material.BLAZE_ROD,"§6jKeychain Creator"));
+				p.getInventory().addItem(Util.getCustomItem(Material.BLAZE_ROD,"§6jKeychain Creator"));
 				break;
 			default:
 				p.sendMessage("§cUnknown admin option, you fuck");

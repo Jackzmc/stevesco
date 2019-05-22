@@ -38,14 +38,12 @@ import java.io.IOException;
 
 public class InventoryClick implements Listener {
 	private final Main plugin;
-	private final Util util;
-	private jPhoneMain jphone;
+
 	InventoryClick(Main plugin,jPhoneMain jphone) {
 		this.plugin = plugin;
-		this.jphone = jphone;
-		this.util = new Util();
 	}
 
+	@SuppressWarnings("SpellCheckingInspection")
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) { //move to own class?
 		InventoryView view = event.getView();
@@ -109,11 +107,9 @@ public class InventoryClick implements Listener {
 					},1L);
 					break;
 				case NOTE_BLOCK:
-					util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
-					util.createDisplay(p,Material.MUSIC_DISC_MELLOHI,jPhoneMain.stunes,2,"§9Legacy Player");
-					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-						p.openInventory(jPhoneMain.stunes);
-					},1L);
+					Util.createDisplay(p,Material.WRITTEN_BOOK,jPhoneMain.stunes,0,"§9INFO");
+					Util.createDisplay(p,Material.MUSIC_DISC_MELLOHI,jPhoneMain.stunes,2,"§9Legacy Player");
+					plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.openInventory(jPhoneMain.stunes),1L);
 					//play a tune
 					break;
 				default:

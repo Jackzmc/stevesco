@@ -18,6 +18,7 @@
 package me.jackz.jackzco3;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,12 +47,12 @@ public class MoveHandler implements Listener {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
-		if(true) return;
+		//if(true) return;
 		//TODO: FIX ABOVE! BROKEN
 
-		if(!plugin.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
+		if(!Main.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
-		if(underneathPlayer == null) return;
+		if(underneathPlayer.getType().equals(Material.AIR)) return;
 
 		Boolean isImmune = scanImmune.get(p.getUniqueId().toString());
 		Boolean isTimeImmune = scanTimeImmune.get(p.getUniqueId().toString());
