@@ -73,7 +73,7 @@ public class Bow implements Listener {
 
 			switch(hitBlock.getType()) {
 				case GLASS:
-				case THIN_GLASS:
+				case LEGACY_THIN_GLASS:
 					hitBlock.setType(Material.AIR);
 					arrow.remove();
 					break;

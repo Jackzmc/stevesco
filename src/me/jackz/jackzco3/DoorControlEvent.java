@@ -35,9 +35,8 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 class DoorControlEvent implements Listener {
@@ -54,23 +53,27 @@ class DoorControlEvent implements Listener {
             Player p = e.getPlayer();
             try {
 
-                if(clickedBlock.getType() == Material.IRON_DOOR || clickedBlock.getType() == Material.LEGACY_IRON_DOOR_BLOCK) {
-                    if(!plugin.checkRegion(clickedBlock.getLocation(),new ArrayList<>(Arrays.asList("stevesco", "minishco")))) return;
+                if(clickedBlock.getType() == Material.IRON_DOOR) {
+                    p.sendMessage("§7debug: passed material check");
+
+                    if(!plugin.checkRegion(clickedBlock.getLocation(),"jackzco")) return;
+                    p.sendMessage("§cdebug: passed region test");
                     boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();
                     for(ItemStack item : inv.getContents()) {
                         if(item != null && item.getType().equals(Material.PAPER)) {
-
+                            p.sendMessage("§cuser has ID");
                             e.setCancelled(true);
-                            if(item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§6ID Card")) {
+
+                            if(item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§6ID Card")) {
 
                                 isMatch = true;
+                                p.sendMessage("§cdebug: door open attempt");
                                 BlockState blockState = clickedBlock.getState();
                                 if(((Door) blockState.getData()).isTopHalf()){
                                     blockState = clickedBlock.getRelative(BlockFace.DOWN).getState();
+                                    p.sendMessage("§cdebug: " + ((Door) blockState.getData()).isTopHalf());
                                 }
-
-
                                 Openable openable = (Openable) blockState.getData();
                                 boolean isDoorOpen = openable.isOpen();
                                 if(isDoorOpen) { //is currently opened
@@ -84,9 +87,9 @@ class DoorControlEvent implements Listener {
                                 blockState.update();
                                 final BlockState closedBS = blockState;
                                 if(!isDoorOpen) {
-                                    new java.util.Timer().schedule(new java.util.TimerTask() {
-                                        @Override
+                                    new BukkitRunnable() {
                                         public void run() {
+                                            Openable openable = (Openable) clickedBlock.getState().getData();
                                             if (openable.isOpen()) {
                                                 openable.setOpen(false);
                                                 closedBS.setData((MaterialData) openable);
@@ -94,7 +97,7 @@ class DoorControlEvent implements Listener {
                                                 clickedBlock.getWorld().playSound(p.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1, 1);
                                             }
                                         }
-                                    }, 3000);
+                                    }.runTaskLater(plugin,3000);
                                 }
                                 break;
                             }

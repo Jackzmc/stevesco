@@ -125,9 +125,9 @@ public class InteractEvent implements Listener {
 						Integer battery = nbti.getInteger("battery");
 						p.sendMessage(" ");
 						if (battery == -1) {
-							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §aBattery §cDead");
+							p.sendMessage("§ajPhoneOS Version §e" + Main.JOS_VERSION + "§6 | §aBattery §cDead");
 						} else {
-							p.sendMessage("§ajPhoneOS Version §e" + plugin.getJackzCo().getString("versions.jphone") + "§6 | §a Battery §e" + battery + "%");
+							p.sendMessage("§ajPhoneOS Version §e" + Main.JOS_VERSION + "§6 | §a Battery §e" + battery + "%");
 						}
 						p.sendMessage("§7Check your data by /jackzco jcloud info");
 						if (!(nbti.hasKey("owner"))) {

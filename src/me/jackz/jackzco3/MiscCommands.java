@@ -34,6 +34,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 
 class MiscCommands {
@@ -110,8 +111,22 @@ class MiscCommands {
 					sender.sendMessage("§7Must be a player");
 					return true;
 				}
-				Player p = (Player) sender;
-				sender.sendMessage("Your UUID is §e" + p.getUniqueId());
+				Player p;
+				if(args.length > 0) {
+					p = plugin.getServer().getPlayer(args[0]);
+					if(p == null) {
+						try {
+							p = plugin.getServer().getPlayer(UUID.fromString(args[0]));
+						}catch(Exception ignored){ }
+					}
+				}else{
+					p = (Player) sender;
+				}
+				if(p == null) {
+					sender.sendMessage("§cThat user could not be found online.");
+					return true;
+				}
+				sender.sendMessage("§e" + p.getName() + "'s§7 UUID is §e" + p.getUniqueId());
 				return true;
 			}
 			case "getlogs":

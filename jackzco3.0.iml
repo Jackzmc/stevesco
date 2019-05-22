@@ -20,10 +20,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="TTA" level="project" />
     <orderEntry type="library" name="item-nbt-api-plugin-1.8.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="worldguard-bukkit-6.2.2" level="project" />
+    <orderEntry type="library" name="worldguard" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" name="ParticleAnimationApi" level="project" />
     <orderEntry type="library" name="GlowAPI" level="project" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="spigot-api" level="project" />
+    <orderEntry type="library" name="worldedit" level="project" />
   </component>
 </module>

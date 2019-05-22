@@ -37,5 +37,9 @@ commands:
     description: open the jstore
     usage: /jstore
   openchant:
+    aliases: [opchant]
     description: super enchant
     usage: /openchant <enchantment> <level>
+  jboss:
+    description: BOSS TIME
+    usage: /jboss help

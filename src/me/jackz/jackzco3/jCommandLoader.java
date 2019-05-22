@@ -42,7 +42,7 @@ public class jCommandLoader implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 
         if(args.length == 0) {
-            sender.sendMessage("§aJackzCo §eV" + plugin.latest_version + "§a - §e/jackzco help§a for help");
+            sender.sendMessage("§aJackzCo §eV" + Main.LATEST_VERSION + "§a - §e/jackzco help§a for help");
             return true;
         }
         switch(args[0].toLowerCase()) {
@@ -63,7 +63,7 @@ public class jCommandLoader implements CommandExecutor {
                 plugin.reloadConfig();
                 break;
             case "version":
-                sender.sendMessage(prefix + "Currently running on version §e" + plugin.latest_version + "!");
+                sender.sendMessage(prefix + "Currently running on version §e" + Main.LATEST_VERSION + "!");
                 break;
             case "jcloud":
                 if (args.length >= 2) {
@@ -124,7 +124,7 @@ public class jCommandLoader implements CommandExecutor {
                 p.getInventory().addItem(newPhone);
                 break;
             } default:
-                sender.sendMessage("§aJackzCo §eV" + plugin.latest_version + " §e" + "?" + " commands");
+                sender.sendMessage("§aJackzCo §eV" + Main.LATEST_VERSION + " §e" + "?" + " commands");
                 break;
         }
         return true;

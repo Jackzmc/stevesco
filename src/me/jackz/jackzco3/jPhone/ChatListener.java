@@ -72,7 +72,7 @@ public class ChatListener implements Listener {
 				String[] args = e.getMessage().split(" ");
 				switch(args[0].toLowerCase()) {
 					case "version":
-						p.sendMessage("§7The current version of terminal is §e" + plugin.getJackzCo().getString("versions.terminal"));
+						p.sendMessage("§7The current version of terminal is §e" + Main.TERMINAL_VERSION);
 						break;
 					case "light":
 					case "jlight":
@@ -86,7 +86,7 @@ public class ChatListener implements Listener {
 					case "commands":
 					    int pageno = 1;
 					    if(args.length >= 2) {
-					        if(new Util().isInteger(args[1])) {
+						    if(Util.isInteger(args[1])) {
 					            pageno = Integer.parseInt(args[1]);
 					            if(pageno <= 0) {
 					                pageno = 1;
@@ -204,7 +204,7 @@ public class ChatListener implements Listener {
 							ItemStack item = p.getInventory().getItem(i);
 							if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
 							ItemMeta meta = item.getItemMeta();
-							if (meta.getDisplayName() == null) continue;
+							if (meta == null || !meta.hasDisplayName()) continue;
 							if (meta.getDisplayName().equals("§fjLight") || meta.getDisplayName().equals("§3jPhone")) {
 								String outMsg = String.join(" ",args).replace(String.format("%s %s",args[0],args[1]),"");
 								rec.sendMessage("§ajText>§3" + p.getName() + ":§7" + outMsg);
@@ -385,11 +385,11 @@ public class ChatListener implements Listener {
 			}
 		}
 	}
-	double randomizeDouble(Double d, Location loc) {
+	private double randomizeDouble(Double d, Location loc) {
 		int seed = (int)loc.getX() + (int)loc.getY() + (int)loc.getZ();
 		return randomizeDouble(d,seed);
 	}
-	double randomizeDouble(Double d, int seed) {
+	private double randomizeDouble(Double d, int seed) {
 		Random random = new Random(seed);
 		//300 blocks -> down to 250 to 350
 		double range = ((d + 50) - (d - 50)) + 1;

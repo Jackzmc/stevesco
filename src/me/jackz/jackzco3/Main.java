@@ -17,11 +17,12 @@
 
 package me.jackz.jackzco3;
 
-import com.sk89q.worldguard.bukkit.RegionContainer;
-import com.sk89q.worldguard.bukkit.RegionQuery;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.jackz.jackzco3.jPhone.KeyChainStorage;
 import me.jackz.jackzco3.jPhone.jPhoneMain;
 import me.jackz.jackzco3.lib.Config;
@@ -49,7 +50,9 @@ import java.util.UUID;
 public class Main extends JavaPlugin {
     private static Plugin plugin;
 
-    String latest_version = "0.0.0";
+    public static String LATEST_VERSION = "0.0.0";
+    public static String JOS_VERSION = "2.3.0-beta";
+    public static String TERMINAL_VERSION = "1.5.0-beta";
     static String jackzco_prefix = "§3JackzCo§6>§r ";
     public Map<String,Location> keychainMap = new HashMap<>();
     private FileConfiguration config;
@@ -59,9 +62,10 @@ public class Main extends JavaPlugin {
         keychainMap = new KeyChainStorage(this).loadMap(Bukkit.getWorld("overworld"));
         plugin = this;
         new jPhoneMain(this);
-        latest_version = this.getDescription().getVersion();
+        LATEST_VERSION = this.getDescription().getVersion();
         this.getCommand("jackzco").setExecutor(new jCommandLoader(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
+        this.getCommand("jboss").setExecutor(new jBoss(this));
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));
 
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));
@@ -125,14 +129,13 @@ public class Main extends JavaPlugin {
         return new MiscCommands().onCommand(this,sender,command,label,args);
     }
 
-    WorldGuardPlugin getWorldGuard() {
-        Plugin plugin =  getServer().getPluginManager().getPlugin("WorldGuard");
+    WorldGuard getWorldGuard() {
+        WorldGuard wg = WorldGuard.getInstance();
         // WorldGuard may not be loaded
-        if (!(plugin instanceof WorldGuardPlugin)) {
+        if (wg == null) {
             return null; // Maybe you want throw an exception instead
         }
-
-        return (WorldGuardPlugin) plugin;
+        return wg;
     }
     public boolean isJackzCoRegion(Location loc) {
 
@@ -141,11 +144,11 @@ public class Main extends JavaPlugin {
         return checkRegion(loc,jackzco_regions);
     }
     public boolean checkRegion(Location loc, List<String> regions) {
-        if(true) return false;
         if(getWorldGuard() != null) {
-            RegionContainer container = getWorldGuard().getRegionContainer();
+            //RegionContainer container = getWorldGuard().getRegionContainer();
+            RegionContainer container = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
-            ApplicableRegionSet set = query.getApplicableRegions(loc);
+            ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(loc));
             for (ProtectedRegion region : set) {
                 for(String rg_name : regions) {
                     if (region.getId().contains(rg_name)) {
@@ -160,11 +163,10 @@ public class Main extends JavaPlugin {
     }
 
     public boolean checkRegion(Location loc, String region_name) { //should simplify but eh
-        if(true) return false;
         if(getWorldGuard() != null) {
-            RegionContainer container = getWorldGuard().getRegionContainer();
+            RegionContainer container = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform().getRegionContainer();
             RegionQuery query = container.createQuery();
-            ApplicableRegionSet set = query.getApplicableRegions(loc);
+            ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(loc));
             for (ProtectedRegion region : set) {
                 if (region.getId().contains(region_name)) {
                     return true;
