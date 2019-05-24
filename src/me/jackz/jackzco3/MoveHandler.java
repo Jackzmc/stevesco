@@ -47,8 +47,6 @@ public class MoveHandler implements Listener {
 		Player p = e.getPlayer();
 		Location from = e.getFrom();
 		Location to = e.getTo();
-		//if(true) return;
-		//TODO: FIX ABOVE! BROKEN
 
 		if(!Main.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
@@ -63,9 +61,9 @@ public class MoveHandler implements Listener {
 			isImmune = false;
 		}
 		switch(underneathPlayer.getType()) {
-			case STONE:
+			case POLISHED_ANDESITE:
 				//noinspection deprecation
-				if(!isImmune && !isTimeImmune && underneathPlayer.getData() == (byte) 2) {
+				if(!isImmune && !isTimeImmune) {
 					scanImmune.put(p.getUniqueId().toString(),true);
 					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 						scanTimeImmune.put(p.getUniqueId().toString(), false);
