@@ -34,26 +34,27 @@ public class BatteryTick implements Runnable {
 				if (item == null || !item.getType().equals(Material.TRIPWIRE_HOOK)) continue;
 				ItemMeta meta = item.getItemMeta();
 				String dpname = (meta != null && meta.hasDisplayName()) ? meta.getDisplayName() : null;
-				if (meta.hasDisplayName() && dpname.equals("§fjLight") || dpname.equals("§3jPhone") || dpname.equals("§3jWrench")) { //check if tripwire hook is jPhone || jLight
-
-					NBTItem nbt = ItemNBTAPI.getNBTItem(item);
-					if (nbt.getBoolean("state")) { //If phone on
-						if (nbt.getInteger("battery") == null) {
-							nbt.setInteger("battery", 100);
-						}
-						if (nbt.getInteger("battery") == 3) {
-							p.sendMessage("§cShutting down phone in slot §e" + (i + 1) + "§c due to low battery");
-							nbt.setBoolean("state", false);
-						} else if (nbt.getInteger("battery") == 0) {
-							nbt.setInteger("battery", -1);
-							nbt.setBoolean("state", false);
-							p.sendMessage("§cThe jPhone in slot " + (i + 1) + " has died");
-						} else if (Math.random() >= 0.90) {
-							nbt.setInteger("battery", (nbt.getInteger("battery") - 1));
-						}
-						p.getInventory().setItem(i, nbt.getItem());
+				if(dpname == null) continue;
+				//if (dpname.contains("jLight") || dpname.contains("jPhone") || dpname.contains("jWrench")) { //check if tripwire hook is jPhone || jLight
+				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
+				if(!nbt.hasKey("jphone")) continue;
+				if (nbt.getBoolean("state")) { //If phone on
+					if (nbt.getInteger("battery") == null) {
+						nbt.setInteger("battery", 100);
 					}
+					if (nbt.getInteger("battery") == 3) {
+						p.sendMessage("§cShutting down phone in slot §e" + (i + 1) + "§c due to low battery");
+						nbt.setBoolean("state", false);
+					} else if (nbt.getInteger("battery") == 0) {
+						nbt.setInteger("battery", -1);
+						nbt.setBoolean("state", false);
+						p.sendMessage("§cThe jPhone in slot " + (i + 1) + " has died");
+					} else if (Math.random() >= 0.90) {
+						nbt.setInteger("battery", (nbt.getInteger("battery") - 1));
+					}
+					p.getInventory().setItem(i, nbt.getItem());
 				}
+				//}
 			}
 
 			//check for nearby blocks

@@ -25,7 +25,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.Piston;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,17 +43,20 @@ public class BlockEvent implements Listener {
 	@EventHandler
 	public void onPlace(BlockPlaceEvent e) {
 		Player p = e.getPlayer();
+
 		if(e.getBlockPlaced().getType().equals(Material.PISTON)) {
 			ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
-			if(meta == null || !meta.hasDisplayName() || !meta.getDisplayName().equals("§fjCharger")){
-				return;
-			}
+
+			if(meta == null || !meta.getDisplayName().contains("jCharger")) return;
+			if(!meta.hasLore() && meta.getLore().size() > 0|| !meta.getLore().get(0).equals(jPhoneMain.JCHARGER_VERIFY)) return;
 			if(e.getBlockAgainst().getType().equals(Material.GOLD_BLOCK)) {
-				Piston piston = (Piston) e.getBlockPlaced();
+				p.sendMessage("§cgold block placed against");
+				Directional piston = (Directional) e.getBlockPlaced().getBlockData();
+				//Piston piston = (Piston) e.getBlockPlaced();
 				piston.setFacing(BlockFace.UP);
 				p.getWorld().playSound(e.getBlockPlaced().getLocation(), Sound.BLOCK_ANVIL_PLACE, SoundCategory.BLOCKS,1,1);
 				p.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, Util.getCenterLocation(e.getBlockPlaced().getLocation()),400,0.5,20,0.5);
-				new LocationStore(plugin).setBoolean(e.getBlockPlaced().getLocation(),true);
+				new LocationStore(plugin).setString(e.getBlockPlaced().getLocation(),jPhoneMain.JCHARGER_VERIFY);
 				p.sendMessage("§aSuccessfully added jCharger");
 			}else{
 				e.setCancelled(true);

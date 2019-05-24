@@ -63,15 +63,18 @@ public class InteractEvent implements Listener {
 		if (e.getAction() == Action.PHYSICAL) return;
 		ItemStack item = p.getInventory().getItemInMainHand();
 		ItemMeta meta = item.getItemMeta();
+		if(e.getHand() == null) return;
 		if (e.getHand().equals(EquipmentSlot.HAND)) {
 			//spacing so i dont get confused. rightclick
 			if (item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
 				e.setCancelled(true);
 				//cancel event, then set the item in hand to itself, fixing ghosting
-				p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
+				//p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
 				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
 				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON) {
-					if (new LocationStore(plugin).getBoolean(e.getClickedBlock().getLocation())) {
+					String verify = new LocationStore(plugin).getString(e.getClickedBlock().getLocation());
+					if (verify != null) {
+						if(!verify.equals(jPhoneMain.JCHARGER_VERIFY)) p.sendMessage("§7Notice: This is not an official §3jCharger§7 phone.");
 						if (nbti.getInteger("battery") == 100) {
 							p.sendMessage("§7Your phone is already at §e100%");
 							return;
@@ -122,10 +125,11 @@ public class InteractEvent implements Listener {
 					} else {
 						Integer battery = nbti.getInteger("battery");
 						p.sendMessage(" ");
+						String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
 						if (battery == -1) {
-							p.sendMessage("§ajPhoneOS Version §e" + Main.JOS_VERSION + "§6 | §aBattery §cDead");
+							p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §cDead");
 						} else {
-							p.sendMessage("§ajPhoneOS Version §e" + Main.JOS_VERSION + "§6 | §a Battery §e" + battery + "%");
+							p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §e" + battery + "%");
 						}
 						p.sendMessage("§7Check your data by /jackzco jcloud info");
 						if (!(nbti.hasKey("owner"))) {
@@ -171,12 +175,13 @@ public class InteractEvent implements Listener {
 								accessible++;
 							}
 						}
-						msgs.add(0, "§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown");
+						String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
+						msgs.add(0, "§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown for provider: §e" + provider);
 						p.sendMessage(msgs.toArray(new String[0]));
 					}
 				}
 			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON && e.getAction() == Action.RIGHT_CLICK_AIR) {
-				if (meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjCharger")) {
+				if (meta != null && meta.getDisplayName().equals("§fjCharger")) {
 					e.setCancelled(true);
 					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
 					return;

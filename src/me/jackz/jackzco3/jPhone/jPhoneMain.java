@@ -48,21 +48,23 @@ public class jPhoneMain implements Listener {
 	static Inventory keychain = Bukkit.createInventory(null, 9, "jPhone Keychain");
 	static Inventory appswitcher = Bukkit.createInventory(null, 45, "§9jPhone App Switcher");
 	static Inventory stunes = Bukkit.createInventory(null,54,"§9Steves Tunes Player");
+	public static final String JCHARGER_VERIFY = "VphPyIZn";
 
 	static String phoneName = "§3jPhone";
 
 	 public jPhoneMain(Main plugin) {
 		this.plugin = plugin; // Store the plugin in situations where you need it.
+		 plugin.getLogger().info("[jPhoneMain] Loading events, commands, and managers...");
 		plugin.getServer().getPluginManager().registerEvents(new ChatListener(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InteractEvent(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InventoryClick(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new BlockEvent(plugin,this),plugin);
-		plugin.getServer().getPluginManager().registerEvents(new KeyChainEvents(plugin),plugin);
+		//plugin.getServer().getPluginManager().registerEvents(new KeyChainEvents(plugin),plugin);
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,5L);
-		//plugin.getServer().getScheduler().runTaskTimer(plugin, new BatteryTick(), 0L,200L);
+		 plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
 	}
 
 	static public ItemStack givePhone(Player p, String name, boolean locked) {
@@ -72,7 +74,9 @@ public class jPhoneMain implements Listener {
 		nbt.setBoolean("terminal",false);
 		nbt.setBoolean("firstuse",true);
 		nbt.setBoolean("locked",locked);
+		nbt.setBoolean("jphone",true);
 		nbt.setBoolean("state",true);
+		nbt.setString("provider","jService");
 		nbt.setString("txtsound","bell");
 		ItemStack item = nbt.getItem();
 		ItemMeta meta = item.getItemMeta();
@@ -124,16 +128,16 @@ public class jPhoneMain implements Listener {
 	boolean isInTowerRange(Location loc) {
 		HashMap<String, Double> map = getSortedTowers(loc);
 		double range = map.entrySet().iterator().next().getValue();
-		return (range < 600);
+		return (range < 650);
 	}
 	static String getTowerQuality(Double distance) {
 		if (distance < 25)  return "§3NASA Quality";
-		if (distance < 100) return "§2Excellent";
-		if (distance < 200) return "§aDecent";
-		if (distance < 275) return "§aGreat";
-		if (distance < 450) return "§eOK";
-		if (distance < 500) return "§cPoor";
-		if (distance < 600) return "§cHorrible";
+		if (distance < 150) return "§2Excellent";
+		if (distance < 250) return "§aDecent";
+		if (distance < 350) return "§aGreat";
+		if (distance < 500) return "§eOK";
+		if (distance < 575) return "§cPoor";
+		if (distance < 650) return "§cHorrible";
 		return "§4Unreachable";
 	}
 	public static ItemStack getIntroBook() {
@@ -151,7 +155,7 @@ public class jPhoneMain implements Listener {
 	}
 	public static ItemStack getWarrantyBook() {
 		String[] pages = {
-				"Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
+				"Thank you for choosing jPhone! Warranty Information is disclosed in here ",
 				"You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
 		};
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);

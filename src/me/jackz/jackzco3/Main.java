@@ -51,7 +51,7 @@ public class Main extends JavaPlugin {
     private static Plugin plugin;
 
     public static String LATEST_VERSION = "0.0.0";
-    public static String JOS_VERSION = "2.3.0-beta";
+    public static String JOS_VERSION = "2.4.0-beta";
     public static String TERMINAL_VERSION = "1.5.0-beta";
     static String jackzco_prefix = "§3JackzCo§6>§r ";
     public Map<String,Location> keychainMap = new HashMap<>();
@@ -63,12 +63,14 @@ public class Main extends JavaPlugin {
         plugin = this;
         new jPhoneMain(this);
         LATEST_VERSION = this.getDescription().getVersion();
+        getLogger().info("Loading Main Commands");
         this.getCommand("jackzco").setExecutor(new jCommandLoader(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
         this.getCommand("jboss").setExecutor(new jBoss(this));
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));
 
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));
+        getLogger().info("Loading Main Event Managers");
         registerEvents(this,
                 new JoinEvent(this),
                 new MainListener(this),
@@ -80,6 +82,7 @@ public class Main extends JavaPlugin {
                 new PlayerInteractHandler(this)
         );
         //new LocVarLib(this);
+        getLogger().info("Loading Main Misc");
         config = new Config().setupConfig(this);
         loadTowers();
         if(config.getBoolean("updatecheck.enabled")) {
@@ -93,6 +96,8 @@ public class Main extends JavaPlugin {
         //CitizensAPI.getTraitFactory().deregisterTrait(TraitInfo.create(TestTrait.class));
        // new KeyChainStorage(this).saveMap(keychainMap); //hopefully saves map
 		//getServer().getScheduler().cancelAllTasks();
+        getServer().getScheduler().cancelTasks(this);
+        getLogger().info("Successfully disabled all tasks");
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

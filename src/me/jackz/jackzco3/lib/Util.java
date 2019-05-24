@@ -32,9 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Util {
-    public Util() {
-
-    }
 
     public static boolean isInteger(String s) {
         return isInteger(s,10);

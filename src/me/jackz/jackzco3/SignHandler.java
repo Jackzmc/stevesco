@@ -35,6 +35,9 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class SignHandler implements Listener {
 	private final Main plugin;
 
@@ -75,12 +78,12 @@ public class SignHandler implements Listener {
 			switch(e.getCurrentItem().getType()) {
 				case TRIPWIRE_HOOK:
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
-						case "§fjPhone 2": {
+						case "jPhone 2": {
 							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2",false));
 							p.getInventory().addItem(jPhoneMain.getIntroBook());
 							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
 							break;
-						} case "§fjPhone 2X": {
+						} case "jPhone 2X": {
 							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2X",false));
 							p.getInventory().addItem(jPhoneMain.getIntroBook());
 							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
@@ -93,9 +96,11 @@ public class SignHandler implements Listener {
 				case PISTON:
 					ItemStack jcharger = new ItemStack(Material.PISTON);
 					ItemMeta meta = jcharger.getItemMeta();
+					meta.setLore(new ArrayList<String>(
+							Collections.singletonList(jPhoneMain.JCHARGER_VERIFY))
+					);
 					meta.setDisplayName("§fjCharger");
 					jcharger.setItemMeta(meta);
-
 					p.getInventory().addItem(jcharger);
 					p.sendMessage("§aThank you for buying the jCharger!");
 					p.sendMessage("§7Place the piston on a gold block to set it up.");

@@ -44,6 +44,9 @@ class PlayerInteractHandler implements Listener {
 		Player p = e.getPlayer();
 		if(e.getHand() == EquipmentSlot.HAND) {
 			ItemStack hand = p.getInventory().getItemInMainHand();
+			if(p.getInventory().getItemInMainHand().getType().equals(Material.STICK) && e.getClickedBlock() != null) {
+				p.sendMessage("§cblock: " + e.getClickedBlock().getType().toString());
+			}
 			if(Util.checkItem(hand,Material.STICK,"§6LocationStore Checker")) {
 				/*
 					name = §9Debugger
