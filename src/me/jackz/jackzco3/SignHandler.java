@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -70,11 +71,8 @@ public class SignHandler implements Listener {
 			Player p = (Player) e.getWhoClicked();
 			ItemStack item = e.getCurrentItem();
 			e.setCancelled(true);
-			if(item == null) {
-				//do nothing?
-				return;
-			}
-			jPhoneMain jphone = new jPhoneMain(plugin);
+			if(item == null) return;
+			e.setResult(Event.Result.DENY);
 			switch(e.getCurrentItem().getType()) {
 				case TRIPWIRE_HOOK:
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
@@ -109,14 +107,14 @@ public class SignHandler implements Listener {
 					//dont do anything
 					break;
 				default:
-					p.sendMessage("§cSorry, that item is not setup");
+					p.sendMessage("§cSorry, but that is not a valid store item. Please contact a StevesCo support member.");
 					p.closeInventory();
 			}
 		}
 	}
 	static void getStore(Player p) {
-		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$Unknown");
-		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$Unknown+$100");
+		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+1,"§fjPhone 2","§a$499");
+		Util.createDisplay(p,Material.TRIPWIRE_HOOK,jstore,9+3,"§fjPhone 2X","§a$599");
 		Util.createDisplay(p,Material.PISTON,jstore,9+5,"§fjCharger","§7Ultra fast charger");
 		p.openInventory(jstore);
 	}

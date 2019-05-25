@@ -20,10 +20,7 @@ package me.jackz.jackzco3.jPhone;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.LocationStore;
 import me.jackz.jackzco3.lib.Util;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
@@ -31,7 +28,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class BlockEvent implements Listener {
 	private final Main plugin;
@@ -68,11 +69,21 @@ public class BlockEvent implements Listener {
 	public void onBreak(BlockBreakEvent e) {
 		Player p = e.getPlayer();
 		if(e.getBlock().getType().equals(Material.PISTON)) {
-			boolean isCharger = new LocationStore(plugin).getBoolean(e.getBlock().getLocation());
-			if(isCharger) {
+			String charger_verify = new LocationStore(plugin).getString(e.getBlock().getLocation());
+			if(charger_verify.equals(jPhoneMain.JCHARGER_VERIFY)) {
 				if(p.isSneaking()) {
 					new LocationStore(plugin).deleteValue(e.getBlock().getLocation()); //todo: make .deleteValue()
-					p.getInventory().addItem(Util.getCustomItem(Material.PISTON,"§fjCharger"));
+					if(p.getGameMode() != GameMode.CREATIVE) {
+						ItemStack itm = new ItemStack(Material.PISTON);
+						ItemMeta meta = itm.getItemMeta();
+						meta.setDisplayName("§fjCharger");
+						meta.setLore(new ArrayList<>(
+								Collections.singletonList(jPhoneMain.JCHARGER_VERIFY))
+						);
+						itm.setItemMeta(meta);
+						p.getInventory().addItem(itm);
+					}
+					//p.getInventory().addItem(Util.getCustomItem(Material.PISTON,"§fjCharger"));
 					p.sendMessage("§cSuccessfully removed jCharger");
 				}else{
 					e.setCancelled(true);

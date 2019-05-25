@@ -36,6 +36,7 @@ public class jTower {
 		this.name = (String) obj.get("name");
 		this.location = new Location(world, (Double) obj.get("locX"),  (Double) obj.get("locY"),  (Double) obj.get("locZ"));
 	}
+	//todo: convert to gson, provided by spigot api
 
 	@SuppressWarnings("unchecked")
 	public void toJSON(Main plugin) {

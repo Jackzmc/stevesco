@@ -84,6 +84,11 @@ public class jPhoneMain implements Listener {
 		item.setItemMeta(meta);
 		return item;
 	}
+	static public boolean isPhone(ItemStack item) {
+	 	NBTItem nbt =  ItemNBTAPI.getNBTItem(item);
+		return nbt.hasKey("jphone");
+	 	//todo: check for item name
+	}
 
 	static Inventory getAppSwitcher(Player p) {
 		me.jackz.jackzco3.lib.Util util = new me.jackz.jackzco3.lib.Util();

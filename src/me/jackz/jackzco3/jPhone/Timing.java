@@ -32,7 +32,7 @@ public class Timing implements Runnable {
 			ItemStack item = p.getInventory().getItemInMainHand();
 			if(Util.checkItem(item,Material.TRIPWIRE_HOOK,"jPhone")) {
 				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
-				if(!nbt.hasKey("jackzco")) continue;
+				if(!nbt.hasKey("jphone")) continue;
 				int battery = nbt.getInteger("battery");
 				String color = (battery > 85) ? "§a" : (battery < 20) ? "§c" : "§e";
 				//todo: check if TTA

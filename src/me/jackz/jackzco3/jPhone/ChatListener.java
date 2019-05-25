@@ -59,7 +59,7 @@ public class ChatListener implements Listener {
 		ItemStack itm = p.getInventory().getItemInMainHand();
 		if(itm.hasItemMeta()) {
 			NBTItem nbt = ItemNBTAPI.getNBTItem(itm);
-			if(!nbt.hasKey("jackzco") || !nbt.hasNBTData()) return;
+			if(!nbt.hasKey("jphone") || !nbt.hasNBTData()) return;
 			if(nbt.getBoolean("terminal") && !nbt.getBoolean("state")) { //check if terminal mode on, and its off
 				p.sendMessage("§7Cannot connect to phone: §cPhone is offline");
 				return;

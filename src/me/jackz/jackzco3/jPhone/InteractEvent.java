@@ -31,6 +31,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -64,195 +65,208 @@ public class InteractEvent implements Listener {
 		ItemStack item = p.getInventory().getItemInMainHand();
 		ItemMeta meta = item.getItemMeta();
 		if(e.getHand() == null) return;
-		if (e.getHand().equals(EquipmentSlot.HAND)) {
-			//spacing so i dont get confused. rightclick
-			if (item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
-				e.setCancelled(true);
-				//cancel event, then set the item in hand to itself, fixing ghosting
-				//p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
-				NBTItem nbti = ItemNBTAPI.getNBTItem(item);
-				if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON) {
-					String verify = new LocationStore(plugin).getString(e.getClickedBlock().getLocation());
-					if (verify != null) {
-						if(!verify.equals(jPhoneMain.JCHARGER_VERIFY)) p.sendMessage("§7Notice: This is not an official §3jCharger§7 phone.");
-						if (nbti.getInteger("battery") == 100) {
-							p.sendMessage("§7Your phone is already at §e100%");
-							return;
-						}
-						//charge phone
-						p.getWorld().spawnParticle(Particle.SPELL_INSTANT, Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
-						p.sendMessage("§7Charging...");
-						for (int i = 0; i < 59; i++) {
-							plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
-									Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
-									10, 0.5, 3, 0.5),
-									i
-							);
-						}
-						plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-							if (p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
-								p.sendMessage("§7Charging aborted - you must hold your phone.");
+		if(e.getHand().equals(EquipmentSlot.OFF_HAND)) {
+
+		}
+		if (item.getType().equals(Material.TRIPWIRE_HOOK) && meta != null) {
+			if(e.getHand().equals(EquipmentSlot.OFF_HAND)) {
+				//todo: fix?
+				ItemStack offhand = p.getInventory().getItemInOffHand();
+				ItemMeta offhand_meta = offhand.getItemMeta();
+				if(offhand_meta != null && meta.getDisplayName().equals(jPhoneMain.phoneName)) {
+					plugin.getLogger().info("OFFHAND PLACEMENT");
+					e.setUseItemInHand(Event.Result.DENY);
+					e.setCancelled(true);
+					return;
+				}
+			}
+			plugin.getLogger().info("TEST INTERACTEVENT");
+			//todo: convert .contains(phoneName) to jPhoneMain.IsJPhone
+			if (e.getHand().equals(EquipmentSlot.HAND) && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
+				//spacing so i dont get confused. rightclick
+				if (item.getType().equals(Material.TRIPWIRE_HOOK)) {
+					e.setCancelled(true);
+					//cancel event, then set the item in hand to itself, fixing ghosting
+					//p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
+					NBTItem nbti = ItemNBTAPI.getNBTItem(item);
+					if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON) {
+						String verify = new LocationStore(plugin).getString(e.getClickedBlock().getLocation());
+						if (verify != null) {
+							if(!verify.equals(jPhoneMain.JCHARGER_VERIFY)) p.sendMessage("§7Notice: This is not an official §3jCharger§7 phone.");
+							if (nbti.getInteger("battery") == 100) {
+								p.sendMessage("§7Your phone is already at §e100%");
 								return;
 							}
-							p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
-							nbti.setInteger("battery", 100);
-							p.sendMessage("§aYour phone has been charged!");
-							p.getInventory().setItemInMainHand(nbti.getItem());
-						}, 60L);
-						return;
-					}
-
-				}
-
-				if (!nbti.getBoolean("state")) {
-					if (p.isSneaking()) {
-						if (nbti.getInteger("battery") < 5) {
-							p.sendMessage("§7Battery is too low to start");
-						} else {
-							nbti.setBoolean("state", true);
-							p.sendMessage("§7Turned on phone");
-						}
-						p.getInventory().setItemInMainHand(nbti.getItem());
-						return;
-					}
-					p.sendMessage("§cPhone is turned off, shift+rightclick to turn it on");
-					return;
-				}
-				if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-					if (p.isSneaking()) {
-						p.openInventory(jPhoneMain.getAppSwitcher(p));
-						p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2F, 5);
-					} else {
-						Integer battery = nbti.getInteger("battery");
-						p.sendMessage(" ");
-						String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
-						if (battery == -1) {
-							p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §cDead");
-						} else {
-							p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §e" + battery + "%");
-						}
-						p.sendMessage("§7Check your data by /jackzco jcloud info");
-						if (!(nbti.hasKey("owner"))) {
-							//hover: "Go to App Switcher->Settings->Owner to claim"
-							TextComponent msg = new TextComponent("§cThis device is not claimed. ");
-							TextComponent msg_hover = new TextComponent("§c[Hover to learn how to]");
-							//message.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "http://spigotmc.org" ) );
-							msg_hover.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("To claim this device go to \n§eapp switcher §rthen §esettings §rthen\n§eowner§r to claim.").create()));
-							msg.addExtra(msg_hover);
-							p.spigot().sendMessage(msg);
-							//Key "owner" not set
-						} else {
-							//is claimed
-							TextComponent msg = new TextComponent("§9This device is claimed. §7Hover for details");
-							msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create()));
-
-							p.spigot().sendMessage(msg);
-						}
-						p.sendMessage(" ");
-					}
-				} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					InventoryStore store = new InventoryStore(plugin, "keychain_" + p.getName(), 9 * 3);
-					if (p.isSneaking()) {
-						if (!jphone.isInTowerRange(p.getLocation())) {
-							p.sendMessage("§cCannot access your keychain, please get in range of a tower.");
-							return;
-						}
-						Inventory inv = store.loadInv();
-						p.openInventory(inv);
-					} else {
-						//https://gist.github.com/Caeden117/92223ecd39b61bd3310aee64e0dfd0d0
-						HashMap<String, Double> towers = jphone.getSortedTowers(p.getLocation());
-						if (towers.isEmpty()) {
-							p.sendMessage("§cCould not locate any nearby towers");
-							return;
-						}
-						List<String> msgs = new ArrayList<>();
-						int accessible = 0;
-						for (String tower : towers.keySet()) {
-							Double distances = towers.get(tower);
-							if (distances <= 600) {
-								msgs.add("§7Tower §e" + tower + "§7:§e " + jPhoneMain.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
-								accessible++;
+							//charge phone
+							p.getWorld().spawnParticle(Particle.SPELL_INSTANT, Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
+							p.sendMessage("§7Charging...");
+							for (int i = 0; i < 59; i++) {
+								plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
+										Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
+										10, 0.5, 3, 0.5),
+										i
+								);
 							}
+							plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+								if (p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
+									p.sendMessage("§7Charging aborted - you must hold your phone.");
+									return;
+								}
+								p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+								nbti.setInteger("battery", 100);
+								p.sendMessage("§aYour phone has been charged!");
+								p.getInventory().setItemInMainHand(nbti.getItem());
+							}, 60L);
+							return;
 						}
-						String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
-						msgs.add(0, "§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown for provider: §e" + provider);
-						p.sendMessage(msgs.toArray(new String[0]));
+
 					}
-				}
-			} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON && e.getAction() == Action.RIGHT_CLICK_AIR) {
-				if (meta != null && meta.getDisplayName().equals("§fjCharger")) {
-					e.setCancelled(true);
-					p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
-					return;
-				}
-			} else if (Util.checkItem(item, Material.BONE, "§3jWrench")) {
-				e.setCancelled(true);
-				if (p.isSneaking()) {
-					ItemMeta phoneMeta = item.getItemMeta();
-					item.setType(Material.TRIPWIRE_HOOK);
-					phoneMeta.setDisplayName(jPhoneMain.phoneName); //check if 2X
-					item.setItemMeta(phoneMeta);
-					p.getInventory().setItemInMainHand(item);
-					return;
-				}
-				List<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
-						Material.PISTON,
-						Material.STICKY_PISTON,
-						Material.IRON_DOOR,
-						Material.DISPENSER,
-						Material.CHEST,
-						Material.OAK_DOOR,
-						Material.DROPPER
-				));
-				if (e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
-					Block b = e.getClickedBlock();
-					if (!allowedBlocks.contains(b.getType())) {
-						p.sendMessage("§cInvalid block");
-						//p.sendMessage("§cValid blocks: §e" + String.join(",",allowedBlocks::toString));
+
+					if (!nbti.getBoolean("state")) {
+						if (p.isSneaking()) {
+							if (nbti.getInteger("battery") < 5) {
+								p.sendMessage("§7Battery is too low to start");
+							} else {
+								nbti.setBoolean("state", true);
+								p.sendMessage("§7Turned on phone");
+							}
+							p.getInventory().setItemInMainHand(nbti.getItem());
+							return;
+						}
+						p.sendMessage("§cPhone is turned off, shift+rightclick to turn it on");
 						return;
 					}
-					try {
-						/*BlockFace[] directions = {BlockFace.NORTH,BlockFace.EAST,BlockFace.SOUTH,BlockFace.WEST,BlockFace.UP,BlockFace.DOWN};
-						Directional dir = (Directional) b;
-						BlockFace direction = dir.getFacing();
-						dir.setFacingDirection(BlockFace.EAST_NORTH_EAST);*/
-						/*if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-							int data = b.getData();
-							b.setData((byte) ((data == 5) ? 0 : ++data));
-						} else if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-							int data = b.getData();
-							b.setData((byte) ((data == 0) ? 5 : --data));
-						}*/
-						p.sendMessage("§cSorry, but the jWrench has been disabled until further notice.");
+					if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+						if (p.isSneaking()) {
+							p.openInventory(jPhoneMain.getAppSwitcher(p));
+							p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 0.2F, 5);
+						} else {
+							Integer battery = nbti.getInteger("battery");
+							p.sendMessage(" ");
+							String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
+							if (battery == -1) {
+								p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §cDead");
+							} else {
+								p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §e" + battery + "%");
+							}
+							p.sendMessage("§7Check your data by /jackzco jcloud info");
+							if (!(nbti.hasKey("owner"))) {
+								//hover: "Go to App Switcher->Settings->Owner to claim"
+								TextComponent msg = new TextComponent("§cThis device is not claimed. ");
+								TextComponent msg_hover = new TextComponent("§c[Hover to learn how to]");
+								//message.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "http://spigotmc.org" ) );
+								msg_hover.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("To claim this device go to \n§eapp switcher §rthen §esettings §rthen\n§eowner§r to claim.").create()));
+								msg.addExtra(msg_hover);
+								p.spigot().sendMessage(msg);
+								//Key "owner" not set
+							} else {
+								//is claimed
+								TextComponent msg = new TextComponent("§9This device is claimed. §7Hover for details");
+								msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create()));
 
-					} catch (IllegalArgumentException ex) {
-						plugin.getLogger().warning("Wrench failure: " + ex.toString());
-						p.sendMessage("§7Uh oh! Something went wrong. §c" + ex.toString());
+								p.spigot().sendMessage(msg);
+							}
+							p.sendMessage(" ");
+						}
+					} else if (e.getAction() == Action.LEFT_CLICK_AIR || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+						InventoryStore store = new InventoryStore(plugin, "keychain_" + p.getName(), 9 * 3);
+						if (p.isSneaking()) {
+							if (!jphone.isInTowerRange(p.getLocation())) {
+								p.sendMessage("§cCannot access your keychain, please get in range of a tower.");
+								return;
+							}
+							Inventory inv = store.loadInv();
+							p.openInventory(inv);
+						} else {
+							//https://gist.github.com/Caeden117/92223ecd39b61bd3310aee64e0dfd0d0
+							HashMap<String, Double> towers = jphone.getSortedTowers(p.getLocation());
+							if (towers.isEmpty()) {
+								p.sendMessage("§cCould not locate any nearby towers");
+								return;
+							}
+							List<String> msgs = new ArrayList<>();
+							int accessible = 0;
+							for (String tower : towers.keySet()) {
+								Double distances = towers.get(tower);
+								if (distances <= 600) {
+									msgs.add("§7Tower §e" + tower + "§7:§e " + jPhoneMain.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
+									accessible++;
+								}
+							}
+							String provider = (nbti.hasKey("provider")) ? nbti.getString("provider") : "jService";
+							msgs.add(0, "§e" + accessible + "§7/§e" + towers.size() + "§7 towers are shown for provider: §e" + provider);
+							p.sendMessage(msgs.toArray(new String[0]));
+						}
 					}
-
-				} else {
-					p.sendMessage("§cPlease left/right click a block");
-				}
-			} else if (item.getType().equals(Material.TORCH) && meta != null && meta.getDisplayName() != null && meta.getDisplayName().equals("§fjLight")) {
-				e.setCancelled(true);
-				if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-					ItemStack phone = p.getInventory().getItemInMainHand();
-					ItemMeta phoneMeta = phone.getItemMeta();
-					phone.setType(Material.TRIPWIRE_HOOK);
-					if (phoneMeta != null) {
+				} else if (p.getInventory().getItemInMainHand().getType() == Material.PISTON && e.getAction() == Action.RIGHT_CLICK_AIR) {
+					if (meta != null && meta.getDisplayName().equals("§fjCharger")) {
+						e.setCancelled(true);
+						p.sendMessage("§7Please right click on a gold block to setup the §ejCharger");
+						return;
+					}
+				} else if (Util.checkItem(item, Material.BONE, "§3jWrench")) {
+					e.setCancelled(true);
+					if (p.isSneaking()) {
+						ItemMeta phoneMeta = item.getItemMeta();
+						item.setType(Material.TRIPWIRE_HOOK);
 						phoneMeta.setDisplayName(jPhoneMain.phoneName); //check if 2X
+						item.setItemMeta(phoneMeta);
+						p.getInventory().setItemInMainHand(item);
+						return;
 					}
-					phone.setItemMeta(phoneMeta);
-					p.getInventory().setItemInMainHand(phone);
-				}
+					List<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
+							Material.PISTON,
+							Material.STICKY_PISTON,
+							Material.IRON_DOOR,
+							Material.DISPENSER,
+							Material.CHEST,
+							Material.OAK_DOOR,
+							Material.DROPPER
+					));
+					if (e.getClickedBlock() != null && e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK) {
+						Block b = e.getClickedBlock();
+						if (!allowedBlocks.contains(b.getType())) {
+							p.sendMessage("§cInvalid block");
+							//p.sendMessage("§cValid blocks: §e" + String.join(",",allowedBlocks::toString));
+							return;
+						}
+						try {
+							/*BlockFace[] directions = {BlockFace.NORTH,BlockFace.EAST,BlockFace.SOUTH,BlockFace.WEST,BlockFace.UP,BlockFace.DOWN};
+							Directional dir = (Directional) b;
+							BlockFace direction = dir.getFacing();
+							dir.setFacingDirection(BlockFace.EAST_NORTH_EAST);*/
+							/*if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+								int data = b.getData();
+								b.setData((byte) ((data == 5) ? 0 : ++data));
+							} else if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
+								int data = b.getData();
+								b.setData((byte) ((data == 0) ? 5 : --data));
+							}*/
+							p.sendMessage("§cSorry, but the jWrench has been disabled until further notice.");
 
-			}
-			//below is the stupid way to stop offhand placement. I don't know if two setcancels will fuck it up but i hope not
-		}
-		if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-			if (item.getType() == Material.TRIPWIRE_HOOK && meta != null && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
-				e.setCancelled(true);
+						} catch (IllegalArgumentException ex) {
+							plugin.getLogger().warning("Wrench failure: " + ex.toString());
+							p.sendMessage("§7Uh oh! Something went wrong. §c" + ex.toString());
+						}
+
+					} else {
+						p.sendMessage("§cPlease left/right click a block");
+					}
+				} else if (item.getType().equals(Material.TORCH) && meta.getDisplayName().equals("jLight")) {
+					e.setCancelled(true);
+					if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+						ItemStack phone = p.getInventory().getItemInMainHand();
+						ItemMeta phoneMeta = phone.getItemMeta();
+						phone.setType(Material.TRIPWIRE_HOOK);
+						if (phoneMeta != null) {
+							phoneMeta.setDisplayName(jPhoneMain.phoneName); //check if 2X
+						}
+						phone.setItemMeta(phoneMeta);
+						p.getInventory().setItemInMainHand(phone);
+					}
+
+				}
+				//below is the stupid way to stop offhand placement. I don't know if two setcancels will fuck it up but i hope not
 			}
 		}
 

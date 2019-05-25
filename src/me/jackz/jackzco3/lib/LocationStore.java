@@ -38,6 +38,7 @@ public class LocationStore {
         .setBoolean(Location,boolean)
         .setString(Location,String)
      */
+    //todo: convert to gson, provided by spigot api
     public LocationStore(Main plugin) {
         this.plugin = plugin;
 	    file = new File(plugin.getDataFolder().toString() + "/data/location.store");
