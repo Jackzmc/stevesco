@@ -23,6 +23,7 @@ import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.LocationStore;
 import me.jackz.jackzco3.lib.Util;
+import me.jackz.jackzco3.lib.jTower;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -80,7 +81,6 @@ public class InteractEvent implements Listener {
 					return;
 				}
 			}
-			plugin.getLogger().info("TEST INTERACTEVENT");
 			//todo: convert .contains(phoneName) to jPhoneMain.IsJPhone
 			if (e.getHand().equals(EquipmentSlot.HAND) && meta.getDisplayName().contains(jPhoneMain.phoneName)) {
 				//spacing so i dont get confused. rightclick
@@ -179,17 +179,17 @@ public class InteractEvent implements Listener {
 							p.openInventory(inv);
 						} else {
 							//https://gist.github.com/Caeden117/92223ecd39b61bd3310aee64e0dfd0d0
-							HashMap<String, Double> towers = jphone.getSortedTowers(p.getLocation());
+							HashMap<jTower, Double> towers = jphone.getSortedTowers(p.getLocation());
 							if (towers.isEmpty()) {
 								p.sendMessage("§cCould not locate any nearby towers");
 								return;
 							}
 							List<String> msgs = new ArrayList<>();
 							int accessible = 0;
-							for (String tower : towers.keySet()) {
+							for (jTower tower : towers.keySet()) {
 								Double distances = towers.get(tower);
 								if (distances <= 600) {
-									msgs.add("§7Tower §e" + tower + "§7:§e " + jPhoneMain.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
+									msgs.add("§7Tower §e" + tower.name + "§7:§e " + jPhoneMain.getTowerQuality(distances) + " §7(" + Math.round(distances) + " blocks)");
 									accessible++;
 								}
 							}

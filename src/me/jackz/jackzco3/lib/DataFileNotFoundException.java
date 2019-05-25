@@ -17,14 +17,14 @@
 
 package me.jackz.jackzco3.lib;
 
-import org.bukkit.Location;
+public class DataFileNotFoundException extends Exception {
+    String name;
 
-public class jTower {
-	public String name;
-	public Location location;
+    public DataFileNotFoundException(String name) {
+        this.name = name;
+    }
 
-	public jTower(String name, Location location) {
-		this.name = name;
-		this.location = location;
-	}
+    public String toString() {
+        return String.format("DataFileNotFoundException: Could not find data file %s in plugin data directory",name);
+    }
 }

@@ -22,6 +22,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
+import me.jackz.jackzco3.lib.jTowerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -31,20 +32,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.File;
-import java.io.FileReader;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 import static java.util.stream.Collectors.toMap;
 
 public class jPhoneMain implements Listener {
 	private final Main plugin;
+	private final jTowerManager towerManager;
+
 	static Inventory keychain = Bukkit.createInventory(null, 9, "jPhone Keychain");
 	static Inventory appswitcher = Bukkit.createInventory(null, 45, "§9jPhone App Switcher");
 	static Inventory stunes = Bukkit.createInventory(null,54,"§9Steves Tunes Player");
@@ -53,8 +52,9 @@ public class jPhoneMain implements Listener {
 	static String phoneName = "§3jPhone";
 
 	 public jPhoneMain(Main plugin) {
-		this.plugin = plugin; // Store the plugin in situations where you need it.
-		 plugin.getLogger().info("[jPhoneMain] Loading events, commands, and managers...");
+	 	this.towerManager = plugin.getTowerManager();
+	 	this.plugin = plugin; // Store the plugin in situations where you need it.
+	 	// plugin.getLogger().info("[jPhoneMain] Loading events, commands, and managers...");
 		plugin.getServer().getPluginManager().registerEvents(new ChatListener(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InteractEvent(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InventoryClick(plugin,this),plugin);
@@ -64,7 +64,7 @@ public class jPhoneMain implements Listener {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
 		//plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,5L); //todo: NEEDS TTA
-		 plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
+	 	plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
 	}
 
 	static public ItemStack givePhone(Player p, String name, boolean locked) {
@@ -102,36 +102,22 @@ public class jPhoneMain implements Listener {
 		return appswitcher;
 	}
 
-	HashMap<String,Double> getTowers(Location fromLocation) throws NullPointerException{
-		HashMap<String, Double> map = new HashMap<>();
-		File towers = new File(plugin.getDataFolder().toString() + "/towers/");
-		File[] phoneLists = towers.listFiles();
-		if (phoneLists != null) {
-			for (File phoneList : phoneLists) {
-				try {
-					if (phoneList.isFile()) {
-						if (!phoneList.getName().contains("tower")) continue;
-						JSONParser parser = new JSONParser();
-						JSONObject obj = (JSONObject) parser.parse(new FileReader(phoneList));
-						jTower tower = new jTower(obj, fromLocation.getWorld());
-						map.put(tower.name, fromLocation.distance(tower.location));
-					}
-				} catch (Exception e) {
-					Bukkit.getLogger().log(Level.WARNING,"getTowers issue reading",e);
-				}
-			}
-			return map;
-		}else{
-			return null;
+	HashMap<jTower,Double> getTowers(Location fromLocation) throws NullPointerException{
+	 	HashMap<jTower,Double> map = new HashMap<>();
+	 	Iterator iterator = towerManager.towers.values().iterator();
+	 	while(iterator.hasNext()) {
+	 		jTower tower = (jTower) iterator.next();
+	 		map.put(tower,fromLocation.distance(tower.location));
 		}
+	 	return map;
 	}
 
-	HashMap<String,Double> getSortedTowers(Location loc) {
-		HashMap<String, Double> map = getTowers(loc);
+	HashMap<jTower,Double> getSortedTowers(Location loc) {
+		HashMap<jTower, Double> map = getTowers(loc);
 		return map.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
 	}
 	boolean isInTowerRange(Location loc) {
-		HashMap<String, Double> map = getSortedTowers(loc);
+		HashMap<jTower, Double> map = getSortedTowers(loc);
 		double range = map.entrySet().iterator().next().getValue();
 		return (range < 650);
 	}

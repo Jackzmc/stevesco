@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Util {
+public final class Util {
 
     public static boolean isInteger(String s) {
         return isInteger(s,10);
@@ -98,7 +98,7 @@ public class Util {
     }
     public static boolean checkItem(ItemStack input, String name) {
         ItemMeta meta = input.getItemMeta();
-        if(meta == null || meta.getDisplayName() == null) {
+        if(meta == null || !meta.hasDisplayName()) {
             return false;
         }else{
             return meta.getDisplayName().equals(name);

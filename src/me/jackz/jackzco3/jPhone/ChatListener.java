@@ -22,6 +22,7 @@ import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
+import me.jackz.jackzco3.lib.jTower;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -162,17 +163,17 @@ public class ChatListener implements Listener {
 					case "towers":
 						p.sendMessage("§7Pinging towers...");
 						Bukkit.getScheduler().runTaskLater(plugin, () -> {
-							HashMap<String,Double> towers = jphone.getSortedTowers(p.getLocation());
-							for (String tower : towers.keySet()) {
+							HashMap<jTower,Double> towers = jphone.getSortedTowers(p.getLocation());
+							for (jTower tower : towers.keySet()) {
 								double dist = towers.get(tower);
 								if(dist > 1000) {
-									p.sendMessage("§7Tower §e" + tower + "§7 is §e" + jPhoneMain.getTowerQuality(dist));
+									p.sendMessage("§7Tower §e" + tower.name + "§7 is §e" + jPhoneMain.getTowerQuality(dist));
 									continue;
 								}else if(dist > 600) {
-									p.sendMessage("§7Tower §e" + tower + "§7 (§cPoor§7) is §e" + Math.round(randomizeDouble(dist,p.getLocation())) + "§7 blocks away");
+									p.sendMessage("§7Tower §e" + tower.name + "§7 (§cPoor§7) is §e" + Math.round(randomizeDouble(dist,p.getLocation())) + "§7 blocks away");
 									continue;
 								}
-								p.sendMessage("§7Tower §e" + tower + "§7 is §e" + Math.round(dist) + "§7 blocks away.");
+								p.sendMessage("§7Tower §e" + tower.name + "§7 is §e" + Math.round(dist) + "§7 blocks away.");
 							}
 						},40L);
 						break;

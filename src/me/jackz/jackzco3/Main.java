@@ -26,7 +26,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import me.jackz.jackzco3.jPhone.KeyChainStorage;
 import me.jackz.jackzco3.jPhone.jPhoneMain;
 import me.jackz.jackzco3.lib.Config;
-import me.jackz.jackzco3.lib.jTower;
+import me.jackz.jackzco3.lib.jTowerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -37,11 +37,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +47,7 @@ import java.util.UUID;
 
 public class Main extends JavaPlugin {
     private static Plugin plugin;
+    private static jTowerManager towerManager;
 
     public static String LATEST_VERSION = "0.0.0";
     public static String JOS_VERSION = "2.4.0-beta";
@@ -61,6 +60,15 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         keychainMap = new KeyChainStorage(this).loadMap(Bukkit.getWorld("overworld"));
         plugin = this;
+        getLogger().info("Loading jTower Manager");
+        try {
+            towerManager = new jTowerManager(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+            getLogger().info("Failed to load jTower Manager, disabling...");
+            //this.getPluginLoader().disablePlugin(this);
+        }
+        if(towerManager == null) return;
         new jPhoneMain(this);
         LATEST_VERSION = this.getDescription().getVersion();
         getLogger().info("Loading Main Commands");
@@ -84,7 +92,6 @@ public class Main extends JavaPlugin {
         //new LocVarLib(this);
         getLogger().info("Loading Main Misc");
         config = new Config().setupConfig(this);
-        loadTowers();
         if(config.getBoolean("updatecheck.enabled")) {
 	        getServer().getScheduler().runTaskTimer(this, this::checkForUpdates,0L,config.getInt("updatecheck.interval")*20L);
         }
@@ -96,7 +103,10 @@ public class Main extends JavaPlugin {
        // new KeyChainStorage(this).saveMap(keychainMap); //hopefully saves map
 		//getServer().getScheduler().cancelAllTasks();
         getServer().getScheduler().cancelTasks(this);
-        getLogger().info("Successfully disabled all tasks");
+        if(towerManager != null) towerManager.save();
+        towerManager = null;
+        keychainMap = null;
+        getLogger().info("Successfully disabled all tasks & saved jTowers");
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -182,24 +192,8 @@ public class Main extends JavaPlugin {
     public FileConfiguration getJackzCo() {
         return config;
     }
-    private void loadTowers() {
-        File[] towers = new File(getDataFolder() + "/towers").listFiles();
-        if(towers != null) {
-            for (File tower : towers) {
-                try {
-                    if (tower.isFile()) {
-                        if (!tower.getName().endsWith(".tower")) continue;
-                        JSONParser parser = new JSONParser();
-                        JSONObject obj = (JSONObject) parser.parse(new FileReader(tower));
-                        new jTower(obj, getServer().getWorld("world"));
-                    }
-                } catch (Exception ignored) {
-
-                }
-            }
-            return;
-        }
-        getServer().getLogger().warning("No /towers folder found");
+    public jTowerManager getTowerManager() {
+        return towerManager;
     }
 
     public static Plugin getPlugin() {

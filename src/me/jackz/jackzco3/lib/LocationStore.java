@@ -38,6 +38,7 @@ public class LocationStore {
         .setBoolean(Location,boolean)
         .setString(Location,String)
      */
+    //todo: performance: save automatically in background, on close, instead of PER operation
     //todo: convert to gson, provided by spigot api
     public LocationStore(Main plugin) {
         this.plugin = plugin;

@@ -17,7 +17,6 @@
 
 package me.jackz.jackzco3;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -25,6 +24,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,15 +45,10 @@ public class MoveHandler implements Listener {
 	@SuppressWarnings("SwitchStatementWithTooFewBranches")
 	@EventHandler
 	public void PlayerMoveEvent(PlayerMoveEvent e) {
-
 		Player p = e.getPlayer();
-		Location from = e.getFrom();
-		Location to = e.getTo();
-
 		if(!Main.checkRegion(p.getLocation(),"stevesco")) return; //check if in whitelisted region
 		Block underneathPlayer = p.getWorld().getBlockAt(p.getLocation().subtract(0,1,0));
 		if(underneathPlayer.getType().equals(Material.AIR)) return;
-
 		Boolean isImmune = scanImmune.get(p.getUniqueId().toString());
 		Boolean isTimeImmune = scanTimeImmune.get(p.getUniqueId().toString());
 		if(isImmune == null || isTimeImmune == null) {
@@ -70,8 +66,8 @@ public class MoveHandler implements Listener {
 						scanTimeImmune.put(p.getUniqueId().toString(), false);
 						//isTimeImmune = false;
 					},600L);
-					scanTimeImmune.put(p.getUniqueId().toString(),true);
 					//noinspection
+					p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 5, 20));
 					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™",0,40,0);
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();
@@ -87,7 +83,10 @@ public class MoveHandler implements Listener {
 						String itemList = illegalItems.stream().map(itm -> itm.getType().toString()).collect(Collectors.joining(", "));
 						p.sendMessage(Main.jackzco_prefix + "§7Detected illegal items: §e" + itemList);
 						plugin.getServer().broadcastMessage("§3JackzCo Security §7Player §e" + p.getName() + " §7has illegal items: §e" + itemList);
+						p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40*20, 40));
 						//todo: lockdown
+					}else{
+						scanTimeImmune.put(p.getUniqueId().toString(),true);
 					}
 				}
 				break;
