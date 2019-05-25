@@ -79,14 +79,8 @@ public class LocationStore {
     @SuppressWarnings("unchecked")
     public void setString(Location loc,String value) {
         try{
-            JSONObject obj;
-            if(!file.exists()) {
-                //throw new FileNotFoundException();
-                obj = new JSONObject();
-            }else{
-                JSONParser parser = new JSONParser();
-                obj = (JSONObject) parser.parse(new FileReader(file));
-            }
+            JSONObject obj = getObject();
+            if(obj == null) return; //todo: error
             obj.put(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()), value);
             FileWriter writer = new FileWriter(file);
             writer.write(obj.toJSONString());
@@ -98,36 +92,13 @@ public class LocationStore {
     }
     @SuppressWarnings("unchecked")
     public void setBoolean(Location loc,boolean value) {
-        try{
-
-            JSONObject obj;
-            if(!file.exists()) {
-                //throw new FileNotFoundException();
-                obj = new JSONObject();
-            }else{
-                JSONParser parser = new JSONParser();
-                obj = (JSONObject) parser.parse(new FileReader(file));
-            }
-            obj.put(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()), value);
-            FileWriter writer = new FileWriter(file);
-            writer.write(obj.toJSONString());
-            writer.flush();
-            writer.close();
-        }catch(Exception e) {
-            plugin.getLogger().warning(e.toString() + " at " + e.getStackTrace()[0]);
-        }
+        setString(loc, String.valueOf(value));
     }
 
 	public void deleteValue(Location loc) {
 		try{
-			JSONObject obj;
-			if(!file.exists()) {
-				//throw new FileNotFoundException();
-				obj = new JSONObject();
-			}else{
-				JSONParser parser = new JSONParser();
-				obj = (JSONObject) parser.parse(new FileReader(file));
-			}
+			JSONObject obj = getObject();
+			if(obj == null) return; //todo: error
 			obj.remove(String.format("%s,%s,%s",loc.getX(),loc.getY(),loc.getZ()));
 			FileWriter writer = new FileWriter(file);
 			writer.write(obj.toJSONString());
@@ -137,6 +108,23 @@ public class LocationStore {
 			plugin.getLogger().warning(e.toString());
 		}
 	}
+    @SuppressWarnings("unchecked")
+	private JSONObject getObject() {
+        try {
+            JSONObject obj;
+            if(!file.exists()) {
+                //throw new FileNotFoundException();
+                obj = new JSONObject();
+            }else{
+                JSONParser parser = new JSONParser();
+                obj = (JSONObject) parser.parse(new FileReader(file));
+            }
+            return obj;
+        }catch(Exception e) {
+            plugin.getLogger().warning(e.toString());
+            return null; //todo: error
+        }
+    }
 	/*
 	getReader
 	saveWrite

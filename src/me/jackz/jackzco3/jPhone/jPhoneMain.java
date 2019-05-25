@@ -63,7 +63,7 @@ public class jPhoneMain implements Listener {
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,5L);
+		//plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,5L); //todo: NEEDS TTA
 		 plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
 	}
 
@@ -145,23 +145,21 @@ public class jPhoneMain implements Listener {
 				"Thank you for choosing jPhone! To get started you will want to claim the phone. Shift+rightclick, holding the phone to open your appswitcher. You will want to turn on terminal mode. Terminal allows you to run commands to do certain tasks. ",
 				"You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
 		};
-		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		BookMeta meta = (BookMeta) book.getItemMeta();
-		meta.setAuthor("StevesCo");
-		meta.setTitle("jPhone Docs");
-		meta.addPage(pages);
-		book.setItemMeta(meta);
-		return book;
+		return getBook(pages, "jPhone Docs","StevesCo");
 	}
 	public static ItemStack getWarrantyBook() {
 		String[] pages = {
 				"Thank you for choosing jPhone! Warranty Information is disclosed in here ",
 				"You will want to type in chat with terminal mode 'help' to get started You can view a list of commands in terminal mode by typing 'ccommands [page #]'. Try texting someone or claiming your device!"
 		};
+		return getBook(pages, "jPhone Warranty Information","StevesCo");
+	}
+
+	private static ItemStack getBook(String[] pages, String title, String author) {
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		BookMeta meta = (BookMeta) book.getItemMeta();
-		meta.setAuthor("StevesCo");
-		meta.setTitle("jPhone Warranty Information");
+		meta.setAuthor(author);
+		meta.setTitle(title);
 		meta.addPage(pages);
 		book.setItemMeta(meta);
 		return book;

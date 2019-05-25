@@ -88,7 +88,6 @@ public class Main extends JavaPlugin {
         if(config.getBoolean("updatecheck.enabled")) {
 	        getServer().getScheduler().runTaskTimer(this, this::checkForUpdates,0L,config.getInt("updatecheck.interval")*20L);
         }
-
     }
 
     @Override
@@ -136,9 +135,7 @@ public class Main extends JavaPlugin {
     static WorldGuard getWorldGuard() {
         WorldGuard wg = WorldGuard.getInstance();
         // WorldGuard may not be loaded
-        if (wg == null) {
-            return null; // Maybe you want throw an exception instead
-        }
+        // Maybe you want throw an exception instead
         return wg;
     }
     public boolean isJackzCoRegion(Location loc) {

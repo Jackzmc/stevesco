@@ -104,6 +104,7 @@ class DoorControlEvent implements Listener {
                         }
                     }
                     if(!isMatch) {
+                        if(plugin.getServer().getPluginManager().getPlugin("TTA") == null) return;
                         TTA_Methods.sendActionBar(p, "§cYou need an ID Card!");
                     }
                     //failed iron block, no paper

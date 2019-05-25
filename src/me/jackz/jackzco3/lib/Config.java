@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Config {
-    @SuppressWarnings("SpellCheckingInspection")
     public FileConfiguration setupConfig(Main plugin) { //set the config in memory, and set defaults
         File configFile = new File (plugin.getDataFolder(), "jackzco.yml");
         FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);

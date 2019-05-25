@@ -30,10 +30,12 @@ public class Timing implements Runnable {
 	public void run() {
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			ItemStack item = p.getInventory().getItemInMainHand();
-			if(Util.checkItem(item,Material.TRIPWIRE_HOOK,"§3jPhone")) {
+			if(Util.checkItem(item,Material.TRIPWIRE_HOOK,"jPhone")) {
 				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
+				if(!nbt.hasKey("jackzco")) continue;
 				int battery = nbt.getInteger("battery");
 				String color = (battery > 85) ? "§a" : (battery < 20) ? "§c" : "§e";
+				//todo: check if TTA
 				TTA_Methods.sendActionBar(p,"§7Battery: " + color + battery + "%");
 
 			}

@@ -41,6 +41,7 @@ public class MoveHandler implements Listener {
 		this.plugin = plugin;
 	}
 
+	@SuppressWarnings("SwitchStatementWithTooFewBranches")
 	@EventHandler
 	public void PlayerMoveEvent(PlayerMoveEvent e) {
 
@@ -62,7 +63,7 @@ public class MoveHandler implements Listener {
 		}
 		switch(underneathPlayer.getType()) {
 			case POLISHED_ANDESITE:
-				//noinspection deprecation
+				//noinspection
 				if(!isImmune && !isTimeImmune) {
 					scanImmune.put(p.getUniqueId().toString(),true);
 					plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
@@ -70,7 +71,7 @@ public class MoveHandler implements Listener {
 						//isTimeImmune = false;
 					},600L);
 					scanTimeImmune.put(p.getUniqueId().toString(),true);
-					//noinspection deprecation
+					//noinspection
 					p.sendTitle("Scanning...","By §3JackzCo SuperUltra Security Scanner 3027™",0,40,0);
 					List<String> items = plugin.getJackzCo().getStringList("scanner.disallowed");
 					List<ItemStack> illegalItems = new ArrayList<>();

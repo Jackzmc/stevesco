@@ -17,7 +17,6 @@
 
 package me.jackz.jackzco3;
 
-import de.Herbystar.TTA.TTA_Methods;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.KeyedBossBar;
 import org.bukkit.entity.Player;
@@ -39,10 +38,10 @@ public class JoinEvent implements Listener {
         try {
             if(plugin.getJackzCo().getString("motd") == null) return;
             Player p = e.getPlayer();
-            TTA_Methods.sendTablist(p, "§4Jackz Craft Testing Server", "die nerd");
-            //noinspection deprecation
+            //todo: TTA
+            //TTA_Methods.sendTablist(p, "§4Jackz Craft Testing Server", "die nerd");
             p.sendTitle("JackzCo is alive","",0,40,0);
-            String motd = plugin.getJackzCo().getString("motd").replace("%player%",(p.getDisplayName() == null) ? p.getName() : p.getDisplayName()).replace("%username%",p.getName());
+            String motd = plugin.getJackzCo().getString("motd").replace("%player%",(p.getDisplayName().equals("")) ? p.getName() : p.getDisplayName()).replace("%username%",p.getName());
             System.out.println(motd);
             if(!motd.equals("")) {
                 p.sendMessage(motd);

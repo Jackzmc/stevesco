@@ -256,6 +256,7 @@ public class ChatListener implements Listener {
 							p.sendMessage("§cThis feature is disabled, missing plugin §eGlowAPI");
 							return;
 						}
+						//todo: merge duplicates into method to toggle glow status for X ticks
 						if (args.length > 1) {
 							if (args[1].equalsIgnoreCase("players")) {
 								int count = 0;
