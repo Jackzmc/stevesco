@@ -96,7 +96,7 @@ public class SignHandler implements Listener {
 				case PISTON:
 					ItemStack jcharger = new ItemStack(Material.PISTON);
 					ItemMeta meta = jcharger.getItemMeta();
-					meta.setLore(new ArrayList<String>(
+					meta.setLore(new ArrayList<>(
 							Collections.singletonList(jPhoneMain.JCHARGER_VERIFY))
 					);
 					meta.setDisplayName("§fjCharger");

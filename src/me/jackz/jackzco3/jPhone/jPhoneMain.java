@@ -58,7 +58,7 @@ public class jPhoneMain implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(new ChatListener(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InteractEvent(plugin,this),plugin);
 		plugin.getServer().getPluginManager().registerEvents(new InventoryClick(plugin,this),plugin);
-		plugin.getServer().getPluginManager().registerEvents(new BlockEvent(plugin,this),plugin);
+		plugin.getServer().getPluginManager().registerEvents(new BlockEvent(plugin),plugin);
 		//plugin.getServer().getPluginManager().registerEvents(new KeyChainEvents(plugin),plugin);
 		plugin.getCommand("jphone").setExecutor(new Command(plugin,this));
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);

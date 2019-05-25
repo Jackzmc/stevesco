@@ -57,11 +57,9 @@ public class ChatListener implements Listener {
 	public void jPhoneChat(AsyncPlayerChatEvent e) {
 		Player p = e.getPlayer();
 		ItemStack itm = p.getInventory().getItemInMainHand();
-		if(itm != null) {
+		if(itm.hasItemMeta()) {
 			NBTItem nbt = ItemNBTAPI.getNBTItem(itm);
-			if(!nbt.hasNBTData()) {
-				return;
-			}
+			if(!nbt.hasKey("jackzco") || !nbt.hasNBTData()) return;
 			if(nbt.getBoolean("terminal") && !nbt.getBoolean("state")) { //check if terminal mode on, and its off
 				p.sendMessage("§7Cannot connect to phone: §cPhone is offline");
 				return;
@@ -357,6 +355,14 @@ public class ChatListener implements Listener {
 						message.addExtra("\n§7No other settings found.\n");
 						p.spigot().sendMessage(message);
 						break;
+					case "debug":
+						p.sendMessage("§cjPhone Data Dump. jPhone Terminal OS V" + Main.TERMINAL_VERSION);
+						Set<String> keys = nbt.getKeys();
+						while(keys.iterator().hasNext()){
+							String key = keys.iterator().next();
+							String value = nbt.getString(key);
+							p.sendMessage(String.format("§c%s: §e%s",key,value));
+						}
 					case "lookup":
 						p.sendMessage("§7Looking up player from UUID...");
 						try {

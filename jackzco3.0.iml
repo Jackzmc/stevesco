@@ -16,7 +16,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/scripts" />
     </content>
-    <orderEntry type="jdk" jdkName="10" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="TTA" level="project" />
     <orderEntry type="library" name="item-nbt-api-plugin-1.8.1-SNAPSHOT" level="project" />

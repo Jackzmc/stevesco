@@ -36,7 +36,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class BlockEvent implements Listener {
 	private final Main plugin;
 
-	BlockEvent(Main plugin, jPhoneMain jphone) {
+	BlockEvent(Main plugin) {
 		this.plugin = plugin;
 	}
 

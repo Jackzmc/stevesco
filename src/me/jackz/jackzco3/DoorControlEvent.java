@@ -55,10 +55,8 @@ class DoorControlEvent implements Listener {
             try {
 
                 if(clickedBlock.getType() == Material.IRON_DOOR) {
-                    p.sendMessage("§7debug: passed material check");
 
                     if(!Main.checkRegion(clickedBlock.getLocation(),"jackzco")) return;
-                    p.sendMessage("§cdebug: passed region test");
                     boolean isMatch = false;
                     PlayerInventory inv = p.getInventory();
                     for(ItemStack item : inv.getContents()) {
