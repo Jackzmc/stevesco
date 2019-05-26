@@ -50,9 +50,9 @@ public class Main extends JavaPlugin {
     private static jTowerManager towerManager;
 
     public static String LATEST_VERSION = "0.0.0";
-    public static String JOS_VERSION = "2.4.0-beta";
-    public static String TERMINAL_VERSION = "1.5.0-beta";
-    static String jackzco_prefix = "§3JackzCo§6>§r ";
+    public static String JOS_VERSION = "2.6.0-beta";
+    public static String TERMINAL_VERSION = "1.5.2-beta";
+    static String JACKZCO_PREFIX = "§3JackzCo§6>§r ";
     public Map<String,Location> keychainMap = new HashMap<>();
     private FileConfiguration config;
 
@@ -120,15 +120,17 @@ public class Main extends JavaPlugin {
 			    }
 			    newJar.renameTo(new File(plugin.getDataFolder() + "/../jackzco.jar"));
                 getLogger().info("[UpdateChecker] Detected jackzco.jar, reloading...");
-			    Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plugman reload JackzCo3"), 20L);
-			    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                //todo: fix
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     getLogger().info("[UpdateChecker] Updating & reloading JackzCo");
                     Player jackz = getServer().getPlayer(UUID.fromString("b0c16432-67a6-4e3d-b49a-61b323c49b03"));
                     if(jackz != null) {
-                        jackz.sendMessage(jackzco_prefix + "§7Auto updating & reloading jackzco");
+                        jackz.sendMessage(JACKZCO_PREFIX + "§7Auto updating & reloading jackzco");
                         jackz.playSound(jackz.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING,1,1);
                     }
                 },20L * 2);
+			    Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(), "plugman reload JackzCo3"), 20L);
+
 
 		    }
 	    }catch(Exception ex) {

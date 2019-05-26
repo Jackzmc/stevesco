@@ -17,20 +17,52 @@
 
 package me.jackz.jackzco3.jPhone;
 
+import de.tr7zw.itemnbtapi.ItemNBTAPI;
+import de.tr7zw.itemnbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class Command implements CommandExecutor {
-	private jPhoneMain jphone;
-	Command(Main plugin,jPhoneMain jphone) {
-		Main plugin1 = plugin;
-		this.jphone = jphone;
+	private Main plugin;
+	Command(Main plugin) {
+		this.plugin = plugin;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, org.bukkit.command.Command cmd, String label, String[] args) {
-		sender.sendMessage("§7All jPhone commands have been moved to terminal mode.");
-		return false;
+		if(args.length == 0) {
+			sender.sendMessage("§7All jPhone commands have been moved to terminal mode.");
+			return true;
+		}
+		if(!(sender instanceof Player)) {
+			sender.sendMessage("You must be a player");
+			return false;
+		}
+		Player p = (Player) sender;
+		ItemStack item = p.getInventory().getItemInMainHand();
+		if(!jPhoneMain.isPhone(item)) {
+			p.sendMessage("§cYou must have a jphone in your hand");
+			return true;
+		}
+		switch(args[0].toLowerCase()) {
+			case "togglephone": {
+				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
+				if (nbt.getBoolean("state")) {
+					nbt.setBoolean("state", false);
+					p.sendMessage("§7Phone has been switched off.");
+				} else {
+					nbt.setBoolean("state", true);
+					p.sendMessage("§7Phone has been turned on.");
+				}
+				p.getInventory().setItemInMainHand(nbt.getItem());
+				break;
+			}
+			default:
+				sender.sendMessage("§7All jPhone commands have been moved to terminal mode.");
+		}
+		return true;
 	}
 }

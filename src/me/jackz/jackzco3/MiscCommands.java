@@ -18,9 +18,14 @@
 package me.jackz.jackzco3;
 
 import me.jackz.jackzco3.lib.Util;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -45,6 +50,24 @@ class MiscCommands {
 	boolean onCommand(Main plugin,CommandSender sender, Command command, String label, String[] args) {
 		String cmd = command.getName().toLowerCase();
 		switch (cmd) {
+			case "worlds":
+				if(sender instanceof Player) {
+					Player p = (Player) sender;
+					TextComponent base = new TextComponent("§6===== Worlds =====\n");
+					for(World world : plugin.getServer().getWorlds()) {
+						TextComponent world_tc = new TextComponent("§e" + world.getName());
+						TextComponent teleport = new TextComponent(" §9[Teleport]");
+						teleport.setHoverEvent(new net.md_5.bungee.api.chat.HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder( "Teleport to world" ).create()));
+						teleport.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/world " + world.getName()));
+						world_tc.addExtra(teleport);
+						base.addExtra(world_tc);
+						base.addExtra("\n");
+					}
+					p.spigot().sendMessage(base);
+				}else{
+					sender.sendMessage("You must be a player to use this");
+				}
+				return true;
 			case "openchant":
 			case "opchant":
 				if (sender instanceof Player) {

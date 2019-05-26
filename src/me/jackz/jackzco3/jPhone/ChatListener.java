@@ -93,7 +93,6 @@ public class ChatListener implements Listener {
                                 }
                             }
                         }
-					    //TODO: pagination (split by 10 or 15s)
 						List<String> cmds = new ArrayList<>(Arrays.asList( //make clickable names
 								"§ehelp §7get jphone help",
 								"§eversion §7check the version of terminal",

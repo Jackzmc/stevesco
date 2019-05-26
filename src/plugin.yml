@@ -43,3 +43,6 @@ commands:
   jboss:
     description: BOSS TIME
     usage: /jboss help
+  worlds:
+    description: teleport to different worlds
+    usage: /worlds

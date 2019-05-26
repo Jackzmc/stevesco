@@ -104,7 +104,6 @@ public class jTowerManager {
                 jTower tower = new jTower(name,loc);
                 towers.put(name,tower);
             }
-            plugin.getLogger().info(towers.keySet().toString());
         }else{
             //throw new DataFileNotFoundException("towers.store");
             plugin.getLogger().info("[jTowerManager] towers.json not found, creating new file");

@@ -67,7 +67,6 @@ class DoorControlEvent implements Listener {
                             if(item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§6ID Card")) {
 
                                 isMatch = true;
-                                p.sendMessage("§cdebug: door open attempt");
                                 BlockState blockState = clickedBlock.getState();
                                 if(((Door) blockState.getData()).isTopHalf()){
                                     blockState = clickedBlock.getRelative(BlockFace.DOWN).getState();

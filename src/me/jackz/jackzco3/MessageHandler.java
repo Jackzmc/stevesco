@@ -34,7 +34,7 @@ public class MessageHandler implements Listener {
         String msg = e.getMessage();
         if(msg.startsWith("jackzco")) {
             e.setCancelled(true);
-            p.sendMessage(Main.jackzco_prefix + " §7Thank you for wanting to use JackzCo Chat Commands! They are currently in development, sorry!");
+            p.sendMessage(Main.JACKZCO_PREFIX + " §7Thank you for wanting to use JackzCo Chat Commands! They are currently in development, sorry!");
         }
     }
 }

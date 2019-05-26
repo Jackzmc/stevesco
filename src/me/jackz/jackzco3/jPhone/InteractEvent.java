@@ -24,6 +24,8 @@ import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.LocationStore;
 import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -133,7 +135,12 @@ public class InteractEvent implements Listener {
 							p.getInventory().setItemInMainHand(nbti.getItem());
 							return;
 						}
-						p.sendMessage("§cPhone is turned off, shift+rightclick to turn it on");
+						TextComponent toggle_btn = new TextComponent("§a[Click Here]");
+						toggle_btn.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§7Turns on your phone").create()));
+						toggle_btn.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/jphone togglephone"));
+						ComponentBuilder cb = new ComponentBuilder("§cPhone is turned off. Shift + RightClick or ")
+								.append(toggle_btn);
+						p.spigot().sendMessage(cb.create());
 						return;
 					}
 					if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -147,9 +154,21 @@ public class InteractEvent implements Listener {
 							if (battery == -1) {
 								p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §cDead");
 							} else {
-								p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §e" + battery + "%");
+								TextComponent battery_msg = new TextComponent("§aBattery §e" + battery + "%");
+								battery_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Estimated Hours Left:\n§70h and 32m\n§6Last Charge:\n§75 hrs ago\n\n§cClick to turn off phone").create()));
+								battery_msg.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND,"/jphone togglephone"));
+
+								TextComponent provider_msg = new TextComponent("§aProvider §e" + provider);
+								provider_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Coverage:\n§7Undetermined\n§6Data Plan:\n§70 GB/∞ GB Used").create()));
+
+								TextComponent version_msg = new TextComponent("§a§ljPhone OS §r§aV§e" + Main.JOS_VERSION);
+								version_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Terminal Version:\n").append(Main.TERMINAL_VERSION).color(ChatColor.YELLOW).create()));
+
+								ComponentBuilder msg = new ComponentBuilder(version_msg)
+										.append("§6 | ").append(provider_msg).color(ChatColor.YELLOW)
+										.append("§6 | ").append(battery_msg);
+								p.spigot().sendMessage(msg.create());
 							}
-							p.sendMessage("§7Check your data by /jackzco jcloud info");
 							if (!(nbti.hasKey("owner"))) {
 								//hover: "Go to App Switcher->Settings->Owner to claim"
 								TextComponent msg = new TextComponent("§cThis device is not claimed. ");
@@ -162,8 +181,10 @@ public class InteractEvent implements Listener {
 							} else {
 								//is claimed
 								TextComponent msg = new TextComponent("§9This device is claimed. §7Hover for details");
-								msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§9Device claimed by\n§7" + nbti.getString("owner")).create()));
-
+								String name = plugin.getServer().getOfflinePlayer(UUID.fromString(nbti.getString("owner"))).getName();
+                                ComponentBuilder hover_text = new ComponentBuilder(String.format("§9Device claimed by\n§7%s §e(%s)",nbti.getString("owner"),name));
+                                hover_text.append("\n§7Device ID: §e" + nbti.getString("ID"));
+								msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover_text.create()));
 								p.spigot().sendMessage(msg);
 							}
 							p.sendMessage(" ");

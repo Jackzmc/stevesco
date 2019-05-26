@@ -81,7 +81,7 @@ public class MoveHandler implements Listener {
 					}
 					if(illegalItems.size() > 0) {
 						String itemList = illegalItems.stream().map(itm -> itm.getType().toString()).collect(Collectors.joining(", "));
-						p.sendMessage(Main.jackzco_prefix + "§7Detected illegal items: §e" + itemList);
+						p.sendMessage(Main.JACKZCO_PREFIX + "§7Detected illegal items: §e" + itemList);
 						plugin.getServer().broadcastMessage("§3JackzCo Security §7Player §e" + p.getName() + " §7has illegal items: §e" + itemList);
 						p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40*20, 40));
 						//todo: lockdown
