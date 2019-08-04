@@ -13,27 +13,21 @@
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/scripts" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="TTA" level="project" />
-    <orderEntry type="library" name="item-nbt-api-plugin-1.8.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="worldguard" level="project" />
     <orderEntry type="library" name="json-simple-1.1.1" level="project" />
-    <orderEntry type="library" name="ParticleAnimationApi" level="project" />
-    <orderEntry type="library" name="GlowAPI" level="project" />
     <orderEntry type="library" exported="" scope="PROVIDED" name="spigot-api" level="project" />
-    <orderEntry type="library" name="worldedit" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.11" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.github.tr7zw:Item-NBT-API:master-21ca224233-1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.tr7zw.Item-NBT-API:item-nbt-api:master-21ca224233-1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.tr7zw.Item-NBT-API:item-nbt-api-plugin:master-21ca224233-1" level="project" />
-    <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit-lite:1.2" level="project" />
+    <orderEntry type="library" name="Maven: de.tr7zw:item-nbt-api-plugin:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: de.tr7zw:item-nbt-api:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: de.tr7zw:nbt-injector:2.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.javassist:javassist:3.25.0-GA" level="project" />
     <orderEntry type="library" name="Maven: com.sk89q.worldedit:worldedit-bukkit:7.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.sk89q.worldedit:worldedit-core:7.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
@@ -46,13 +40,12 @@
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.26" level="project" />
     <orderEntry type="library" name="Maven: com.sk89q.worldedit.worldedit-libs:bukkit:7.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.sk89q:dummypermscompat:1.10" level="project" />
     <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.13.2-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" name="Maven: io.papermc:paperlib:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:1.4" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.papermc:paperlib:1.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.8.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.logging.log4j:log4j-api:2.8.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.bstats:bstats-bukkit:1.4" level="project" />
     <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-legacy:7.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-core:7.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.sk89q.intake:intake:4.2-SNAPSHOT" level="project" />
@@ -60,7 +53,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flywaydb:flyway-core:3.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.khelekore:prtree:1.5.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.sk89q:commandbook:2.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.opencsv:opencsv:2.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.Herbystar:TTA:3.6" level="project" />
     <orderEntry type="library" name="Maven: org.inventivetalent:glowapi:1.4.8-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.inventivetalent.packetlistener:api:3.6.0-SNAPSHOT" level="project" />
