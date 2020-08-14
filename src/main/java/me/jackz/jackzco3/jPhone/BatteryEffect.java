@@ -46,7 +46,7 @@ public class BatteryEffect implements Runnable {
 							if(verify == null) continue;
 							if (verify.equals(jPhoneMain.JCHARGER_VERIFY)){
 								Location loc = Util.getCenterLocation(bk.getLocation());
-								p.spawnParticle(Particle.ENCHANTMENT_TABLE, loc.add(0, 3, 0), 10, 0.5, 5, 0.5);
+								p.spawnParticle(Particle.ENCHANTMENT_TABLE, loc.add(0, 3, 0), 20, 0.0, 5, 0.0);
 							}
 						}
 						/*else if(bk.getType().equals(Material.EMERALD_BLOCK)) {

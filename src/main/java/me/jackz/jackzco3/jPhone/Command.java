@@ -17,13 +17,16 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Command implements CommandExecutor {
 	private Main plugin;
@@ -49,10 +52,13 @@ public class Command implements CommandExecutor {
 		}
 		switch(args[0].toLowerCase()) {
 			case "togglephone": {
-				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
+				NBTItem nbt = new NBTItem(item);
 				if (nbt.getBoolean("state")) {
 					nbt.setBoolean("state", false);
 					p.sendMessage("§7Phone has been switched off.");
+					ItemMeta meta = item.getItemMeta();
+					meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
+					item.setItemMeta(meta);
 				} else {
 					nbt.setBoolean("state", true);
 					p.sendMessage("§7Phone has been turned on.");

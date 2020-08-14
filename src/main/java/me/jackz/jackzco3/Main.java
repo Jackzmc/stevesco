@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
     private static jTowerManager towerManager;
 
     public static String LATEST_VERSION = "0.0.0";
-    public static String JOS_VERSION = "2.6.0-beta";
+    public static String JOS_VERSION = "2.6.1-beta";
     public static String TERMINAL_VERSION = "1.5.2-beta";
     static String JACKZCO_PREFIX = "§3JackzCo§6>§r ";
     public Map<String,Location> keychainMap = new HashMap<>();
@@ -75,6 +75,7 @@ public class Main extends JavaPlugin {
         this.getCommand("jackzco").setExecutor(new jCommandLoader(this));
         this.getCommand("getid").setExecutor(new DoorControlCmd(this));
         this.getCommand("jboss").setExecutor(new jBoss(this));
+
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));
 
         //this.getCommand("jphone").setExecutor(new jPhoneMain(this));

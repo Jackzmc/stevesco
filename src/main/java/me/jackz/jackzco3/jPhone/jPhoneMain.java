@@ -17,8 +17,7 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.RandomString;
 import me.jackz.jackzco3.lib.Util;
@@ -64,12 +63,12 @@ public class jPhoneMain implements Listener {
 		plugin.getCommand("jphone").setExecutor(new Command(plugin));
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
-		//plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,5L); //todo: NEEDS TTA
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,10L);
 	 	plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
 	}
 
 	static public ItemStack givePhone(Player p, String name, boolean locked) {
-		NBTItem nbt = ItemNBTAPI.getNBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
+		NBTItem nbt = new NBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
 		nbt.setInteger("battery",100);
 		if(!locked) nbt.setString("owner",p.getUniqueId().toString());
 		nbt.setBoolean("terminal",false);
@@ -77,6 +76,7 @@ public class jPhoneMain implements Listener {
 		nbt.setBoolean("locked",locked);
 		nbt.setBoolean("jphone",true);
 		nbt.setBoolean("state",true);
+		nbt.setString("mode","normal");
 		nbt.setString("provider","jService");
 		nbt.setString("txtsound","bell");
 		nbt.setString("ID",new RandomString(10).nextString());
@@ -87,7 +87,7 @@ public class jPhoneMain implements Listener {
 		return item;
 	}
 	static public boolean isPhone(ItemStack item) {
-	 	NBTItem nbt =  ItemNBTAPI.getNBTItem(item);
+	 	NBTItem nbt = new NBTItem(item);
 		return nbt.hasKey("jphone");
 	 	//todo: check for item name
 	}

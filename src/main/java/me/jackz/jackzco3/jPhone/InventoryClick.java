@@ -17,8 +17,7 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
@@ -35,6 +34,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class InventoryClick implements Listener {
 	private final Main plugin;
@@ -54,12 +55,12 @@ public class InventoryClick implements Listener {
 			//If name of inventory is same as app switcher
 			event.setCancelled(true);
 			if(!(p.getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK))) {
-				p.sendMessage("§You must have your phone being held");
+				p.sendMessage("§cYou must have your phone being held");
 				return;
 			}
 			if(clicked == null) return;
 			ItemStack item =  p.getInventory().getItemInMainHand();
-			NBTItem nbti = ItemNBTAPI.getNBTItem(item);
+			NBTItem nbti = new NBTItem(item);
 			switch(clicked.getType()) {
 				case AIR:
 					break;
@@ -96,8 +97,12 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(item);
 					break;
 				} case REDSTONE_LAMP:
-					nbti.setBoolean("state",false);
-					p.getInventory().setItemInMainHand(nbti.getItem());
+					nbti.setBoolean("state", false);
+					ItemMeta meta = item.getItemMeta();
+					meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
+					ItemStack newItem = nbti.getItem();
+					newItem.setItemMeta(meta);
+					p.getInventory().setItemInMainHand(newItem);
 					p.sendMessage("§7Phone has been switched off.");
 					break;
 				case GOLD_NUGGET:
@@ -114,6 +119,7 @@ public class InventoryClick implements Listener {
 					break;
 				default:
 					p.sendMessage("That item is not configured correctly.");
+					event.setCancelled(true);
 			}
 			p.closeInventory(); //close it
 		}else if(view.getTitle().equals("§9Steves Tunes Player")) {

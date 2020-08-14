@@ -17,15 +17,23 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+
 public class BatteryTick implements Runnable {
+	private final Calendar calt = Calendar.getInstance();
+	private final SimpleDateFormat sdft = new SimpleDateFormat("h:mm a");
+
 	public void run() {
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			//check player's inventory
@@ -36,23 +44,36 @@ public class BatteryTick implements Runnable {
 				String dpname = (meta != null && meta.hasDisplayName()) ? meta.getDisplayName() : null;
 				if(dpname == null) continue;
 				//if (dpname.contains("jLight") || dpname.contains("jPhone") || dpname.contains("jWrench")) { //check if tripwire hook is jPhone || jLight
-				NBTItem nbt = ItemNBTAPI.getNBTItem(item);
+				NBTItem nbt = new NBTItem(item);
 				if(!nbt.hasKey("jphone")) continue;
 				if (nbt.getBoolean("state")) { //If phone on
-					if (nbt.getInteger("battery") == null) {
+					Integer battery = nbt.getInteger("battery");
+					if (battery == null) {
 						nbt.setInteger("battery", 100);
+						battery = 100;
 					}
-					if (nbt.getInteger("battery") == 3) {
+					meta.setLore(new ArrayList<>(Arrays.asList(
+							"§9Time: §7" +  sdft.format(calt.getTime()),
+							"§9Battery: §7" + battery + "%",
+							"",
+							"§7§oNo new notifications"
+					)));
+
+					if (battery == 3) {
 						p.sendMessage("§cShutting down phone in slot §e" + (i + 1) + "§c due to low battery");
+						meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
 						nbt.setBoolean("state", false);
-					} else if (nbt.getInteger("battery") == 0) {
+					} else if (battery == 0) {
 						nbt.setInteger("battery", -1);
 						nbt.setBoolean("state", false);
+						meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is dead, use a jCharger to recharge.")));
 						p.sendMessage("§cThe jPhone in slot " + (i + 1) + " has died");
-					} else if (Math.random() >= 0.90) {
-						nbt.setInteger("battery", (nbt.getInteger("battery") - 1));
+					} else if (Math.random() >= 0.80) {
+						nbt.setInteger("battery", battery - 1);
 					}
-					p.getInventory().setItem(i, nbt.getItem());
+					item = nbt.getItem();
+					item.setItemMeta(meta);
+					p.getInventory().setItem(i, item);
 				}
 				//}
 			}

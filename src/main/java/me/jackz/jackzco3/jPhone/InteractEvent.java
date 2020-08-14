@@ -17,8 +17,7 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.LocationStore;
@@ -29,10 +28,13 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -90,7 +92,7 @@ public class InteractEvent implements Listener {
 					e.setCancelled(true);
 					//cancel event, then set the item in hand to itself, fixing ghosting
 					//p.getInventory().setItemInMainHand(p.getInventory().getItemInMainHand());
-					NBTItem nbti = ItemNBTAPI.getNBTItem(item);
+					NBTItem nbti = new NBTItem(item);
 					if (e.getClickedBlock() != null && e.getClickedBlock().getType() == Material.PISTON) {
 						String verify = new LocationStore(plugin).getString(e.getClickedBlock().getLocation());
 						if (verify != null) {
@@ -100,23 +102,28 @@ public class InteractEvent implements Listener {
 								return;
 							}
 							//charge phone
-							p.getWorld().spawnParticle(Particle.SPELL_INSTANT, Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0), 40, 0.5, 3, 0.5);
+							Location centerPos = Util.getCenterLocation(e.getClickedBlock().getLocation().add(0, 3, 0));
+							p.getWorld().spawnParticle(Particle.SPELL_INSTANT, centerPos, 40, 0.5, 3, 0.5);
 							p.sendMessage("§7Charging...");
+							item.addUnsafeEnchantment(Enchantment.QUICK_CHARGE, 1);
+							Item drop = p.getWorld().dropItem(centerPos, item);
+							drop.setPickupDelay(60000);
 							for (int i = 0; i < 59; i++) {
-								plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.getWorld().spawnParticle(Particle.SPELL_INSTANT,
-										Util.getCenterLocation(e.getClickedBlock().getLocation()).add(0, 3, 0),
-										10, 0.5, 3, 0.5),
-										i
-								);
+								plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+									p.getWorld().spawnParticle(Particle.SPELL_INSTANT, centerPos, 20, 0.0, 3, 0.0);
+								}, i);
 							}
 							plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
 								if (p.getInventory().getItemInMainHand().getType() != Material.TRIPWIRE_HOOK) { //TODO?: add to the above loop?
 									p.sendMessage("§7Charging aborted - you must hold your phone.");
 									return;
 								}
+								drop.remove();
+
 								p.playSound(e.getClickedBlock().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
 								nbti.setInteger("battery", 100);
 								p.sendMessage("§aYour phone has been charged!");
+								item.removeEnchantment(Enchantment.QUICK_CHARGE);
 								p.getInventory().setItemInMainHand(nbti.getItem());
 							}, 60L);
 							return;
@@ -155,13 +162,13 @@ public class InteractEvent implements Listener {
 								p.sendMessage("§ajPhoneOS V§e" + Main.JOS_VERSION + "§6 | §aProvider §e" + provider + " §6| §aBattery §cDead");
 							} else {
 								TextComponent battery_msg = new TextComponent("§aBattery §e" + battery + "%");
-								battery_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Estimated Hours Left:\n§70h and 32m\n§6Last Charge:\n§75 hrs ago\n\n§cClick to turn off phone").create()));
+								battery_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Estimated Hours Left:\n§7n/a\n§6Last Charge:\n§7n/a\n\n§cClick to turn off phone").create()));
 								battery_msg.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND,"/jphone togglephone"));
 
 								TextComponent provider_msg = new TextComponent("§aProvider §e" + provider);
 								provider_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Coverage:\n§7Undetermined\n§6Data Plan:\n§70 GB/∞ GB Used").create()));
 
-								TextComponent version_msg = new TextComponent("§a§ljPhone OS §r§aV§e" + Main.JOS_VERSION);
+								TextComponent version_msg = new TextComponent("§a§ljPhone OS §r§ev" + Main.JOS_VERSION);
 								version_msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,new ComponentBuilder("§6Terminal Version:\n").append(Main.TERMINAL_VERSION).color(ChatColor.YELLOW).create()));
 
 								ComponentBuilder msg = new ComponentBuilder(version_msg)

@@ -17,8 +17,7 @@
 
 package me.jackz.jackzco3.jPhone;
 
-import de.tr7zw.itemnbtapi.ItemNBTAPI;
-import de.tr7zw.itemnbtapi.NBTItem;
+import de.tr7zw.nbtapi.NBTItem;
 import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
@@ -59,7 +58,7 @@ public class ChatListener implements Listener {
 		Player p = e.getPlayer();
 		ItemStack itm = p.getInventory().getItemInMainHand();
 		if(itm.hasItemMeta()) {
-			NBTItem nbt = ItemNBTAPI.getNBTItem(itm);
+			NBTItem nbt = new NBTItem(itm);
 			if(!nbt.hasKey("jphone") || !nbt.hasNBTData()) return;
 			if(nbt.getBoolean("terminal") && !nbt.getBoolean("state")) { //check if terminal mode on, and its off
 				p.sendMessage("§7Cannot connect to phone: §cPhone is offline");
@@ -250,7 +249,8 @@ public class ChatListener implements Listener {
 						}, (30 * 20L));
 						p.sendMessage("§cFound " + entities.size() + " dangers");
 						break;
-					} case "glow":
+					}
+					case "glow":
 					case "highlight": {
 						if (plugin.getServer().getPluginManager().getPlugin("GlowAPI") == null) {
 							p.sendMessage("§cThis feature is disabled, missing plugin §eGlowAPI");
@@ -272,25 +272,44 @@ public class ChatListener implements Listener {
 								p.sendMessage("§7Made §e" + count + "§7 players glow for §e30§7 seconds");
 								break;
 							} else if (args[1].equalsIgnoreCase("entities")) {
-								int count = 0;
-								for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
-									if (!(ent instanceof Player)) {
-										if (!(GlowAPI.isGlowing(ent, p))) {
+								Bukkit.getScheduler().runTask(plugin, () -> {
+									int count = 0;
+									for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
+										if (!(ent instanceof Player)) {
+											if (!(GlowAPI.isGlowing(ent, p))) {
 
-											GlowAPI.setGlowing(ent, GlowAPI.Color.WHITE, p);
-											count += 1;
+												GlowAPI.setGlowing(ent, GlowAPI.Color.WHITE, p);
+												count += 1;
+											}
+											Bukkit.getScheduler().runTaskLater(plugin, () -> {
+												if (GlowAPI.isGlowing(ent, p)) GlowAPI.setGlowing(ent, false, p);
+											}, (30 * 20L));
 										}
-										Bukkit.getScheduler().runTaskLater(plugin, () -> {
-											if (GlowAPI.isGlowing(ent, p)) GlowAPI.setGlowing(ent, false, p);
-										}, (30 * 20L));
 									}
-								}
-								p.sendMessage("§7Made §e" + count + "§7 entities glow for §e30§7 seconds");
+									p.sendMessage("§7Made §e" + count + "§7 entities glow for §e30§7 seconds");
+								});
 								break;
 							}  else if (args[1].equalsIgnoreCase("dangers")) {
-								int count = 0;
-								for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
-									if (ent instanceof Monster) {
+								Bukkit.getScheduler().runTask(plugin, () -> {
+									int count = 0;
+									for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
+										if (ent instanceof Monster) {
+											if (!(GlowAPI.isGlowing(ent, p))) {
+												GlowAPI.setGlowing(ent, GlowAPI.Color.WHITE, p);
+												count += 1;
+											}
+											Bukkit.getScheduler().runTaskLater(plugin, () -> {
+												if (GlowAPI.isGlowing(ent, p)) GlowAPI.setGlowing(ent, false, p);
+											}, (30 * 20L));
+										}
+									}
+									p.sendMessage("§7Made §e" + count + "§7 entities glow for §e30§7 seconds");
+								});
+								break;
+							} else if (args[1].equalsIgnoreCase("all")) {
+								Bukkit.getScheduler().runTask(plugin, () -> {
+									int count = 0;
+									for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
 										if (!(GlowAPI.isGlowing(ent, p))) {
 											GlowAPI.setGlowing(ent, GlowAPI.Color.WHITE, p);
 											count += 1;
@@ -299,21 +318,8 @@ public class ChatListener implements Listener {
 											if (GlowAPI.isGlowing(ent, p)) GlowAPI.setGlowing(ent, false, p);
 										}, (30 * 20L));
 									}
-								}
-								p.sendMessage("§7Made §e" + count + "§7 entities glow for §e30§7 seconds");
-								break;
-							} else if (args[1].equalsIgnoreCase("all")) {
-								int count = 0;
-								for (Entity ent : p.getNearbyEntities(50, 50, 50)) {
-									if (!(GlowAPI.isGlowing(ent, p))) {
-										GlowAPI.setGlowing(ent, GlowAPI.Color.WHITE, p);
-										count += 1;
-									}
-									Bukkit.getScheduler().runTaskLater(plugin, () -> {
-										if (GlowAPI.isGlowing(ent, p)) GlowAPI.setGlowing(ent, false, p);
-									}, (30 * 20L));
-								}
-								p.sendMessage("§7Made §e" + count + "§7 entities/players glow for §e30§7 seconds");
+									p.sendMessage("§7Made §e" + count + "§7 entities/players glow for §e30§7 seconds");
+								});
 								break;
 							}
 						} else {
@@ -335,12 +341,18 @@ public class ChatListener implements Listener {
 					}case "state":
 						if (nbt.getBoolean("state")) {
 							nbt.setBoolean("state", false);
+							ItemMeta meta = itm.getItemMeta();
+							ItemStack newItem = nbt.getItem();
+							meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
+							newItem.setItemMeta(meta);
+							p.getInventory().setItemInMainHand(newItem);
 							p.sendMessage("§7Phone has been switched off.");
 						} else {
 							nbt.setBoolean("state", true);
 							p.sendMessage("§7Phone has been turned on.");
+							p.getInventory().setItemInMainHand(nbt.getItem());
 						}
-						p.getInventory().setItemInMainHand(nbt.getItem());
+
 						break;
 					case "settings":
 						BaseComponent message = new TextComponent("§3jPhoneOS Settings\n");

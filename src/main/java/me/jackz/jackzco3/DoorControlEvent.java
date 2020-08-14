@@ -17,7 +17,8 @@
 
 package me.jackz.jackzco3;
 
-import de.Herbystar.TTA.TTA_Methods;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -103,8 +104,8 @@ class DoorControlEvent implements Listener {
                         }
                     }
                     if(!isMatch) {
-                        if(plugin.getServer().getPluginManager().getPlugin("TTA") == null) return;
-                        TTA_Methods.sendActionBar(p, "§cYou need an ID Card!");
+                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText("§cYou need an ID Card!"));
+                        p.sendMessage("§cYou need an ID Card!");
                     }
                     //failed iron block, no paper
 
