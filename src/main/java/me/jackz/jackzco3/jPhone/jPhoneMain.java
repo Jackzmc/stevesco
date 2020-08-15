@@ -47,6 +47,7 @@ public class jPhoneMain implements Listener {
 	static Inventory keychain = Bukkit.createInventory(null, 9, "jPhone Keychain");
 	static Inventory appswitcher = Bukkit.createInventory(null, 45, "§9jPhone App Switcher");
 	static Inventory stunes = Bukkit.createInventory(null,54,"§9Steves Tunes Player");
+	static Inventory settings = Bukkit.createInventory(null, 54, "§9jPhone Settings");
 	public static final String JCHARGER_VERIFY = "VphPyIZn";
 
 	static String phoneName = "§3jPhone";

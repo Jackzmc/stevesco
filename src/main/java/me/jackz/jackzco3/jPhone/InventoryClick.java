@@ -72,7 +72,8 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(item);
 					break;
 				} case WRITABLE_BOOK:
-					p.performCommand("settings");
+					Util.createDisplay(p,Material.WRITTEN_BOOK, jPhoneMain.settings,0,"§9INFO");
+					plugin.getServer().getScheduler().runTaskLater(plugin, () -> p.openInventory(jPhoneMain.settings),1L);
 					//p.sendMessage("§7Type /jphone claim to claim");
 					break;
 				case OAK_SIGN:
@@ -97,13 +98,14 @@ public class InventoryClick implements Listener {
 					p.getInventory().setItemInMainHand(item);
 					break;
 				} case REDSTONE_LAMP:
-					nbti.setBoolean("state", false);
+					nbti.setBoolean("state",false);
 					ItemMeta meta = item.getItemMeta();
-					meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
 					ItemStack newItem = nbti.getItem();
+					meta.setLore(new ArrayList<>(Collections.singletonList("§cPhone is switched off.")));
 					newItem.setItemMeta(meta);
-					p.getInventory().setItemInMainHand(newItem);
 					p.sendMessage("§7Phone has been switched off.");
+					p.getInventory().setItemInMainHand(newItem);
+
 					break;
 				case GOLD_NUGGET:
 					Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -119,7 +121,6 @@ public class InventoryClick implements Listener {
 					break;
 				default:
 					p.sendMessage("That item is not configured correctly.");
-					event.setCancelled(true);
 			}
 			p.closeInventory(); //close it
 		}else if(view.getTitle().equals("§9Steves Tunes Player")) {
@@ -147,6 +148,18 @@ public class InventoryClick implements Listener {
 					}
 				}
 
+			}
+		}else if(view.getTitle().startsWith("§9jPhone")) {
+			event.setCancelled(true);
+			if(clicked != null) {
+				switch (clicked.getType()) {
+					case WRITTEN_BOOK: {
+						p.sendMessage("§cSettings is currently in development. Check back later!");
+						break;
+					}
+					default:
+						p.sendMessage("§cUnknown item. ");
+				}
 			}
 		}
 	}

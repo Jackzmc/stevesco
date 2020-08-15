@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+<module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
       <configuration>
@@ -89,14 +89,13 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.logging.log4j:log4j-slf4j-impl:2.8.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.logging.log4j:log4j-api:2.8.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.bstats:bstats-bukkit:1.7" level="project" />
-    <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-legacy:7.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-core:7.0.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.sk89q.intake:intake:4.2-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.sk89q:squirrelid:0.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-bukkit:7.0.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q.worldguard:worldguard-core:7.0.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.sk89q.worldguard.worldguard-libs:core:7.0.3-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.flywaydb:flyway-core:3.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.khelekore:prtree:1.5.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.sk89q:commandbook:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.inventivetalent:glowapi:1.4.10-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.inventivetalent.packetlistener:api:3.7.3-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.github.stefvanschie.inventoryframework:IF:0.7.1" level="project" />
   </component>
 </module>

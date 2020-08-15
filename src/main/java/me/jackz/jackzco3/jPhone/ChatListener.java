@@ -22,9 +22,7 @@ import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -116,7 +114,7 @@ public class ChatListener implements Listener {
 								if (i % pageResults == 0) {
 									//index of:
 
-									int endsize = (i+(pageResults - 1)) > cmds.size() ? cmds.size() : i+(pageResults - 1);
+									int endsize = Math.min((i + (pageResults - 1)), cmds.size());
 									List<String> list = new ArrayList<>(cmds.subList(i, endsize));
 									commands.add(list);
 								}
@@ -126,7 +124,18 @@ public class ChatListener implements Listener {
                         if(pageno > commands.size()) {
                             pageno = commands.size();
                         }
-						p.sendMessage("§3Current Commands: §7(Page §e" + (pageno) + "/" + commands.size() + "§7)\n" + String.join("\n",commands.get(pageno-1)));
+                        TextComponent pageComponent = new TextComponent("§3Current Commands: §7(Page §e" + (pageno) + "/" + commands.size() + "§7) ");
+						TextComponent leftArrow = new TextComponent("§9[Previous] ");
+						leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (pageno-1)));
+						leftArrow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to go to the next page").create()));
+                        TextComponent rightArrow = new TextComponent("§9[Next]");
+                        rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (pageno+1)));
+                        rightArrow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to go to the next page").create()));
+
+                        if(pageno > 1) pageComponent.addExtra(leftArrow);
+                        if(pageno < commands.size()) pageComponent.addExtra(rightArrow);
+                        pageComponent.addExtra("\n§7" + String.join("\n",commands.get(pageno-1)));
+						p.spigot().sendMessage(pageComponent);
 						break;
 					case "keychain":
 						int max_size = 9*3;
