@@ -27,9 +27,9 @@ import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class BatteryEffect implements Runnable {
+public class BatteryEffectTimer implements Runnable {
 	final Main plugin;
-	BatteryEffect(Main plugin) {
+	BatteryEffectTimer(Main plugin) {
 		this.plugin = plugin;
 	}
 

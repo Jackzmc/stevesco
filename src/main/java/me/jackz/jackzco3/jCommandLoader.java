@@ -116,7 +116,7 @@ public class jCommandLoader implements CommandExecutor {
                     return true;
                 }
                 new jPhoneMain(plugin);
-                p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2",false));
+                p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2", "2", false));
                 p.getInventory().addItem(jPhoneMain.getIntroBook());
                 ItemStack newPhone = new ItemStack(Material.TRIPWIRE_HOOK);
                 ItemMeta newPhoneMeta = newPhone.getItemMeta();

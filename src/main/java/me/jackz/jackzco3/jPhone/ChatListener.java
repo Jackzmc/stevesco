@@ -22,6 +22,7 @@ import me.jackz.jackzco3.Main;
 import me.jackz.jackzco3.lib.InventoryStore;
 import me.jackz.jackzco3.lib.Util;
 import me.jackz.jackzco3.lib.jTower;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -46,9 +47,37 @@ import java.util.*;
 public class ChatListener implements Listener {
 	private Main plugin;
 	private jPhoneMain jphone;
+	private final LinkedHashMap<String, String> commandsMap = new LinkedHashMap<String, String>() {
+		{
+			put("help", "get jphone help");
+			put("version", "check the version of terminal");
+			put("light", "turn on your flashlight");
+			put("claim", "claim the device as yours");
+			put("glow", "highlight players, entities, monsters");
+			put("dangers", "highlight dangers (legacy)");
+			put("state", "turn your phone off");
+			put("lookup", "Search a database of users by UUID");
+			put("text", "text any player that uses jService or jPhone");
+			put("keychain", "View and manage your keychain space");
+			put("jcloud", "manage your jCloud account");
+			put("date/time", "View the current date/time");
+			put("settings", "View or manage your phone's settings");
+			put("exit", "exit terminal mode");
+		}
+	};
+	private List<TextComponent> commands = new ArrayList<>();
+
 	ChatListener(Main plugin,jPhoneMain jphone) {
 		this.plugin = plugin;
 		this.jphone = jphone;
+		for (Map.Entry<String, String> commandEntry : commandsMap.entrySet()) {
+			TextComponent tc = new TextComponent(commandEntry.getKey());
+			tc.setColor(ChatColor.YELLOW);
+			tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandEntry.getKey()));
+			tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click to run the command: \n§e" + commandEntry.getKey()).create()));
+			tc.addExtra( "§7 " + commandEntry.getValue());
+			commands.add(tc);
+		}
 	}
 	@SuppressWarnings("SpellCheckingInspection")
 	@EventHandler
@@ -81,67 +110,51 @@ public class ChatListener implements Listener {
 						p.getInventory().setItemInMainHand(CurrentPhone);
 						break;
 					case "commands":
-					    int pageno = 1;
+					    int currentPage = 1;
 					    if(args.length >= 2) {
 						    if(Util.isInteger(args[1])) {
-					            pageno = Integer.parseInt(args[1]);
-					            if(pageno <= 0) {
-					                pageno = 1;
+					            currentPage = Integer.parseInt(args[1]);
+					            if(currentPage <= 0) {
+					                currentPage = 1;
                                 }
                             }
                         }
-						List<String> cmds = new ArrayList<>(Arrays.asList( //make clickable names
-								"§ehelp §7get jphone help",
-								"§eversion §7check the version of terminal",
-								"§elight §7turn on your flashlight",
-								"§eclaim §7claim the device as yours",
-								"§eglow §7highlight player, entities, monsters",
-								"§edangers §7highlights dangers (legacy",
-								"§estate §7turn on/off phone",
-								"§elookup §7lookup a player by UUID",
-								"§etext §7text any player that has a jPhone",
-								"§ekeychain §7View your used/free space on your keychain",
-								"§ejcloud §7manage your jCloud account",
-								"§edate/time §7view the current time or date",
-								"§esettings §7view/Set your phone's settings",
-								"§eping §7ping all known towers",
-								"§eexit §7exit terminal mode"
-						));
-						final int pageResults = 10;
-						List<List<String>> commands = new ArrayList<>();
-						if(cmds.size() >= pageResults) {
-							for (int i = 0; i < cmds.size(); i++)
-								if (i % pageResults == 0) {
-									//index of:
-
-									int endsize = Math.min((i + (pageResults - 1)), cmds.size());
-									List<String> list = new ArrayList<>(cmds.subList(i, endsize));
-									commands.add(list);
-								}
-						}else{
-							commands.add(cmds);
+						final int MAX_RESULTS_PER_PAGE = 10;
+						int AVAILABLE_PAGES = (int)Math.ceil((float)commands.size() / (float)MAX_RESULTS_PER_PAGE);
+						if(currentPage > AVAILABLE_PAGES) {
+							currentPage = AVAILABLE_PAGES;
 						}
-                        if(pageno > commands.size()) {
-                            pageno = commands.size();
-                        }
-                        TextComponent pageComponent = new TextComponent("§3Current Commands: §7(Page §e" + (pageno) + "/" + commands.size() + "§7) ");
+						List<TextComponent> cmdList;
+						if(commands.size() >= MAX_RESULTS_PER_PAGE) {
+							int startPageIndex = (currentPage-1) * 10;
+							int endPageIndex = startPageIndex + (MAX_RESULTS_PER_PAGE);
+							if(endPageIndex > commands.size()) endPageIndex = commands.size() - 1;
+							cmdList = commands.subList(startPageIndex, endPageIndex);
+						}else{
+							cmdList = commands;
+						}
+                        TextComponent pageComponent = new TextComponent("§3Current Commands: §7(Page §e" + (currentPage) + "/" +AVAILABLE_PAGES + "§7) ");
+						pageComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7There are a total of §e" + commands.size() + "§7 commands.").create()));
 						TextComponent leftArrow = new TextComponent("§9[Previous] ");
-						leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (pageno-1)));
-						leftArrow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to go to the next page").create()));
+						leftArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (currentPage-1)));
+						leftArrow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to go to the previous page").create()));
                         TextComponent rightArrow = new TextComponent("§9[Next]");
-                        rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (pageno+1)));
+                        rightArrow.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands " + (currentPage+1)));
                         rightArrow.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to go to the next page").create()));
 
-                        if(pageno > 1) pageComponent.addExtra(leftArrow);
-                        if(pageno < commands.size()) pageComponent.addExtra(rightArrow);
-                        pageComponent.addExtra("\n§7" + String.join("\n",commands.get(pageno-1)));
+                        if(currentPage > 1) pageComponent.addExtra(leftArrow);
+                        if(currentPage < AVAILABLE_PAGES) pageComponent.addExtra(rightArrow);
+						for (TextComponent textComponent : cmdList) {
+							pageComponent.addExtra("\n");
+							pageComponent.addExtra(textComponent);
+						}
 						p.spigot().sendMessage(pageComponent);
 						break;
 					case "keychain":
-						int max_size = 9*3;
-						float size = new InventoryStore(plugin,"keychain_" + p.getName(),max_size).getFillSize();
-						double percent = (size/(float)max_size) * 100;
-						p.sendMessage(MessageFormat.format("§7Your keychain is §e{0}% §7full. (§e{1}/{2}§7)",percent,size,max_size));
+						final int max_size = 27;
+						float size = new InventoryStore(plugin,"keychain_" + p.getName(), max_size).getFillSize();
+						double percent = (size/(float) max_size) * 100;
+						p.sendMessage(MessageFormat.format("§7Your keychain is §e{0,number,#.##%% §7full. (§e{1,number}/{2,number} slots used§7)", percent, size, max_size));
 						break;
 					case "help":
 						p.sendMessage("§7Hi, terminal is currently in alpha and missing features.");
@@ -149,11 +162,11 @@ public class ChatListener implements Listener {
 						p.sendMessage("§7Type §ecommands §7to view commands");
 						break;
 					case "time": {
-						DateFormat dateFormat = new SimpleDateFormat("h:mm a");
+						final DateFormat dateFormat = new SimpleDateFormat("h:mm a");
 						p.sendMessage("§7The time is §e" + dateFormat.format(new Date()));
 						break;
 					} case "date": {
-						DateFormat dateFormat = new SimpleDateFormat("EEEE, MMMMMM d yyyy ");
+						final DateFormat dateFormat = new SimpleDateFormat("EEEE, MMMMMM d yyyy ");
 						p.sendMessage("§7Today is §e" + dateFormat.format(new Date()));
 						break;
 					} case "claim":
@@ -229,7 +242,7 @@ public class ChatListener implements Listener {
 						p.sendMessage("§aYour phone has been charged using the power of BlockChain(TM)");
 						break;
 					case "trash":
-						Inventory trash = Bukkit.createInventory(null, 9 * 3, "jPhone Portable Trash");
+						final Inventory trash = Bukkit.createInventory(null, 9 * 3, "jPhone Portable Trash");
 						p.openInventory(trash);
 						break;
 					case "dangers": {
@@ -407,8 +420,20 @@ public class ChatListener implements Listener {
 						p.getInventory().setItemInMainHand(nbt.getItem());
 						break;
 					default:
-						p.sendMessage("§cUnknown command was specified. §7Type §ehelp for help");
+						TextComponent base = new TextComponent("§cUnknown command was specified.");
+						TextComponent help = new TextComponent(" §e[Help]");
+						TextComponent commands = new TextComponent(" §9[View Commands]");
 
+						help.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "help"));
+						help.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click to view help information").create()));
+
+						commands.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "commands"));
+						commands.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§7Click to view all jPhone Terminal commands.").create()));
+
+						base.addExtra(help);
+						base.addExtra(commands);
+
+						p.spigot().sendMessage(base);
 				}
 
 			}

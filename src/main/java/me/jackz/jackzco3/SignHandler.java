@@ -68,7 +68,7 @@ public class SignHandler implements Listener {
 	public void onInvClick(InventoryClickEvent e) {
 		InventoryView view = e.getView();
 		if(e.getClickedInventory() != null && view.getTitle().equals("§cJackzCo Store")) {
-			Player p = (Player) e.getWhoClicked();
+			Player player = (Player) e.getWhoClicked();
 			ItemStack item = e.getCurrentItem();
 			e.setCancelled(true);
 			if(item == null) return;
@@ -76,19 +76,19 @@ public class SignHandler implements Listener {
 			switch(e.getCurrentItem().getType()) {
 				case TRIPWIRE_HOOK:
 					switch(e.getCurrentItem().getItemMeta().getDisplayName()) { //get NBT?
-						case "jPhone 2": {
-							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2",false));
-							p.getInventory().addItem(jPhoneMain.getIntroBook());
-							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
+						case "§fjPhone 2": {
+							player.getInventory().addItem(jPhoneMain.givePhone(player,"§3jPhone 2", "2", false));
+							player.getInventory().addItem(jPhoneMain.getIntroBook());
+							player.getInventory().addItem(jPhoneMain.getWarrantyBook());
 							break;
-						} case "jPhone 2X": {
-							p.getInventory().addItem(jPhoneMain.givePhone(p,"§3jPhone 2X",false));
-							p.getInventory().addItem(jPhoneMain.getIntroBook());
-							p.getInventory().addItem(jPhoneMain.getWarrantyBook());
+						} case "§fjPhone 2X": {
+							player.getInventory().addItem(jPhoneMain.givePhone(player,"§3jPhone 2X","2X", false));
+							player.getInventory().addItem(jPhoneMain.getIntroBook());
+							player.getInventory().addItem(jPhoneMain.getWarrantyBook());
 							break;
 						} default:
-							p.sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());
-							p.sendMessage("§cSorry we don't support that phone. Please contact our support team if you have any questions");
+							player.sendMessage(e.getCurrentItem().getItemMeta().getDisplayName());
+							player.sendMessage("§cSorry we don't support that phone. Please contact our support team if you have any questions");
 					}
 					break;
 				case PISTON:
@@ -99,16 +99,16 @@ public class SignHandler implements Listener {
 					);
 					meta.setDisplayName("§fjCharger");
 					jcharger.setItemMeta(meta);
-					p.getInventory().addItem(jcharger);
-					p.sendMessage("§aThank you for buying the jCharger!");
-					p.sendMessage("§7Place the piston on a gold block to set it up.");
+					player.getInventory().addItem(jcharger);
+					player.sendMessage("§aThank you for buying the jCharger!");
+					player.sendMessage("§7Place the piston on a gold block to set it up.");
 					break;
 				case AIR:
 					//dont do anything
 					break;
 				default:
-					p.sendMessage("§cSorry, but that is not a valid store item. Please contact a StevesCo support member.");
-					p.closeInventory();
+					player.sendMessage("§cSorry, but that is not a valid store item. Please contact a StevesCo support member.");
+					player.closeInventory();
 			}
 		}
 	}

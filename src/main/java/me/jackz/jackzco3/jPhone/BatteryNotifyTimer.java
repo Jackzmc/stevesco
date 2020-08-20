@@ -25,7 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class Timing implements Runnable {
+public class BatteryNotifyTimer implements Runnable {
 	public void run() {
 		for(Player player : Bukkit.getOnlinePlayers()) {
 			if(player.isSneaking()) {

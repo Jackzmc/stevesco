@@ -62,25 +62,26 @@ public class jPhoneMain implements Listener {
 		plugin.getServer().getPluginManager().registerEvents(new BlockEvent(plugin),plugin);
 		//plugin.getServer().getPluginManager().registerEvents(new KeyChainEvents(plugin),plugin);
 		plugin.getCommand("jphone").setExecutor(new Command(plugin));
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffect(plugin),0L,10L);
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTick(),0L,30 * 20);
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Timing(),0L,10L);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryEffectTimer(plugin),0L,10L);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new BatteryTickTimer(),0L,30 * 20);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new BatteryNotifyTimer(),0L,10L);
 	 	plugin.getLogger().info("[jphoneMain] Loaded events, commands managers successfully.");
 	}
 
-	static public ItemStack givePhone(Player p, String name, boolean locked) {
+	static public ItemStack givePhone(Player player, String name, String model, boolean locked) {
 		NBTItem nbt = new NBTItem(new ItemStack(Material.TRIPWIRE_HOOK));
-		nbt.setInteger("battery",100);
-		if(!locked) nbt.setString("owner",p.getUniqueId().toString());
-		nbt.setBoolean("terminal",false);
-		nbt.setBoolean("firstuse",true);
-		nbt.setBoolean("locked",locked);
-		nbt.setBoolean("jphone",true);
-		nbt.setBoolean("state",true);
-		nbt.setString("mode","normal");
-		nbt.setString("provider","jService");
-		nbt.setString("txtsound","bell");
-		nbt.setString("ID",new RandomString(10).nextString());
+		nbt.setInteger("battery", 100);
+		if(!locked) nbt.setString("owner", player.getUniqueId().toString());
+		nbt.setBoolean("terminal", false);
+		nbt.setBoolean("firstuse", true);
+		nbt.setBoolean("locked", locked);
+		nbt.setBoolean("jphone", true);
+		nbt.setBoolean("state", true);
+		nbt.setString("mode", "normal");
+		nbt.setString("provider", "jService");
+		nbt.setString("setting.txtsound", "bell");
+		nbt.setString("model", model);
+		nbt.setString("ID", new RandomString(10).nextString());
 		ItemStack item = nbt.getItem();
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);
@@ -88,6 +89,7 @@ public class jPhoneMain implements Listener {
 		return item;
 	}
 	static public boolean isPhone(ItemStack item) {
+	 	if(item.getType() == Material.AIR) return false;
 	 	NBTItem nbt = new NBTItem(item);
 		return nbt.hasKey("jphone");
 	 	//todo: check for item name

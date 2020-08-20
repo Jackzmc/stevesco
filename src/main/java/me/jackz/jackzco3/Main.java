@@ -50,8 +50,8 @@ public class Main extends JavaPlugin {
     private static jTowerManager towerManager;
 
     public static String LATEST_VERSION = "0.0.0";
-    public static String JOS_VERSION = "2.6.1-beta";
-    public static String TERMINAL_VERSION = "1.5.2-beta";
+    public static String JOS_VERSION = "2.7.1-beta";
+    public static String TERMINAL_VERSION = "1.6.2-beta";
     static String JACKZCO_PREFIX = "§3JackzCo§6>§r ";
     public Map<String,Location> keychainMap = new HashMap<>();
     private FileConfiguration config;

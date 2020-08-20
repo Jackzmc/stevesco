@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
-public class BatteryTick implements Runnable {
+public class BatteryTickTimer implements Runnable {
 	private final Calendar calt = Calendar.getInstance();
 	private final SimpleDateFormat sdft = new SimpleDateFormat("h:mm a");
 
